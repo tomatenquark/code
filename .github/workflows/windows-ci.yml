@@ -1,0 +1,15 @@
+name: CI for Windows
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
+    - uses: warrenbuckley/Setup-MSBuild@v1
+    - working-directory: ./src/vcpp
+      run: msbuild /p:PlatformToolset=v142 sauerbraten.sln
