@@ -1,0 +1,14 @@
+name: CI for OSX
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
+    - working-directory: ./src/xcode
+      run: xcodebuild
