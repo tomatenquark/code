@@ -2,7 +2,7 @@ name: Continous integration for sauerbraten
 on: [push]
 
 jobs:
-  build-osx:
+  build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
