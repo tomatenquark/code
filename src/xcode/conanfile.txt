@@ -1,0 +1,15 @@
+[requires]
+sdl2/2.0.10@bincrafters/stable
+sdl2_image/2.0.5@bincrafters/stable
+sdl2_mixer/2.0.4@bincrafters/stable
+
+[options]
+sdl2:iconv=True
+sdl2:shared=True
+
+[imports]
+lib, *.dylib* -> ./lib # Copies all dylib files from packages lib folder to my local "bin" folder
+
+[generators]
+xcode
+
