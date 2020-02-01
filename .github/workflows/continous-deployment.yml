@@ -32,7 +32,7 @@ jobs:
         working-directory: ./src/vcpp
         run: msbuild /p:PlatformToolset=v142 sauerbraten.sln
       - name: Archive Windows binaries
-        run: Compress-Archive -Path .\bin\sauerbraten_debug.exe -DestinationPath sauerbraten_windows.zip
+        run: Compress-Archive -Path .\bin -DestinationPath sauerbraten_windows.zip
       - uses: actions/upload-artifact@v1
         with: 
           name: sauerbraten_windows
@@ -77,7 +77,6 @@ jobs:
       - uses: actions/download-artifact@v1
         with:
           name: sauerbraten_ubuntu
-      - run: find .
       - name: Upload OSX App
         uses: actions/upload-release-asset@v1.0.1
         env:
