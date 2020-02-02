@@ -15,11 +15,12 @@ jobs:
         working-directory: ./src/xcode
         run: xcodebuild
       - name: Archive OSX App
-        run: zip -r sauerbraten_macos.zip ./src/xcode/build/Debug
+        run: zip -r sauerbraten_macos.zip .
+        working-directory: ./src/xcode/build/Debug
       - uses: actions/upload-artifact@v1
         with: 
           name: sauerbraten_macos
-          path: ./sauerbraten_macos.zip
+          path: ./src/xcode/build/Debug/sauerbraten_macos.zip
   build-windows:
     runs-on: windows-latest
     steps:
@@ -51,11 +52,12 @@ jobs:
         working-directory: ./src
         run: make
       - name: Archive Ubuntu binaries
-        run: zip sauerbraten_ubuntu.zip ./src/sauer_client ./src/sauer_server
+        run: zip sauerbraten_ubuntu.zip ./sauer_client ./sauer_server
+        working-directory: ./src
       - uses: actions/upload-artifact@v1
         with: 
           name: sauerbraten_ubuntu
-          path: ./sauerbraten_ubuntu.zip
+          path: ./src/sauerbraten_ubuntu.zip
   release:
     runs-on: ubuntu-latest
     needs: [build-macos, build-windows, build-ubuntu]
