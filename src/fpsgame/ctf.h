@@ -948,9 +948,9 @@ struct ctfclientmode : clientmode
        }
     }
 
-    int respawnwait(fpsent *d)
+    int respawnwait(fpsent *d, int delay = 0)
     {
-        return m_efficiency || !m_protect ? max(0, RESPAWNSECS-(lastmillis-d->lastpain)/1000) : 0;
+        return m_efficiency || !m_protect ? d->respawnwait(RESPAWNSECS, delay) : 0;
     }
 
     bool pickholdspawn(fpsent *d)

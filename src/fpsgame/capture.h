@@ -453,10 +453,10 @@ struct captureclientmode : clientmode
         if(blips && !basenumbers) gle::end();
     }
 
-    int respawnwait(fpsent *d)
+    int respawnwait(fpsent *d, int delay = 0)
     {
         if(m_regencapture) return -1;
-        return max(0, RESPAWNSECS-(lastmillis-d->lastpain)/1000);
+        return d->respawnwait(RESPAWNSECS, delay);
     }
 
     int clipconsole(int w, int h)
