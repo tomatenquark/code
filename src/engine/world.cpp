@@ -1068,9 +1068,9 @@ void nearestent()
             closedist = dist;
         }
     }
-    if(closest >= 0) entadd(closest);
-}    
-            
+    if(closest >= 0 && entgroup.find(closest) < 0) entadd(closest);
+}
+
 ICOMMAND(enthavesel,"",  (), addimplicit(intret(entgroup.length())));
 ICOMMAND(entselect, "e", (uint *body), if(!noentedit()) addgroup(e.type != ET_EMPTY && entgroup.find(n)<0 && executebool(body)));
 ICOMMAND(entloop,   "e", (uint *body), if(!noentedit()) addimplicit(groupeditloop(((void)e, execute(body)))));
