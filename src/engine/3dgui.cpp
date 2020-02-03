@@ -1026,7 +1026,14 @@ struct gui : g3d_gui
         {
             list &l = lists[i];
             if(l.parent > parent) { parent = l.parent; depth++; }
-            else if(l.parent < parent) { parent = l.parent; depth--; }
+            else if(l.parent < parent)
+            {
+                while(parent > l.parent && depth > 0)
+                {
+                    parent = lists[parent].parent;
+                    depth--;
+                }
+            }
             if(l.column >= 0)
             {
                 if(depth&1) adjusthorizontalcolumn(l.column, i); 
