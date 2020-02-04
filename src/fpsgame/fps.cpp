@@ -903,6 +903,77 @@ namespace game
     extern int hudscore;
     extern void drawhudscore(int w, int h);
 
+    VARP(ammobar, 0, 0, 1);
+    VARP(ammobaralign, -1, 0, 1);
+    VARP(ammobarhorizontal, 0, 0, 1);
+    VARP(ammobarflip, 0, 0, 1);
+    VARP(ammobarhideempty, 0, 1, 1);
+    VARP(ammobarsep, 0, 20, 500);
+    VARP(ammobarcountsep, 0, 20, 500);
+    FVARP(ammobarcountscale, 0.5, 1.5, 2);
+    FVARP(ammobarx, 0, 0.025f, 1.0f);
+    FVARP(ammobary, 0, 0.5f, 1.0f);
+    FVARP(ammobarscale, 0.1f, 0.5f, 1.0f);
+
+    void drawammobarcounter(const vec2 &center, const fpsent *p, int gun)
+    {
+        vec2 icondrawpos = vec2(center).sub(HICON_SIZE / 2);
+        int alpha = p->ammo[gun] ? 0xFF : 0x7F;
+        gle::color(bvec(0xFF, 0xFF, 0xFF), alpha);
+        drawicon(HICON_FIST + gun, icondrawpos.x, icondrawpos.y);
+
+        int fw, fh; text_bounds("000", fw, fh);
+        float labeloffset = HICON_SIZE / 2.0f + ammobarcountsep + ammobarcountscale * (ammobarhorizontal ? fh : fw) / 2.0f;
+        vec2 offsetdir = (ammobarhorizontal ? vec2(0, 1) : vec2(1, 0)).mul(ammobarflip ? -1 : 1);
+        vec2 labelorigin = vec2(offsetdir).mul(labeloffset).add(center);
+
+        pushhudmatrix();
+        hudmatrix.translate(labelorigin.x, labelorigin.y, 0);
+        hudmatrix.scale(ammobarcountscale, ammobarcountscale, 1);
+        flushhudmatrix();
+
+        defformatstring(label, "%d", p->ammo[gun]);
+        int tw, th; text_bounds(label, tw, th);
+        vec2 textdrawpos = vec2(-tw, -th).div(2);
+        float ammoratio = (float)p->ammo[gun] / itemstats[gun-GUN_SG].add;
+        bvec color = bvec::hexcolor(p->ammo[gun] == 0 || ammoratio >= 1.0f ? 0xFFFFFF : (ammoratio >= 0.5f ? 0xFFC040 : 0xFF0000));
+        draw_text(label, textdrawpos.x, textdrawpos.y, color.r, color.g, color.b, alpha);
+
+        pophudmatrix();
+    }
+
+    static inline bool ammobargunvisible(const fpsent *d, int gun)
+    {
+        return d->ammo[gun] > 0 || d->gunselect == gun;
+    }
+
+    void drawammobar(int w, int h, fpsent *p)
+    {
+        int NUMPLAYERGUNS = GUN_PISTOL - GUN_SG + 1;
+        int numvisibleguns = NUMPLAYERGUNS;
+        if(ammobarhideempty) loopi(NUMPLAYERGUNS) if(!ammobargunvisible(p, GUN_SG + i)) numvisibleguns--;
+
+        vec2 origin = vec2(ammobarx, ammobary).mul(vec2(w, h).div(ammobarscale));
+        vec2 offsetdir = ammobarhorizontal ? vec2(1, 0) : vec2(0, 1);
+        float stepsize = HICON_SIZE + ammobarsep;
+        float initialoffset = (ammobaralign - 1) * (numvisibleguns - 1) * stepsize / 2;
+
+        pushhudmatrix();
+        hudmatrix.scale(ammobarscale, ammobarscale, 1);
+        flushhudmatrix();
+
+        int numskippedguns = 0;
+        loopi(NUMPLAYERGUNS) if(ammobargunvisible(p, GUN_SG + i) || !ammobarhideempty)
+        {
+            float offset = initialoffset + (i - numskippedguns) * stepsize;
+            vec2 drawpos = vec2(offsetdir).mul(offset).add(origin);
+            drawammobarcounter(drawpos, p, GUN_SG + i);
+        }
+        else numskippedguns++;
+
+        pophudmatrix();
+    }
+
     void gameplayhud(int w, int h)
     {
         pushhudmatrix();
@@ -934,6 +1005,11 @@ namespace game
         }
 
         pophudmatrix();
+
+        if(d->state!=CS_EDITING && d->state!=CS_SPECTATOR && d->state!=CS_DEAD)
+        {
+            if(ammobar) drawammobar(w, h, d);
+        }
 
         if(!m_edit)
         {
