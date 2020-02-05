@@ -27,7 +27,7 @@ namespace game
         if(!t) { t = &teaminfos[team]; copystring(t->team, team, sizeof(t->team)); }
         t->frags = frags;
     }
-            
+
     static inline bool playersort(const fpsent *a, const fpsent *b)
     {
         if(a->state==CS_SPECTATOR)
@@ -59,7 +59,7 @@ namespace game
 
     void getbestteams(vector<const char *> &best)
     {
-        if(cmode && cmode->hidefrags()) 
+        if(cmode && cmode->hidefrags())
         {
             vector<teamscore> teamscores;
             cmode->getteamscores(teamscores);
@@ -67,14 +67,14 @@ namespace game
             while(teamscores.length() > 1 && teamscores.last().score < teamscores[0].score) teamscores.drop();
             loopv(teamscores) best.add(teamscores[i].team);
         }
-        else 
+        else
         {
             int bestfrags = INT_MIN;
             enumerate(teaminfos, teaminfo, t, bestfrags = max(bestfrags, t.frags));
             if(bestfrags <= 0) loopv(players)
             {
                 fpsent *o = players[i];
-                if(o->state!=CS_SPECTATOR && !teaminfos.access(o->team) && best.htfind(o->team) < 0) { bestfrags = 0; best.add(o->team); } 
+                if(o->state!=CS_SPECTATOR && !teaminfos.access(o->team) && best.htfind(o->team) < 0) { bestfrags = 0; best.add(o->team); }
             }
             enumerate(teaminfos, teaminfo, t, if(t.frags >= bestfrags) best.add(t.team));
         }
@@ -158,7 +158,7 @@ namespace game
                 else g.titlef("%s:%d", 0xFFFF80, NULL, hostname, address->port);
             }
         }
-     
+
         g.pushlist();
         g.spring();
         g.text(server::modename(gamemode), 0xFFFF80);
@@ -171,7 +171,7 @@ namespace game
         {
             g.separator();
             if(intermission) g.text("intermission", 0xFFFF80);
-            else 
+            else
             {
                 int secs = max(maplimit-lastmillis, 0)/1000, mins = secs/60;
                 secs %= 60;
@@ -186,12 +186,12 @@ namespace game
         g.poplist();
 
         g.separator();
- 
+
         int numgroups = groupplayers();
         loopk(numgroups)
         {
             if((k%2)==0) g.pushlist(); // horizontal
-            
+
             scoregroup &sg = *groups[k];
             int bgcolor = sg.team && m_teammode ? (isteam(player1->team, sg.team) ? 0x3030C0 : 0xC03030) : 0,
                 fgcolor = 0xFFFF80;
@@ -204,7 +204,7 @@ namespace game
                 { \
                     fpsent *o = sg.players[i]; \
                     b; \
-                }    
+                }
 
             g.pushlist();
             if(sg.team && m_teammode)
@@ -240,7 +240,7 @@ namespace game
             }
 
             if(!cmode || !cmode->hidefrags() || !hidefrags)
-            { 
+            {
                 g.pushlist();
                 g.strut(6);
                 g.text("frags", fgcolor);
@@ -251,7 +251,7 @@ namespace game
             g.pushlist();
             g.text("name", fgcolor);
             g.strut(12);
-            loopscoregroup(o, 
+            loopscoregroup(o,
             {
                 g.textf("%s ", statuscolor(o, 0xFFFFDD), NULL, colorname(o));
             });
@@ -328,7 +328,7 @@ namespace game
                 loopscoregroup(o, g.textf("%d", 0xFFFFDD, NULL, o->clientnum));
                 g.poplist();
             }
-            
+
             if(sg.team && m_teammode)
             {
                 g.poplist(); // horizontal
@@ -341,17 +341,17 @@ namespace game
             if(k+1<numgroups && (k+1)%2) g.space(2);
             else g.poplist(); // horizontal
         }
-        
+
         if(showspectators && spectators.length())
         {
             if(showclientnum || player1->privilege>=PRIV_MASTER)
             {
                 g.pushlist();
-                
+
                 g.pushlist();
                 g.text("spectator", 0xFFFF80, " ");
                 g.strut(12);
-                loopv(spectators) 
+                loopv(spectators)
                 {
                     fpsent *o = spectators[i];
                     if(o==player1 && highlightscore)
@@ -394,7 +394,7 @@ namespace game
                 g.textf("%d spectator%s", 0xFFFF80, " ", spectators.length(), spectators.length()!=1 ? "s" : "");
                 loopv(spectators)
                 {
-                    if((i%3)==0) 
+                    if((i%3)==0)
                     {
                         g.pushlist();
                         g.text("", 0xFFFFDD, "spectator");
@@ -461,14 +461,14 @@ namespace game
     ICOMMAND(showscores, "D", (int *down), showscores(*down!=0));
 
     VARP(hudscore, 0, 0, 1);
-    FVARP(hudscorescale, 1e-3f, 0.5f, 1e3f);
-    VARP(hudscorealign, -1, 1, 1);
-    FVARP(hudscorex, 0, 0.990f, 1);
-    FVARP(hudscorey, 0, 0.350f, 1);
+    FVARP(hudscorescale, 1e-3f, 0.8f, 1e3f);
+    VARP(hudscorealign, -1, 0, 1);
+    FVARP(hudscorex, 0, 0.500f, 1);
+    FVARP(hudscorey, 0, 0.025f, 1);
     HVARP(hudscoreplayercolour, 0, 0x60A0FF, 0xFFFFFF);
     HVARP(hudscoreenemycolour, 0, 0xFF4040, 0xFFFFFF);
     VARP(hudscorealpha, 0, 255, 255);
-    VARP(hudscoresep, 0, 40, 1000);
+    VARP(hudscoresep, 0, 200, 1000);
 
     void drawhudscore(int w, int h)
     {
