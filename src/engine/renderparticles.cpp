@@ -1008,7 +1008,7 @@ void renderparticles(bool mainpass)
             }
             if(!(flags&PT_SHADER))
             {
-                if(changedbits&(PT_SOFT|PT_SHADER|PT_NOTEX))
+                if(changedbits&(PT_SOFT|PT_SHADER|PT_NOTEX|PT_LERP))
                 {
                     if(flags&PT_SOFT)
                     {
