@@ -868,13 +868,13 @@ namespace game
     }
 
     VARP(gameclock, 0, 0, 1);
-    FVARP(gameclockscale, 1e-3f, 0.7f, 1e3f);
+    FVARP(gameclockscale, 1e-3f, 0.75f, 1e3f);
     HVARP(gameclockcolour, 0, 0xFFFFFF, 0xFFFFFF);
     VARP(gameclockalpha, 0, 255, 255);
     HVARP(gameclocklowcolour, 0, 0xFFC040, 0xFFFFFF);
     VARP(gameclockalign, -1, 0, 1);
-    FVARP(gameclockx, 0, 0.500f, 1);
-    FVARP(gameclocky, 0, 0.023f, 1);
+    FVARP(gameclockx, 0, 0.50f, 1);
+    FVARP(gameclocky, 0, 0.03f, 1);
 
     void drawgameclock(int w, int h)
     {

@@ -461,10 +461,10 @@ namespace game
     ICOMMAND(showscores, "D", (int *down), showscores(*down!=0));
 
     VARP(hudscore, 0, 0, 1);
-    FVARP(hudscorescale, 1e-3f, 0.8f, 1e3f);
+    FVARP(hudscorescale, 1e-3f, 1.0f, 1e3f);
     VARP(hudscorealign, -1, 0, 1);
-    FVARP(hudscorex, 0, 0.500f, 1);
-    FVARP(hudscorey, 0, 0.025f, 1);
+    FVARP(hudscorex, 0, 0.50f, 1);
+    FVARP(hudscorey, 0, 0.03f, 1);
     HVARP(hudscoreplayercolour, 0, 0x60A0FF, 0xFFFFFF);
     HVARP(hudscoreenemycolour, 0, 0xFF4040, 0xFFFFFF);
     VARP(hudscorealpha, 0, 255, 255);
