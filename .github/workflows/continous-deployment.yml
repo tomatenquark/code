@@ -53,7 +53,8 @@ jobs:
         run: make
       - name: Archive Ubuntu binaries
         run: |
-          cp ./src/sauer_client ./src/sauer_server bin_unix
+          cp ./src/sauer_client bin_unix/linux_64_client
+          cp ./src/sauer_server bin_unix/linux_64_server
           zip -r sauerbraten_ubuntu.zip ./sauerbraten_unix ./bin_unix
       - uses: actions/upload-artifact@v1
         with: 
