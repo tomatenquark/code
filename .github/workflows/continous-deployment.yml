@@ -52,12 +52,13 @@ jobs:
         working-directory: ./src
         run: make
       - name: Archive Ubuntu binaries
-        run: zip sauerbraten_ubuntu.zip ./sauer_client ./sauer_server
-        working-directory: ./src
+        run: |
+          cp ./src/sauer_client ./src/sauer_server bin_unix
+          zip -r sauerbraten_ubuntu.zip ./sauerbraten_unix ./bin_unix
       - uses: actions/upload-artifact@v1
         with: 
           name: sauerbraten_ubuntu
-          path: ./src/sauerbraten_ubuntu.zip
+          path: ./sauerbraten_ubuntu.zip
   release:
     runs-on: ubuntu-latest
     needs: [build-macos, build-windows, build-ubuntu]
