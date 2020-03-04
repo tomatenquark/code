@@ -1,2 +1,2 @@
-bin\rpg.exe -q"$HOME\My Games\Sauerbraten" -grpg-log.txt -r %*
+bin\rpg.exe -q"$HOME\My Games\Tomatenquark" -grpg-log.txt -r %*
 
