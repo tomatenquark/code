@@ -39,15 +39,6 @@
 			<string>Binary</string>
 		</dict>
 	</array>
-	<key>LSMinimumSystemVersionByArchitecture</key>
-	<dict>
-		<key>x86_64</key>
-		<string>10.6.0</string>
-		<key>i386</key>
-		<string>10.4.0</string>
-		<key>ppc</key>
-		<string>10.4.0</string>
-	</dict>
 	<key>CFBundleExecutable</key>
 	<string>sauerbraten</string>
 	<key>CFBundleHelpBookFolder</key>
@@ -55,7 +46,7 @@
 	<key>CFBundleHelpBookName</key>
 	<string>Sauerbraten help</string>
 	<key>CFBundleIconFile</key>
-	<string>sauerbraten</string>
+	<string>tomatenquark</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.dot3labs.sauerbraten</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -79,6 +70,15 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.5</string>
+	<key>LSMinimumSystemVersionByArchitecture</key>
+	<dict>
+		<key>i386</key>
+		<string>10.4.0</string>
+		<key>ppc</key>
+		<string>10.4.0</string>
+		<key>x86_64</key>
+		<string>10.6.0</string>
+	</dict>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
