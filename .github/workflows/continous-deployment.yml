@@ -29,11 +29,14 @@ jobs:
           lfs: true
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
+      - name: Build for Windows 32
+        working-directory: ./src/vcpp
+        run: msbuild /p:PlatformToolset=v142 /property:Platform=Win32 /p:Configuration=Release sauerbraten.sln
       - name: Build for Windows
         working-directory: ./src/vcpp
         run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /p:Configuration=Release sauerbraten.sln
       - name: Archive Windows binaries
-        run: Compress-Archive -Path .\bin64, .\sauerbraten.bat -DestinationPath sauerbraten_windows.zip
+        run: Compress-Archive -Path .\bin, .\bin64, .\sauerbraten.bat -DestinationPath sauerbraten_windows.zip
       - uses: actions/upload-artifact@v1
         with: 
           name: sauerbraten_windows
