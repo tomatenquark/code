@@ -56,13 +56,13 @@ jobs:
         run: make
       - name: Archive Ubuntu binaries
         run: |
-          cp ./src/sauer_client bin_unix/linux_64_client
-          cp ./src/sauer_server bin_unix/linux_64_server
-          zip -r sauerbraten_ubuntu.zip ./sauerbraten_unix ./bin_unix ./server-init.cfg
+          cp ./src/tomaten_client bin_unix/linux_64_client
+          cp ./src/tomaten_server bin_unix/linux_64_server
+          zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
       - uses: actions/upload-artifact@v1
         with: 
-          name: sauerbraten_ubuntu
-          path: ./sauerbraten_ubuntu.zip
+          name: tomatenquark_ubuntu
+          path: ./tomatenquark_ubuntu.zip
   release:
     runs-on: ubuntu-latest
     needs: [build-macos, build-windows, build-ubuntu]
@@ -78,7 +78,7 @@ jobs:
           name: sauerbraten_windows
       - uses: actions/download-artifact@v1
         with:
-          name: sauerbraten_ubuntu
+          name: tomatenquark_ubuntu
       - name: Add release assets to OSX archive
         run: |
           mkdir -p sauerbraten.app/Contents/gamedata
@@ -93,8 +93,8 @@ jobs:
       - name: Add release assets to Ubuntu archive
         run: |
           cp -r ../data ../packages .
-          zip -ur sauerbraten_ubuntu.zip ./packages ./data
-        working-directory: ./sauerbraten_ubuntu
+          zip -ur tomatenquark_ubuntu.zip ./packages ./data
+        working-directory: ./tomatenquark_ubuntu
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -129,6 +129,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sauerbraten_ubuntu/sauerbraten_ubuntu.zip
-          asset_name: sauerbraten_ubuntu.zip
+          asset_path: ./tomatenquark_ubuntu/tomatenquark_ubuntu.zip
+          asset_name: tomatenquark_ubuntu.zip
           asset_content_type: application/zip
