@@ -40,7 +40,7 @@
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>sauerbraten</string>
+	<string>tomatenquark</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>help</string>
 	<key>CFBundleHelpBookName</key>
@@ -48,7 +48,7 @@
 	<key>CFBundleIconFile</key>
 	<string>tomatenquark</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.dot3labs.sauerbraten</string>
+	<string>com.dot3labs.tomatenquark</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

@@ -15,12 +15,12 @@ jobs:
         working-directory: ./src/xcode
         run: xcodebuild -configuration Release -arch x86_64
       - name: Archive OSX App
-        run: zip -r sauerbraten_macos.zip .
+        run: zip -r tomatenquark_macos.zip .
         working-directory: ./src/xcode/build/Release
       - uses: actions/upload-artifact@v1
         with: 
-          name: sauerbraten_macos
-          path: ./src/xcode/build/Release/sauerbraten_macos.zip
+          name: tomatenquark_macos
+          path: ./src/xcode/build/Release/tomatenquark_macos.zip
   build-windows:
     runs-on: windows-latest
     steps:
@@ -72,7 +72,7 @@ jobs:
           repository: tomatenquark/essential
       - uses: actions/download-artifact@v1
         with:
-          name: sauerbraten_macos
+          name: tomatenquark_macos
       - uses: actions/download-artifact@v1
         with:
           name: sauerbraten_windows
@@ -81,10 +81,10 @@ jobs:
           name: tomatenquark_ubuntu
       - name: Add release assets to OSX archive
         run: |
-          mkdir -p sauerbraten.app/Contents/gamedata
-          cp -r ../data ../packages sauerbraten.app/Contents/gamedata
-          zip -ur sauerbraten_macos.zip ./sauerbraten.app
-        working-directory: ./sauerbraten_macos
+          mkdir -p tomatenquark.app/Contents/gamedata
+          cp -r ../data ../packages tomatenquark.app/Contents/gamedata
+          zip -ur tomatenquark_macos.zip ./tomatenquark.app
+        working-directory: ./tomatenquark_macos
       - name: Add release assets to Windows archive
         run: |
           cp -r ../data ../packages .
@@ -111,8 +111,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sauerbraten_macos/sauerbraten_macos.zip
-          asset_name: sauerbraten_macos.zip
+          asset_path: ./tomatenquark_macos/tomatenquark_macos.zip
+          asset_name: tomatenquark_macos.zip
           asset_content_type: application/zip
       - name: Upload Windows binaries
         uses: actions/upload-release-asset@v1.0.1
