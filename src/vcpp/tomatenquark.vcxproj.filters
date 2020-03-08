@@ -302,7 +302,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sauerbraten.rc" />
+    <ResourceCompile Include="tomatenquark.rc" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shared">

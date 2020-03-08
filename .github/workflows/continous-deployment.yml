@@ -31,16 +31,16 @@ jobs:
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows 32
         working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=Win32 /p:Configuration=Release sauerbraten.sln
+        run: msbuild /p:PlatformToolset=v142 /property:Platform=Win32 /p:Configuration=Release tomatenquark.sln
       - name: Build for Windows
         working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /p:Configuration=Release sauerbraten.sln
+        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /p:Configuration=Release tomatenquark.sln
       - name: Archive Windows binaries
-        run: Compress-Archive -Path .\bin, .\bin64, .\sauerbraten.bat -DestinationPath sauerbraten_windows.zip
+        run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat -DestinationPath tomatenquark_windows.zip
       - uses: actions/upload-artifact@v1
         with: 
-          name: sauerbraten_windows
-          path: ./sauerbraten_windows.zip
+          name: tomatenquark_windows
+          path: ./tomatenquark_windows.zip
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
@@ -75,7 +75,7 @@ jobs:
           name: tomatenquark_macos
       - uses: actions/download-artifact@v1
         with:
-          name: sauerbraten_windows
+          name: tomatenquark_windows
       - uses: actions/download-artifact@v1
         with:
           name: tomatenquark_ubuntu
@@ -88,8 +88,8 @@ jobs:
       - name: Add release assets to Windows archive
         run: |
           cp -r ../data ../packages .
-          zip -ur sauerbraten_windows.zip ./packages ./data
-        working-directory: ./sauerbraten_windows
+          zip -ur tomatenquark_windows.zip ./packages ./data
+        working-directory: ./tomatenquark_windows
       - name: Add release assets to Ubuntu archive
         run: |
           cp -r ../data ../packages .
@@ -120,8 +120,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sauerbraten_windows/sauerbraten_windows.zip
-          asset_name: sauerbraten_windows.zip
+          asset_path: ./tomatenquark_windows/tomatenquark_windows.zip
+          asset_name: tomatenquark_windows.zip
           asset_content_type: application/zip
       - name: Upload Ubuntu binaries
         uses: actions/upload-release-asset@v1.0.1
