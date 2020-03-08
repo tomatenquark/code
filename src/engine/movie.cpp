@@ -377,7 +377,7 @@ struct aviwriter
         endlistchunk(); // LIST odml
 
         listchunk("LIST", "INFO");
-        const char *software = "Cube 2: Sauerbraten";
+        const char *software = "Cube 2: Tomatenquark";
         writechunk("ISFT", software, strlen(software)+1);
         endlistchunk(); // LIST INFO
         
