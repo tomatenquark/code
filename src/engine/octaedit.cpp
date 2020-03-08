@@ -2503,6 +2503,23 @@ void gettexname(int *tex, int *subslot)
     result(slot.sts[*subslot].name);
 }
 
+void getalltexname() {
+    if (noedit(true)) return;
+    filltexlist();
+    int j = 0;
+    loopvrev(texmru)
+    {
+        VSlot &vslot = lookupvslot(i, false);
+        Slot &slot = *vslot.slot;
+        loopvj(slot.sts)
+        {
+            conoutf("%s", slot.sts[j].name);
+        }
+        j++;
+    }
+    intret(j);
+}
+
 void getslottex(int *idx)
 {
     if(*idx < 0 || !slots.inrange(*idx)) { intret(-1); return; }
@@ -2516,6 +2533,7 @@ COMMAND(getcurtex, "");
 COMMAND(getseltex, "");
 ICOMMAND(getreptex, "", (), { if(!noedit()) intret(vslots.inrange(reptex) ? reptex : -1); });
 COMMAND(gettexname, "ii");
+COMMAND(getalltexname, "");
 ICOMMAND(numvslots, "", (), intret(vslots.length()));
 ICOMMAND(numslots, "", (), intret(slots.length()));
 COMMAND(getslottex, "i");
