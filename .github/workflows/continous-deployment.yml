@@ -1,4 +1,4 @@
-name: Continous deployment for sauerbraten
+name: Continous deployment for Tomatenquark
 on:
   push:
     tags:

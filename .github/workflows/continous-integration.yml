@@ -1,4 +1,4 @@
-name: Continous integration for sauerbraten
+name: Continous integration for Tomatenquark
 on: [push]
 
 jobs:
