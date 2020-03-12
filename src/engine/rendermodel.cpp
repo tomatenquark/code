@@ -2,6 +2,7 @@
 
 VAR(oqdynent, 0, 1, 1);
 VAR(animationinterpolationtime, 0, 150, 1000);
+VAR(mapmodelwarning, 0, 0, 1);
 
 model *loadingmodel = NULL;
 
@@ -395,12 +396,15 @@ void preloadusedmapmodels(bool msg, bool bih)
         loadprogress = float(i+1)/mapmodels.length();
         int mmindex = mapmodels[i];
         mapmodelinfo *mmi = getmminfo(mmindex);
-        if(!mmi) { if(msg) conoutf(CON_WARN, "could not find map model: %d", mmindex); }
-        else if(mmi->name[0] && !loadmodel(NULL, mmindex, msg)) { if(msg) conoutf(CON_WARN, "could not load model: %s", mmi->name); }
-        else if(mmi->m)
+        if (mapmodelwarning)
         {
-            if(bih) mmi->m->preloadBIH();
-            mmi->m->preloadmeshes();
+            if (!mmi) { if(msg) conoutf(CON_WARN, "could not find map model: %d", mmindex); }
+            else if(mmi->name[0] && !loadmodel(NULL, mmindex, msg)) { if(msg) conoutf(CON_WARN, "could not load model: %s", mmi->name); }
+            else if(mmi->m)
+            {
+                if(bih) mmi->m->preloadBIH();
+                mmi->m->preloadmeshes();
+            }
         }
     }
     loadprogress = 0;
