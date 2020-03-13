@@ -676,6 +676,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -699,6 +700,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -722,6 +724,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
 			};

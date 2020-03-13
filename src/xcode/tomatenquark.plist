@@ -48,7 +48,7 @@
 	<key>CFBundleIconFile</key>
 	<string>tomatenquark</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.dot3labs.tomatenquark</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
