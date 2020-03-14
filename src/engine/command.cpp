@@ -3010,9 +3010,6 @@ ICOMMAND(div, "ii", (int *a, int *b), intret(*b ? *a / *b : 0));
 ICOMMAND(mod, "ii", (int *a, int *b), intret(*b ? *a % *b : 0));
 ICOMMAND(divf, "ff", (float *a, float *b), floatret(*b ? *a / *b : 0));
 ICOMMAND(modf, "ff", (float *a, float *b), floatret(*b ? fmod(*a, *b) : 0));
-ICOMMAND(round, "ff", (float *a, float *b), floatret(*b ? round(*a / *b) * *b : round(*a)));
-ICOMMAND(floor, "ff", (float *a), floatret(floor(*a)));
-ICOMMAND(ceil, "ff", (float *a), floatret(ceil(*a)));
 ICOMMAND(sin, "f", (float *a), floatret(sin(*a*RAD)));
 ICOMMAND(cos, "f", (float *a), floatret(cos(*a*RAD)));
 ICOMMAND(tan, "f", (float *a), floatret(tan(*a*RAD)));
@@ -3052,6 +3049,21 @@ ICOMMAND(maxf, "V", (tagval *args, int numargs),
 });
 ICOMMAND(abs, "i", (int *n), intret(abs(*n)));
 ICOMMAND(absf, "f", (float *n), floatret(fabs(*n)));
+
+ICOMMAND(floor, "f", (float *n), floatret(floor(*n)));
+ICOMMAND(ceil, "f", (float *n), floatret(ceil(*n)));
+ICOMMAND(round, "ff", (float *n, float *k),
+{
+    double step = *k;
+    double r = *n;
+    if(step > 0)
+    {
+        r += step * (r < 0 ? -0.5 : 0.5);
+        r -= fmod(r, step);
+    }
+    else r = r < 0 ? ceil(r - 0.5) : floor(r + 0.5);
+    floatret(float(r));
+});
 
 ICOMMAND(cond, "ee2V", (tagval *args, int numargs),
 {
