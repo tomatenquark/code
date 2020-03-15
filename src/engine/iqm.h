@@ -328,7 +328,7 @@ struct iqm : skelloader<iqm>
             lilswap(&hdr.version, (sizeof(hdr) - sizeof(hdr.magic))/sizeof(uint));
             if(hdr.version != 2) goto error;
             if(hdr.filesize > (16<<20)) goto error; // sanity check... don't load files bigger than 16 MB
-            buf = new (false) uchar[hdr.filesize];
+            buf = new (std::nothrow) uchar[hdr.filesize];
             if(!buf || f->read(buf + sizeof(hdr), hdr.filesize - sizeof(hdr)) != hdr.filesize - sizeof(hdr)) goto error;
 
             if(doloadmesh && !loadiqmmeshes(filename, hdr, buf)) goto error;

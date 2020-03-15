@@ -645,7 +645,7 @@ block3 *blockcopy(const block3 &s, int rgrid)
 {
     int bsize = sizeof(block3)+sizeof(cube)*s.size();
     if(bsize <= 0 || bsize > (100<<20)) return NULL;
-    block3 *b = (block3 *)new (false) uchar[bsize];
+    block3 *b = (block3 *)new (std::nothrow) uchar[bsize];
     if(b) blockcopy(s, rgrid, b);
     return b;
 }
@@ -763,7 +763,7 @@ undoblock *newundocube(selinfo &s)
         selgridsize = ssize,
         blocksize = sizeof(block3)+ssize*sizeof(cube);
     if(blocksize <= 0 || blocksize > (undomegs<<20)) return NULL;
-    undoblock *u = (undoblock *)new (false) uchar[sizeof(undoblock) + blocksize + selgridsize];
+    undoblock *u = (undoblock *)new (std::nothrow) uchar[sizeof(undoblock) + blocksize + selgridsize];
     if(!u) return NULL;
     u->numents = 0;
     block3 *b = u->block();
@@ -969,7 +969,7 @@ static bool unpackblock(block3 *&b, B &buf)
     lilswap(&hdr.grid, 1);
     lilswap(&hdr.orient, 1);
     if(hdr.size() > (1<<20) || hdr.grid <= 0 || hdr.grid > (1<<12)) return false;
-    b = (block3 *)new (false) uchar[sizeof(block3)+hdr.size()*sizeof(cube)];
+    b = (block3 *)new (std::nothrow) uchar[sizeof(block3)+hdr.size()*sizeof(cube)];
     if(!b) return false;
     *b = hdr;
     cube *c = b->c();
@@ -1026,7 +1026,7 @@ static bool compresseditinfo(const uchar *inbuf, int inlen, uchar *&outbuf, int 
 {
     uLongf len = compressBound(inlen);
     if(len > (1<<20)) return false;
-    outbuf = new (false) uchar[len];
+    outbuf = new (std::nothrow) uchar[len];
     if(!outbuf || compress2((Bytef *)outbuf, &len, (const Bytef *)inbuf, inlen, Z_BEST_COMPRESSION) != Z_OK || len > (1<<16))
     {
         delete[] outbuf;
@@ -1041,7 +1041,7 @@ static bool uncompresseditinfo(const uchar *inbuf, int inlen, uchar *&outbuf, in
 {
     if(compressBound(outlen) > (1<<20)) return false;
     uLongf len = outlen;
-    outbuf = new (false) uchar[len];
+    outbuf = new (std::nothrow) uchar[len];
     if(!outbuf || uncompress((Bytef *)outbuf, &len, (const Bytef *)inbuf, inlen) != Z_OK)
     {
         delete[] outbuf;
