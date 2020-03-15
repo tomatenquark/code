@@ -21,7 +21,7 @@ jobs:
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows
         working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 tomatenquark.sln
+        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /std:c++14 tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
