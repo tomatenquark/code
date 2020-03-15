@@ -2,24 +2,6 @@
 
 #include "cube.h"
 
-void *operator new(size_t size)
-{
-    void *p = malloc(size);
-    if(!p) abort();
-    return p;
-}
-
-void *operator new[](size_t size)
-{
-    void *p = malloc(size);
-    if(!p) abort();
-    return p;
-}
-
-void operator delete(void *p) { if(p) free(p); }
-
-void operator delete[](void *p) { if(p) free(p); }
-
 void *operator new(size_t size, bool err)
 {
     void *p = malloc(size);
