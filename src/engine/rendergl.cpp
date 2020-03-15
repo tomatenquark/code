@@ -462,6 +462,7 @@ void gl_checkextensions()
     {
         reservevpparams = 10;
         rtsharefb = 0; // work-around for strange driver stalls involving when using many FBOs
+        if(strstr(renderer, "GLX 1") != NULL  || strstr(renderer, "GLX 2") != NULL) setvar("oqwait", 0); // work-around for strange driver stalls involving checkquery
         extern int filltjoints;
         if(glversion < 300 && !hasext("GL_EXT_gpu_shader4")) filltjoints = 0; // DX9 or less NV cards seem to not cause many sparklies
 
