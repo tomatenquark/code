@@ -1,4 +1,5 @@
 // generic useful stuff for any C++ program
+#include <new>
 
 #include <new>
 
