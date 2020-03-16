@@ -1218,7 +1218,7 @@ char *loadfile(const char *fn, size_t *size, bool utf8)
     stream::offset fsize = f->size();
     if(fsize <= 0) { delete f; return NULL; }
     size_t len = fsize;
-    char *buf = new (false) char[len+1];
+    char *buf = new (std::nothrow) char[len+1];
     if(!buf) { delete f; return NULL; }
     size_t offset = 0;
     if(utf8 && len >= 3)
