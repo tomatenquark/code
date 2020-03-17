@@ -2026,6 +2026,7 @@ const struct slottex
     {"g", TEX_GLOW},
     {"s", TEX_SPEC},
     {"z", TEX_DEPTH},
+    {"a", TEX_ALPHA},
     {"e", TEX_ENVMAP}
 };
 
@@ -2192,6 +2193,22 @@ static void mergedepth(ImageData &c, ImageData &z)
     );
 }
 
+static void mergealpha(ImageData &c, ImageData &s)
+{
+    if(s.bpp < 3)
+    {
+        readwritergbatex(c, s,
+            dst[3] = src[0];
+        );
+    }
+    else
+    {
+        readwritergbatex(c, s,
+            dst[3] = src[3];
+        );
+    }
+}
+
 static void addname(vector<char> &key, Slot &slot, Slot::Tex &t, bool combined = false, const char *prefix = NULL)
 {
     if(combined) key.add('&');
@@ -2210,7 +2227,7 @@ static void texcombine(Slot &s, int index, Slot::Tex &t, bool forceload = false)
         case TEX_DIFFUSE:
         case TEX_NORMAL:
         {
-            int i = findtextype(s, t.type==TEX_DIFFUSE ? (1<<TEX_SPEC) : (1<<TEX_DEPTH));
+            int i = findtextype(s, t.type==TEX_DIFFUSE ? (s.texmask&(1<<TEX_SPEC) ? 1<<TEX_SPEC : 1<<TEX_ALPHA) : (s.texmask&(1<<TEX_DEPTH) ? 1<<TEX_DEPTH : 1<<TEX_ALPHA));
             if(i<0) break;
             texmask |= 1<<s.sts[i].type;
             s.sts[i].combined = index;
@@ -2240,6 +2257,7 @@ static void texcombine(Slot &s, int index, Slot::Tex &t, bool forceload = false)
                 {
                     case TEX_SPEC: mergespec(ts, as); break;
                     case TEX_DEPTH: mergedepth(ts, as); break;
+                    case TEX_ALPHA: mergealpha(ts, as); break;
                 }
                 break; // only one combination
             }
