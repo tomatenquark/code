@@ -684,6 +684,7 @@ namespace game
         virtual void pickspawn(fpsent *d) { findplayerspawn(d); }
         virtual void senditems(packetbuf &p) {}
         virtual void removeplayer(fpsent *d) {}
+        virtual void died(fpsent *victim, fpsent *actor) {}
         virtual void gameover() {}
         virtual bool hidefrags() { return false; }
         virtual int getteamscore(const char *team) { return 0; }
