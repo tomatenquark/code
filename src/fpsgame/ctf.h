@@ -124,20 +124,24 @@ struct ctfclientmode : clientmode
     }
 
 #ifdef SERVMODE
-    void ownflag(int i, int owner, int owntime)
+    void ownflag(int i, int owner, int owntime, int ownteam = -1)
 #else
-    void ownflag(int i, fpsent *owner, int owntime)
+    void ownflag(int i, fpsent *owner, int owntime, int ownteam = -1)
 #endif
     {
         flag &f = flags[i];
         f.owner = owner;
         f.owntime = owntime;
-        if(f.holdtime)
+        if(f.holdtime && f.team == ownteam)
         {
             if(f.droptime && f.droptime < owntime) f.holdtime += owntime - f.droptime;
             f.holdtime = min(f.holdtime, owntime);
         }
-        else f.holdtime = owntime;
+        else
+        {
+            f.holdtime = owntime;
+            if(ownteam >= 0) f.team = ownteam;
+        }
 #ifdef SERVMODE
         if(owner == f.dropper) { if(f.dropcount < INT_MAX) f.dropcount++; }
         else f.dropcount = 0;
@@ -377,7 +381,7 @@ struct ctfclientmode : clientmode
         if(m_hold || m_protect == (f.team==team))
         {
             loopvj(flags) if(flags[j].owner==ci->clientnum) return;
-            ownflag(i, ci->clientnum, lastmillis);
+            ownflag(i, ci->clientnum, lastmillis, m_hold ? team : -1);
             sendf(-1, 1, "ri4", N_TAKEFLAG, ci->clientnum, i, ++f.version);
         }
         else if(m_protect)
@@ -752,7 +756,11 @@ struct ctfclientmode : clientmode
                 if(m_hold) spawnflag(f);
                 f.owner = owner>=0 ? (owner==player1->clientnum ? player1 : newclient(owner)) : NULL;
                 f.owntime = owner>=0 ? lastmillis : 0;
-                f.holdtime = f.owntime;
+                if(m_hold)
+                {
+                    f.holdtime = f.owntime;
+                    f.team = ctfteamflag(f.owner->team);
+                }
                 f.droptime = dropped ? lastmillis : 0;
                 f.droploc = dropped ? droploc : f.spawnloc;
                 f.vistime = invis>0 ? 0 : -1000;
@@ -913,7 +921,7 @@ struct ctfclientmode : clientmode
         if(m_hold) conoutf(CON_GAMEINFO, "%s picked up the flag for %s", teamcolorname(d), teamcolor("your team", d->team, "the enemy team"));
         else if(m_protect || f.droptime) conoutf(CON_GAMEINFO, "%s picked up %s", teamcolorname(d), teamcolorflag(f));
         else conoutf(CON_GAMEINFO, "%s stole %s", teamcolorname(d), teamcolorflag(f));
-        ownflag(i, d, lastmillis);
+        ownflag(i, d, lastmillis, m_hold ? ctfteamflag(d->team) : -1);
         teamsound(d, S_FLAGPICKUP);
     }
 
