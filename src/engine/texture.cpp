@@ -3490,7 +3490,7 @@ void screenshot(char *filename)
     if(screenshotdir[0])
     {
         dirlen = strlen(buf);
-        if(buf[dirlen] != '/' && buf[dirlen] != '\\' && dirlen+1 < (int)sizeof(buf)) { buf[dirlen] = '/'; buf[dirlen+1] = '\0'; }
+        if(buf[dirlen] != '/' && buf[dirlen] != '\\' && dirlen+1 < (int)sizeof(buf)) { buf[dirlen++] = '/'; buf[dirlen] = '\0'; }
         const char *dir = findfile(buf, "w");
         if(!fileexists(dir, "w")) createdir(dir);
     }
