@@ -3425,12 +3425,14 @@ enum
     IMG_BMP = 0,
     IMG_TGA = 1,
     IMG_PNG = 2,
+    IMG_JPG = 3,
     NUMIMG
 };
- 
+
+VARP(screenshotquality, 0, 97, 100);
 VARP(screenshotformat, 0, IMG_PNG, NUMIMG-1);
 
-const char *imageexts[NUMIMG] = { ".bmp", ".tga", ".png" };
+const char *imageexts[NUMIMG] = { ".bmp", ".tga", ".png", ".jpg" };
 
 int guessimageformat(const char *filename, int format = IMG_BMP)
 {
@@ -3458,7 +3460,10 @@ void saveimage(const char *filename, int format, ImageData &image, bool flip = f
             stream *f = openfile(filename, "wb");
             if(f)
             {
-                SDL_SaveBMP_RW(s, f->rwops(), 1);
+                switch(format) {
+                    case IMG_JPG: IMG_SaveJPG_RW(s, f->rwops(), 1, screenshotquality); break;
+                    default: SDL_SaveBMP_RW(s, f->rwops(), 1); break;
+                }
                 delete f;
             }
             SDL_FreeSurface(s);
