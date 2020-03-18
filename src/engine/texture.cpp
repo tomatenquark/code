@@ -3475,17 +3475,17 @@ bool loadimage(const char *filename, ImageData &image)
     return true;
 }
 
-SVARP(screenshotdir, "");
+SVARP(screenshotdir, "screenshot");
 
 void screenshot(char *filename)
 {
     static string buf;
-    int format = -1;
+    int format = -1, dirlen = 0;
     copystring(buf, screenshotdir);
     if(screenshotdir[0])
     {
-        int len = strlen(buf);
-        if(buf[len] != '/' && buf[len] != '\\' && len+1 < (int)sizeof(buf)) { buf[len] = '/'; buf[len+1] = '\0'; }
+        dirlen = strlen(buf);
+        if(buf[dirlen] != '/' && buf[dirlen] != '\\' && dirlen+1 < (int)sizeof(buf)) { buf[dirlen] = '/'; buf[dirlen+1] = '\0'; }
         const char *dir = findfile(buf, "w");
         if(!fileexists(dir, "w")) createdir(dir);
     }
@@ -3496,13 +3496,30 @@ void screenshot(char *filename)
     }
     else
     {
-        defformatstring(name, "screenshot_%d", totalmillis);
-        concatstring(buf, name);
+        string sstime;
+        time_t t = time(NULL);
+        size_t len = strftime(sstime, sizeof(sstime), "%Y-%m-%d_%H.%M.%S", localtime(&t));
+        sstime[min(len, sizeof(sstime)-1)] = '\0';
+        concatstring(buf, sstime);
+
+        const char *map = game::getclientmap(), *ssinfo = game::getscreenshotinfo();
+        if(map && map[0])
+        {
+            concatstring(buf, "_");
+            concatstring(buf, map);
+        }
+        if(ssinfo && ssinfo[0])
+        {
+            concatstring(buf, "_");
+            concatstring(buf, ssinfo);
+        }
+
+        for(char *s = &buf[dirlen]; *s; s++) if(iscubespace(*s) || *s == '/' || *s == '\\') *s = '-';
     }
     if(format < 0)
     {
         format = screenshotformat;
-        concatstring(buf, imageexts[format]);         
+        concatstring(buf, imageexts[format]);
     }
 
     ImageData image(screenw, screenh, 3);

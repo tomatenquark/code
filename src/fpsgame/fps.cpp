@@ -631,6 +631,11 @@ namespace game
         return showmodeinfo && m_valid(gamemode) ? gamemodes[gamemode - STARTGAMEMODE].info : NULL;
     }
 
+    const char *getscreenshotinfo()
+    {
+        return server::modename(gamemode, NULL);
+    }
+
     void physicstrigger(physent *d, bool local, int floorlevel, int waterlevel, int material)
     {
         if(d->type==ENT_INANIMATE) return;

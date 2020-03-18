@@ -122,6 +122,7 @@ namespace game
 
     const char *getclientmap() { return mapname; }
     const char *getmapinfo() { return NULL; }
+    const char *getscreenshotinfo() { return NULL; }
     void resetgamestate() {}
     void suicide(physent *d) {}
     void newmap(int size) {}
