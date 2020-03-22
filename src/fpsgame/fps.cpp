@@ -129,8 +129,7 @@ namespace game
     fpsent *hudplayer()
     {
         if(thirdperson && allowthirdperson()) return player1;
-        fpsent *target = followingplayer();
-        return target ? target : player1;
+        return followingplayer(player1);
     }
 
     void setupcamera()
@@ -457,8 +456,7 @@ namespace game
         }
         else if((d->state!=CS_ALIVE && d->state != CS_LAGGED && d->state != CS_SPAWNING) || intermission) return;
 
-        fpsent *h = followingplayer();
-        if(!h) h = player1;
+        fpsent *h = followingplayer(player1);
         int contype = d==h || actor==h ? CON_FRAG_SELF : CON_FRAG_OTHER;
         const char *dname = "", *aname = "";
         if(m_teammode && teamcolorfrags)

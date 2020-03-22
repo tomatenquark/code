@@ -475,23 +475,22 @@ namespace game
         int numgroups = groupplayers();
         if(!numgroups) return;
 
-        extern int specautoteam;
-        fpsent *p = specautoteam ? followingplayer(player1) : player1;
         scoregroup *g = groups[0];
         int score = INT_MIN, score2 = INT_MIN;
         bool best = false;
         if(m_teammode)
         {
             score = g->score;
-            best = isteam(p->team, g->team);
+            best = isteam(player1->team, g->team);
             if(numgroups > 1)
             {
                 if(best) score2 = groups[1]->score;
-                else for(int i = 1; i < groups.length(); ++i) if(isteam(p->team, groups[i]->team)) { score2 = groups[i]->score; break; }
+                else for(int i = 1; i < groups.length(); ++i) if(isteam(player1->team, groups[i]->team)) { score2 = groups[i]->score; break; }
             }
         }
         else
         {
+            fpsent *p = followingplayer1(player1);
             score = g->players[0]->frags;
             best = p == g->players[0];
             if(g->players.length() > 1)
