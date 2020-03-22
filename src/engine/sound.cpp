@@ -388,14 +388,11 @@ static Mix_Chunk *loadwavscaled(const char *name)
         if(cvt.filters[0])
         {
             cvt.len = audiolen & ~(samplesize-1);
-            cvt.buf = (Uint8*)SDL_calloc(1, cvt.len * cvt.len_mult);
-            if(SDL_ConvertAudio(&cvt) < 0)
-            {
-                SDL_free(cvt.buf);
-                SDL_free(audiobuf);
-                return NULL;
-            }
+            cvt.buf = (Uint8*)SDL_malloc(cvt.len * cvt.len_mult);
+            if(!cvt.buf) { SDL_free(audiobuf); return NULL; }
+            SDL_memcpy(cvt.buf, audiobuf, cvt.len);
             SDL_free(audiobuf);
+            if(SDL_ConvertAudio(&cvt) < 0) { SDL_free(cvt.buf); return NULL; }
             audiobuf = cvt.buf;
             audiolen = cvt.len_cvt;
         }
@@ -406,7 +403,7 @@ static Mix_Chunk *loadwavscaled(const char *name)
     return c;
 }
 
-VARP(fixwav, 0, 1, 1);
+VARFP(fixwav, 0, 1, 1, initwarning("sound configuration", INIT_LOAD, CHANGE_SOUND));
 
 bool soundsample::load(bool msg)
 {
