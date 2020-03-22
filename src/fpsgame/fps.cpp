@@ -118,12 +118,12 @@ namespace game
         conoutf("follow off");
     }
 
-    fpsent *followingplayer()
+    fpsent *followingplayer(fpsent *fallback)
     {
-        if(player1->state!=CS_SPECTATOR || following<0) return NULL;
+        if(player1->state!=CS_SPECTATOR || following<0) return fallback;
         fpsent *target = getclient(following);
         if(target && target->state!=CS_SPECTATOR) return target;
-        return NULL;
+        return fallback;
     }
 
     fpsent *hudplayer()

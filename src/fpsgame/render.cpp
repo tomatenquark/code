@@ -14,6 +14,7 @@ namespace game
     VARFP(playermodel, 0, 0, 4, changedplayermodel());
     VARP(forceplayermodels, 0, 0, 1);
     VARP(hidedead, 0, 0, 2);
+    VARP(specautoteam, 0, 0, 1);
 
     vector<fpsent *> ragdolls;
 
@@ -237,13 +238,14 @@ namespace game
 
         startmodelbatches();
 
+        fpsent *p = specautoteam ? followingplayer(player1) : player1;
         fpsent *exclude = isthirdperson() ? NULL : followingplayer();
         loopv(players)
         {
             fpsent *d = players[i];
             if(d == player1 || d->state==CS_SPECTATOR || d->state==CS_SPAWNING || d->lifesequence < 0 || d == exclude || (d->state==CS_DEAD && hidedead)) continue;
             int team = 0;
-            if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
+            if(teamskins || m_teammode) team = isteam(p->team, d->team) ? 1 : 2;
             renderplayer(d, getplayermodelinfo(d), team, 1, mainpass);
             copystring(d->info, colorname(d));
             if(d->maxhealth>100) { defformatstring(sn, " +%d", d->maxhealth-100); concatstring(d->info, sn); }
@@ -253,7 +255,7 @@ namespace game
         {
             fpsent *d = ragdolls[i];
             int team = 0;
-            if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
+            if(teamskins || m_teammode) team = isteam(p->team, d->team) ? 1 : 2;
             float fade = 1.0f;
             if(ragdollmillis && ragdollfade) 
                 fade -= clamp(float(lastmillis - (d->lastupdate + max(ragdollmillis - ragdollfade, 0)))/min(ragdollmillis, ragdollfade), 0.0f, 1.0f);
@@ -341,7 +343,10 @@ namespace game
         const playermodelinfo &mdl = getplayermodelinfo(d);
         defformatstring(gunname, "%s/%s", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, guns[d->gunselect].file);
         if((m_teammode || teamskins) && teamhudguns)
-            concatstring(gunname, d==player1 || isteam(d->team, player1->team) ? "/blue" : "/red");
+        {
+            fpsent *p = specautoteam ? followingplayer(player1) : player1;
+            concatstring(gunname, d==p || isteam(d->team, p->team) ? "/blue" : "/red");
+        }
         else if(testteam > 1)
             concatstring(gunname, testteam==2 ? "/blue" : "/red");
         modelattach a[2];

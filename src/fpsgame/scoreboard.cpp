@@ -475,8 +475,8 @@ namespace game
         int numgroups = groupplayers();
         if(!numgroups) return;
 
-        fpsent *p = followingplayer();
-        if(!p) p = player1;
+        extern int specautoteam;
+        fpsent *p = specautoteam ? followingplayer(player1) : player1;
         scoregroup *g = groups[0];
         int score = INT_MIN, score2 = INT_MIN;
         bool best = false;

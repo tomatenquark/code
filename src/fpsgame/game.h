@@ -726,7 +726,7 @@ namespace game
     extern void teamsound(fpsent *d, int n, const vec *loc = NULL);
     extern fpsent *pointatplayer();
     extern fpsent *hudplayer();
-    extern fpsent *followingplayer();
+    extern fpsent *followingplayer(fpsent *fallback = NULL);
     extern void stopfollowing();
     extern void clientdisconnected(int cn, bool notify = true);
     extern void clearclients(bool notify = true);
