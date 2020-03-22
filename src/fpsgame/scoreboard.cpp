@@ -490,7 +490,7 @@ namespace game
         }
         else
         {
-            fpsent *p = followingplayer1(player1);
+            fpsent *p = followingplayer(player1);
             score = g->players[0]->frags;
             best = p == g->players[0];
             if(g->players.length() > 1)
