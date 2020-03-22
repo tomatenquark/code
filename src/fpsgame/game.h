@@ -135,6 +135,7 @@ static struct gamemodeinfo
 #define m_check(mode, flag)    (m_valid(mode) && gamemodes[(mode) - STARTGAMEMODE].flags&(flag))
 #define m_checknot(mode, flag) (m_valid(mode) && !(gamemodes[(mode) - STARTGAMEMODE].flags&(flag)))
 #define m_checkall(mode, flag) (m_valid(mode) && (gamemodes[(mode) - STARTGAMEMODE].flags&(flag)) == (flag))
+#define m_checkonly(mode, flag, exclude) (m_valid(mode) && (gamemodes[(mode) - STARTGAMEMODE].flags&((flag)|(exclude))) == (flag))
 
 #define m_noitems      (m_check(gamemode, M_NOITEMS))
 #define m_noammo       (m_check(gamemode, M_NOAMMO|M_NOITEMS))
@@ -142,8 +143,10 @@ static struct gamemodeinfo
 #define m_tactics      (m_check(gamemode, M_TACTICS))
 #define m_efficiency   (m_check(gamemode, M_EFFICIENCY))
 #define m_capture      (m_check(gamemode, M_CAPTURE))
+#define m_capture_only (m_checkonly(gamemode, M_CAPTURE, M_REGEN))
 #define m_regencapture (m_checkall(gamemode, M_CAPTURE | M_REGEN))
 #define m_ctf          (m_check(gamemode, M_CTF))
+#define m_ctf_only     (m_checkonly(gamemode, M_CTF, M_PROTECT | M_HOLD))
 #define m_protect      (m_checkall(gamemode, M_CTF | M_PROTECT))
 #define m_hold         (m_checkall(gamemode, M_CTF | M_HOLD))
 #define m_collect      (m_check(gamemode, M_COLLECT))
@@ -681,7 +684,8 @@ namespace game
         virtual void setup() {}
         virtual void checkitems(fpsent *d) {}
         virtual int respawnwait(fpsent *d, int delay = 0) { return 0; }
-        virtual void pickspawn(fpsent *d) { findplayerspawn(d); }
+        virtual int getspawngroup(fpsent *d) { return 0; }
+        virtual float ratespawn(fpsent *d, const extentity &e) { return 1.0f; }
         virtual void senditems(packetbuf &p) {}
         virtual void removeplayer(fpsent *d) {}
         virtual void died(fpsent *victim, fpsent *actor) {}
@@ -727,7 +731,9 @@ namespace game
     extern void clientdisconnected(int cn, bool notify = true);
     extern void clearclients(bool notify = true);
     extern void startgame();
-    extern void spawnplayer(fpsent *);
+    extern float proximityscore(float x, float lower, float upper);
+    extern void pickgamespawn(fpsent *d);
+    extern void spawnplayer(fpsent *d);
     extern void deathstate(fpsent *d, bool restore = false);
     extern void damaged(int damage, fpsent *d, fpsent *actor, bool local = true);
     extern void killed(fpsent *d, fpsent *actor);

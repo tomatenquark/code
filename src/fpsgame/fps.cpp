@@ -281,10 +281,51 @@ namespace game
         if(player1->clientnum>=0) c2sinfo();   // do this last, to reduce the effective frame lag
     }
 
+    float proximityscore(float x, float lower, float upper)
+    {
+        if(x <= lower) return 1.0f;
+        if(x >= upper) return 0.0f;
+        float a = x - lower, b = x - upper;
+        return (b * b) / (a * a + b * b);
+    }
+
+    static inline float harmonicmean(float a, float b) { return a + b > 0 ? 2 * a * b / (a + b) : 0.0f; }
+
+    // avoid spawning near other players
+    float ratespawn(dynent *d, const extentity &e)
+    {
+        fpsent *p = (fpsent *)d;
+        float maxrange = m_noitems && (!cmode || m_ctf_only) ? 160.0f : 400.0f;
+        float minplayerdist = maxrange;
+        loopv(players)
+        {
+            const fpsent *o = players[i];
+            if(o->state != CS_ALIVE || o == p || isteam(o->team, p->team)) continue;
+
+            vec dir = vec(o->o).sub(e.o);
+            float dist = dir.squaredlen();
+            if(dist >= minplayerdist*minplayerdist) continue;
+            dist = sqrtf(dist);
+            dir.mul(1/dist);
+
+            // scale actual distance if not in line of sight
+            if(raycube(e.o, dir, dist) < dist) dist *= 1.5f;
+            minplayerdist = min(minplayerdist, dist);
+        }
+        float rating = 1.0f - proximityscore(minplayerdist, 80.0f, maxrange);
+        return cmode ? harmonicmean(rating, cmode->ratespawn(p, e)) : rating;
+    }
+
+    void pickgamespawn(fpsent *d)
+    {
+        int ent = m_classicsp && d == player1 && respawnent >= 0 ? respawnent : -1;
+        int tag = cmode ? cmode->getspawngroup(d) : 0;
+        findplayerspawn(d, ent, tag);
+    }
+
     void spawnplayer(fpsent *d)   // place at random spawn
     {
-        if(cmode) cmode->pickspawn(d);
-        else findplayerspawn(d, d==player1 && respawnent>=0 ? respawnent : -1);
+        pickgamespawn(d);
         spawnstate(d);
         if(d==player1)
         {

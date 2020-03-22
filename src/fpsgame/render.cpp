@@ -1,5 +1,8 @@
 #include "game.h"
 
+struct spawninfo { const extentity *e; float weight; };
+extern float gatherspawninfos(dynent *d, int tag, vector<spawninfo> &spawninfos);
+
 namespace game
 {      
     vector<fpsent *> bestplayers;
@@ -188,6 +191,38 @@ namespace game
 
     VARP(teamskins, 0, 0, 1);
 
+    // temporary stuff for testing spawns
+
+    float hsv2rgbhelper(float h, float s, float v, int n)
+    {
+        float k = fmod(n + h / 60.0f, 6.0f);
+        return v - v * s * max(min(min(k, 4.0f - k), 1.0f), 0.0f);
+    }
+
+    vec hsv2rgb(float h, float s, float v)
+    {
+        return vec(hsv2rgbhelper(h, s, v, 5), hsv2rgbhelper(h, s, v, 3), hsv2rgbhelper(h, s, v, 1));
+    }
+
+    void renderspawn(const vec &o, int rating, float probability)
+    {
+        defformatstring(score, "%d", rating);
+        defformatstring(percentage, "(%.2f%%)", probability * 100);
+        bvec colorvec = bvec::fromcolor(hsv2rgb(rating * 1.2f, 0.8, 1));
+        int color = (colorvec.r << 16) + (colorvec.g << 8) + colorvec.b;
+        particle_textcopy(vec(o).addz(5), score, PART_TEXT, 1, color, 5.0f);
+        particle_textcopy(vec(o).addz(1), percentage, PART_TEXT, 1, color, 4.0f);
+    }
+
+    void renderspawns()
+    {
+        vector<spawninfo> spawninfos;
+        float ratingsum = gatherspawninfos(player1, 0, spawninfos);
+        loopv(spawninfos) renderspawn(spawninfos[i].e->o, spawninfos[i].weight * 100, spawninfos[i].weight / ratingsum);
+    }
+
+    VAR(dbgspawns, 0, 0, 1);
+
     void rendergame(bool mainpass)
     {
         if(mainpass) ai::render();
@@ -231,6 +266,8 @@ namespace game
         renderbouncers();
         renderprojectiles();
         if(cmode) cmode->rendergame();
+
+        if(dbgspawns) renderspawns();
 
         endmodelbatches();
     }

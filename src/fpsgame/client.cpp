@@ -1471,8 +1471,7 @@ namespace game
                 s->respawn();
                 parsestate(s, p);
                 s->state = CS_ALIVE;
-                if(cmode) cmode->pickspawn(s);
-                else findplayerspawn(s);
+                pickgamespawn(s);
                 if(s == player1)
                 {
                     showscores(false);

@@ -760,9 +760,9 @@ struct collectclientmode : clientmode
         return d->respawnwait(RESPAWNSECS, delay);
     }
 
-    void pickspawn(fpsent *d)
+    int getspawngroup(fpsent *d)
     {
-        findplayerspawn(d, -1, collectteambase(d->team));
+        return collectteambase(d->team);
     }
 
     bool aicheck(fpsent *d, ai::aistate &b)

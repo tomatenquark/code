@@ -131,6 +131,8 @@ namespace game
     {
     }
 
+    float ratespawn(dynent *d, const extentity &e) { return 1.0f; }
+
     void startmap(const char *name)
     {
         clearworld();

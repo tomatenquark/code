@@ -1363,6 +1363,6 @@ struct ipmask
     int print(char *buf) const;
     bool check(enet_uint32 host) const { return (host & mask) == ip; }
 };
-    
+
 #endif
 

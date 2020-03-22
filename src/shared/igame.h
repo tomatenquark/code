@@ -61,6 +61,7 @@ namespace game
     extern const char *getscreenshotinfo();
     extern void resetgamestate();
     extern void suicide(physent *d);
+    extern float ratespawn(dynent *d, const extentity &e);
     extern void newmap(int size);
     extern void loadingmap(const char *name);
     extern void startmap(const char *name);

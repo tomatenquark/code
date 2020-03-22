@@ -308,8 +308,7 @@ namespace entities
             }
 
             case RESPAWNPOINT:
-                if(d!=player1) break;
-                if(n==respawnent) break;
+                if(!m_classicsp || d!=player1 || n==respawnent) break;
                 respawnent = n;
                 conoutf(CON_GAMEINFO, "\f2respawn point set!");
                 playsound(S_V_RESPAWNPOINT);

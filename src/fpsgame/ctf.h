@@ -989,51 +989,26 @@ struct ctfclientmode : clientmode
         return m_efficiency || !m_protect ? d->respawnwait(RESPAWNSECS, delay) : 0;
     }
 
-    bool pickholdspawn(fpsent *d)
-    {
-        vector<extentity *> spawns;
+    float rateholdspawn(const extentity &e)
+    {   // avoid spawning too far away from active flag
+        float minflagdist = 1e16f;
         loopv(flags)
         {
-            flag &f = flags[i];
+            const flag &f = flags[i];
             if(f.spawnindex < 0 || (!f.owner && (!f.droptime || f.droploc.x < 0))) continue;
-            const vec &goal = f.owner ? f.owner->o : f.droploc;
-            extentity *flagspawns[7];
-            int numflagspawns = 0;
-            memset(flagspawns, 0, sizeof(flagspawns));
-            loopvj(entities::ents)
-            {
-                extentity *e = entities::ents[j];
-                if(e->type != PLAYERSTART || e->attr2 != 0) continue;
-                float dist = e->o.dist(goal);
-                loopk(numflagspawns)
-                {
-                    float sdist = flagspawns[k]->o.dist(goal);
-                    if(dist >= sdist) continue;
-                    swap(e, flagspawns[k]);
-                    dist = sdist;
-                }
-                if(numflagspawns < int(sizeof(flagspawns)/sizeof(flagspawns[0]))) flagspawns[numflagspawns++] = e;
-            }
-            loopk(numflagspawns) spawns.add(flagspawns[k]);
+            minflagdist = min(minflagdist, e.o.dist(f.owner ? f.owner->o : f.droploc));
         }
-        if(spawns.empty()) return false;
-        int pick = rnd(spawns.length());
-        d->pitch = 0;
-        d->roll = 0;
-        loopv(spawns)
-        {
-            int attempt = (pick + i)%spawns.length();
-            d->o = spawns[attempt]->o;
-            d->yaw = spawns[attempt]->attr1;
-            if(entinmap(d, true)) return true;
-        }
-        return false;
+        return minflagdist < 1e16f ? proximityscore(minflagdist, 400.0f, 800.0f) : 1.0f;
     }
 
-    void pickspawn(fpsent *d)
+    float ratespawn(fpsent *d, const extentity &e)
     {
-        if(!m_hold || !pickholdspawn(d))
-            findplayerspawn(d, -1, m_hold ? 0 : ctfteamflag(d->team));
+        return m_hold ? rateholdspawn(e) : 1.0f;
+    }
+
+    int getspawngroup(fpsent *d)
+    {
+        return m_hold ? 0 : ctfteamflag(d->team);
     }
 
 	bool aihomerun(fpsent *d, ai::aistate &b)
