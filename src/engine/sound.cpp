@@ -305,6 +305,109 @@ static Mix_Chunk *loadwav(const char *name)
     return c;
 }
 
+template<class T> static void scalewav(T* dst, T* src, size_t len, int scale)
+{
+    len /= sizeof(T);
+    const T* end = src + len;
+    if(scale==2) for(; src < end; src++, dst += scale)
+    {
+        T s = src[0];
+        dst[0] = s;
+        dst[1] = s;
+    }
+    else if(scale==4) for(; src < end; src++, dst += scale)
+    {
+        T s = src[0];
+        dst[0] = s;
+        dst[1] = s;
+        dst[2] = s;
+        dst[3] = s;
+    }
+    else for(; src < end; src++)
+    {
+        T s = src[0];
+        loopi(scale) *dst++ = s;
+    }
+}
+
+static Mix_Chunk *loadwavscaled(const char *name)
+{
+    int mixerfreq = 0;
+    Uint16 mixerformat = 0;
+    int mixerchannels = 0;
+    if(!Mix_QuerySpec(&mixerfreq, &mixerformat, &mixerchannels)) return NULL;
+
+    SDL_AudioSpec spec;
+    Uint8 *audiobuf = NULL;
+    Uint32 audiolen = 0;
+    stream *z = openzipfile(name, "rb");
+    if(z)
+    {
+        SDL_RWops *rw = z->rwops();
+        if(rw)
+        {
+            SDL_LoadWAV_RW(rw, 0, &spec, &audiobuf, &audiolen);
+            SDL_FreeRW(rw);
+        }
+        delete z;
+    }
+    if(!audiobuf) SDL_LoadWAV(findfile(name, "rb"), &spec, &audiobuf, &audiolen);
+    if(!audiobuf) return NULL;
+    int samplesize = ((spec.format&0xFF)/8) * spec.channels;
+    int scale = mixerfreq / spec.freq;
+    if(scale >= 2)
+    {
+        Uint8 *scalebuf = (Uint8*)SDL_malloc(audiolen * scale);
+        if(scalebuf)
+        {
+            switch(samplesize)
+            {
+                case 1: scalewav((uchar*)scalebuf, (uchar*)audiobuf, audiolen, scale); break;
+                case 2: scalewav((ushort*)scalebuf, (ushort*)audiobuf, audiolen, scale); break;
+                case 4: scalewav((uint*)scalebuf, (uint*)audiobuf, audiolen, scale); break;
+                case 8: scalewav((ullong*)scalebuf, (ullong*)audiobuf, audiolen, scale); break;
+                default: SDL_free(scalebuf); scalebuf = NULL; break;
+            }
+            if(scalebuf)
+            {
+                SDL_free(audiobuf);
+                audiobuf = scalebuf;
+                audiolen *= scale;
+                spec.freq *= scale;
+            }
+        }
+    }
+    if(spec.freq != mixerfreq || spec.format != mixerformat || spec.channels != mixerchannels)
+    {
+        SDL_AudioCVT cvt;
+        if(SDL_BuildAudioCVT(&cvt, spec.format, spec.channels, spec.freq, mixerformat, mixerchannels, mixerfreq) < 0)
+        {
+            SDL_free(audiobuf);
+            return NULL;
+        }
+        if(cvt.filters[0])
+        {
+            cvt.len = audiolen & ~(samplesize-1);
+            cvt.buf = (Uint8*)SDL_calloc(1, cvt.len * cvt.len_mult);
+            if(SDL_ConvertAudio(&cvt) < 0)
+            {
+                SDL_free(cvt.buf);
+                SDL_free(audiobuf);
+                return NULL;
+            }
+            SDL_free(audiobuf);
+            audiobuf = cvt.buf;
+            audiolen = cvt.len_cvt;
+        }
+    }
+    Mix_Chunk *c = Mix_QuickLoad_RAW(audiobuf, audiolen);
+    if(!c) { SDL_free(audiobuf); return NULL; }
+    c->allocated = 1;
+    return c;
+}
+
+VARP(fixwav, 0, 1, 1);
+
 bool soundsample::load(bool msg)
 {
     if(chunk) return true;
@@ -317,6 +420,15 @@ bool soundsample::load(bool msg)
         formatstring(filename, "packages/sounds/%s%s", name, exts[i]);
         if(msg && !i) renderprogress(0, filename);
         path(filename);
+        if(fixwav)
+        {
+            size_t len = strlen(filename);
+            if(len >= 4 && !strcasecmp(filename + len - 4, ".wav"))
+            {
+                chunk = loadwavscaled(filename);
+                if(chunk) return true;
+            }
+        }
         chunk = loadwav(filename);
         if(chunk) return true;
     }
