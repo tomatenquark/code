@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		OaZ9V93BVxnokXk3eGvZq0O+ALY=
+		aajDZpEK27J/5hTKuEs43DFX2EE=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,10 +15,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			aLxguvOcyoa3hONDo7n0vLw7Dms=
+			GJMK2oe8VsM2czghj9AHca7NGvI=
 			</data>
 			<key>requirement</key>
-			<string>identifier webp and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = EH385AYQ6F</string>
+			<string>cdhash H"18930ada87bc56c3367338218fd00771aecd1af2"</string>
 		</dict>
 		<key>Headers/SDL_image.h</key>
 		<dict>
@@ -35,11 +35,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			OaZ9V93BVxnokXk3eGvZq0O+ALY=
+			aajDZpEK27J/5hTKuEs43DFX2EE=
 			</data>
 			<key>hash2</key>
 			<data>
-			mPON4LZKxH9KW7WVE/ZkaFRHMUIQKWiK1wFaUV3nxFU=
+			CKIDJhPCT1M2O21E8N3WbW04OzP5VJSUnUb2gDOmEOU=
 			</data>
 		</dict>
 	</dict>
