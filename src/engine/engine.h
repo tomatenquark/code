@@ -406,7 +406,7 @@ extern void clearsleep(bool clearoverrides = true);
 
 // console
 extern void processtextinput(const char *str, int len);
-extern void processkey(int code, bool isdown);
+extern void processkey(int code, bool isdown, int modstate = 0);
 extern int rendercommand(int x, int y, int w);
 extern int renderconsole(int w, int h, int abovehud);
 extern void conoutf(const char *s, ...) PRINTFARGS(1, 2);
