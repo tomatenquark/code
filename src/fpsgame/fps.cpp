@@ -886,13 +886,17 @@ namespace game
         pophudmatrix();
     }
 
+    VARP(healthcolors, 0, 1, 1);
+
     void drawhudicons(fpsent *d)
     {
         pushhudmatrix();
         hudmatrix.scale(2, 2, 1);
         flushhudmatrix();
 
-        draw_textf("%d", (HICON_X + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, d->state==CS_DEAD ? 0 : d->health);
+        defformatstring(health, "%d", d->state==CS_DEAD ? 0 : d->health);
+        bvec healthcolor = bvec::hexcolor(healthcolors && !m_insta ? (d->state==CS_DEAD ? 0x808080 : (d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : 0xFFFFFF))) : 0xFFFFFF);
+        draw_text(health, (HICON_X + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, healthcolor.r, healthcolor.g, healthcolor.b);
         if(d->state!=CS_DEAD)
         {
             if(d->armour) draw_textf("%d", (HICON_X + HICON_STEP + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, d->armour);
