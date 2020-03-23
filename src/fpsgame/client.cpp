@@ -545,7 +545,7 @@ namespace game
     ICOMMAND(getmode, "", (), intret(gamemode));
     ICOMMAND(timeremaining, "i", (int *formatted), 
     {
-        int val = max(maplimit - lastmillis, 0)/1000;
+        int val = max(maplimit - lastmillis + 999, 0)/1000;
         if(*formatted)
         {
             defformatstring(str, "%d:%02d", val/60, val%60);
