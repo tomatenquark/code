@@ -940,7 +940,7 @@ namespace game
 
     void drawgameclock(int w, int h)
     {
-        int secs = max(maplimit-lastmillis, 0)/1000, mins = secs/60;
+        int secs = max(maplimit-lastmillis + 999, 0)/1000, mins = secs/60;
         secs %= 60;
 
         defformatstring(buf, "%d:%02d", mins, secs);
