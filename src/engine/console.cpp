@@ -556,7 +556,7 @@ void processkey(int code, bool isdown, int modstate)
         case SDLK_LCTRL: case SDLK_RCTRL:
         case SDLK_LSHIFT: case SDLK_RSHIFT:
         case SDLK_LGUI: case SDLK_RGUI:
-            break;
+            return;
     }
     keym *haskey = keyms.access(code);
     if(haskey && haskey->pressed) execbind(*haskey, isdown); // allow pressed keys to release
