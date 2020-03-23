@@ -1073,7 +1073,7 @@ namespace game
             if(ammobar) drawammobar(w, h, d);
         }
 
-        if(!m_edit)
+        if(!m_edit && !m_sp)
         {
             if(gameclock) drawgameclock(w, h);
             if(hudscore) drawhudscore(w, h);
