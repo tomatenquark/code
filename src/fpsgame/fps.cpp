@@ -905,6 +905,20 @@ namespace game
 
         pophudmatrix();
 
+        if(d->state != CS_DEAD && d->maxhealth > 100)
+        {
+            float scale = 0.66f;
+            pushhudmatrix();
+            hudmatrix.scale(scale, scale, 1);
+            flushhudmatrix();
+
+            float width, height;
+            text_boundsf(health, width, height);
+            draw_textf("/%d", (HICON_X + HICON_SIZE + HICON_SPACE + width*2)/scale, (HICON_TEXTY + height)/scale, d->maxhealth);
+
+            pophudmatrix();
+        }
+
         drawicon(HICON_HEALTH, HICON_X, HICON_Y);
         if(d->state!=CS_DEAD)
         {
