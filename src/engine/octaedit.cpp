@@ -2774,7 +2774,7 @@ extern int menudistance, menuautoclose;
 
 VARP(texguiwidth, 1, 15, 1000);
 VARP(texguiheight, 1, 8, 1000);
-VARP(texguitime, 0, 25, 1000);
+VARP(texguitime, 0, 15, 1000);
 
 static int lastthumbnail = 0;
 
