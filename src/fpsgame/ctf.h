@@ -148,7 +148,7 @@ struct ctfclientmode : clientmode
         f.owntime = owntime;
         if(f.holdtime && f.team == ownteam)
         {
-            if(f.droptime && f.droptime < owntime) f.holdtime += owntime - f.droptime;
+            if(f.droptime && f.droptime < owntime) f.holdtime += 2*(owntime - f.droptime);
             f.holdtime = min(f.holdtime, owntime);
         }
         else
