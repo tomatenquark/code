@@ -7,6 +7,7 @@ namespace game
     VARP(maxradarscale, 1, 1024, 10000);
     VARP(radarteammates, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
+    _SVAR(servercontent, servercontent, "", IDF_READONLY);
 
     float calcradarscale()
     {
@@ -1348,6 +1349,11 @@ namespace game
                 break;
             }
 
+            case N_SERVERCONTENT:
+                getstring(text, p);
+                setsvar(servercontent, text);
+                break;
+                
             case N_MAPCHANGE:
                 getstring(text, p);
                 changemapserv(text, getint(p));
