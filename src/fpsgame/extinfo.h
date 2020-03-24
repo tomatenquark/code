@@ -1,6 +1,6 @@
 
 #define EXT_ACK                         -1
-#define EXT_VERSION                     106
+#define EXT_VERSION                     105
 #define EXT_NO_ERROR                    0
 #define EXT_ERROR                       1
 #define EXT_PLAYERSTATS_RESP_IDS        -10
