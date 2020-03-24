@@ -70,6 +70,20 @@ struct ctfclientmode : clientmode
         	return spawnloc;
         }
 #endif
+
+        int holdcounter() const
+        {
+            if(!holdtime) return 0;
+#ifdef SERVMODE
+            if(owner<0)
+#else
+            if(!owner)
+#endif
+            {
+                if(droptime && droptime >= holdtime) return max((droptime - holdtime) - (lastmillis - droptime), 0);
+            }
+            return lastmillis - holdtime;
+        }
     };
 
     struct holdspawn
@@ -453,11 +467,11 @@ struct ctfclientmode : clientmode
             }
             if(m_hold)
             {
-                if(!f.holdtime) putint(p, -1);
+                if(!f.team || !f.holdtime) putint(p, -1);
                 else
                 {
                     putint(p, f.team);
-                    putint(p, ((f.owner<0 && f.droptime && f.droptime >= f.holdtime ? f.droptime : lastmillis) - f.holdtime) / 100);
+                    putint(p, f.holdcounter() / 100);
                 }
             }
         }
@@ -541,7 +555,7 @@ struct ctfclientmode : clientmode
                     pushhudmatrix();
                     hudmatrix.scale(2, 2, 1);
                     flushhudmatrix();
-                    draw_textf("%d", (x + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, max(HOLDSECS - (lastmillis - f.holdtime)/1000, 0));
+                    draw_textf("%d", (x + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, max(HOLDSECS - f.holdcounter()/1000, 0));
                     pophudmatrix();
                 }
                 break;
@@ -660,6 +674,18 @@ struct ctfclientmode : clientmode
                         MDL_DYNSHADOW | MDL_CULL_VFC | MDL_CULL_OCCLUDED | (f.droptime || f.owner ? MDL_LIGHT : 0),
                         NULL, NULL, 0, 0, 0.3f + (f.vistime ? 0.7f*min((lastmillis - f.vistime)/1000.0f, 1.0f) : 0.0f));
 
+
+            if(m_hold && canaddparticles() && f.team && f.holdtime)
+            {
+                int counter = f.holdcounter();
+                if(counter > 0)
+                {
+                    vec above = vec(pos).addz(3.0f);
+                    abovemodel(above, flagname);
+                    defformatstring(msg, "%d", max(HOLDSECS - counter / 1000, 0));
+                    particle_textcopy(above, msg, PART_TEXT, 1, f.team == ctfteamflag(player1->team) ? 0x6496FF : 0xFF4B19, 4.0f);
+                }
+            }
             if(m_protect && canaddparticles() && f.owner && insidebase(f, f.owner->feetpos()))
             {
                 particle_flare(pos, f.spawnloc, 0, PART_LIGHTNING, strcmp(f.owner->team, player1->team) ? 0xFF2222 : 0x2222FF, 1.0f);
