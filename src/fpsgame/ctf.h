@@ -451,6 +451,15 @@ struct ctfclientmode : clientmode
                     putint(p, int(f.droploc.z*DMF));
                 }
             }
+            if(m_hold)
+            {
+                if(!f.holdtime) putint(p, -1);
+                else
+                {
+                    putint(p, f.team);
+                    putint(p, ((f.owner<0 && f.droptime && f.droptime >= f.holdtime ? f.droptime : lastmillis) - f.holdtime) / 100);
+                }
+            }
         }
     }
 
@@ -740,12 +749,17 @@ struct ctfclientmode : clientmode
         int numflags = getint(p);
         loopi(numflags)
         {
-            int version = getint(p), spawn = getint(p), owner = getint(p), invis = getint(p), dropped = 0;
+            int version = getint(p), spawn = getint(p), owner = getint(p), invis = getint(p), dropped = 0, holdteam = -1, holdtime = 0;
             vec droploc(0, 0, 0);
             if(owner<0)
             {
                 dropped = getint(p);
                 if(dropped) loopk(3) droploc[k] = getint(p)/DMF;
+            }
+            if(m_hold)
+            {
+                holdteam = getint(p);
+                if(holdteam >= 0) holdtime = getint(p)*100;
             }
             if(p.overread()) break;
             if(commit && flags.inrange(i))
@@ -755,11 +769,11 @@ struct ctfclientmode : clientmode
                 f.spawnindex = spawn;
                 if(m_hold) spawnflag(f);
                 f.owner = owner>=0 ? (owner==player1->clientnum ? player1 : newclient(owner)) : NULL;
-                f.owntime = owner>=0 ? lastmillis : 0;
+                f.owntime = owner>=0 ? lastmillis - (m_hold ? holdtime : 0) : 0;
                 if(m_hold)
                 {
-                    f.holdtime = f.owntime;
-                    f.team = ctfteamflag(f.owner->team);
+                    if(holdteam >= 0) { f.team = holdteam; f.holdtime = lastmillis - holdtime; }
+                    else { f.team = 0; f.holdtime = 0; }
                 }
                 f.droptime = dropped ? lastmillis : 0;
                 f.droploc = dropped ? droploc : f.spawnloc;
