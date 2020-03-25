@@ -17,7 +17,7 @@ struct ctfclientmode : clientmode
     static const int FLAGRADIUS = 16;
     static const int FLAGLIMIT = 10;
     static const int MAXHOLDSPAWNS = 100;
-    static const int HOLDSECS = 15;
+    static const int HOLDSECS = 20;
     static const int HOLDFLAGS = 1;
     static const int HOLDDEATHPENALTY = 5;
     static const int RESPAWNSECS = 5;
