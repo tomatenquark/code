@@ -552,9 +552,6 @@ void processkey(int code, bool isdown, int modstate)
 {
     switch(code)
     {
-        case SDLK_LALT: case SDLK_RALT:
-        case SDLK_LCTRL: case SDLK_RCTRL:
-        case SDLK_LSHIFT: case SDLK_RSHIFT:
         case SDLK_LGUI: case SDLK_RGUI:
             return;
     }
