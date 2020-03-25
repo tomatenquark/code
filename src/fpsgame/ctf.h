@@ -71,17 +71,19 @@ struct ctfclientmode : clientmode
         }
 #endif
 
+        bool hasowner() const
+        {
+#ifdef SERVMODE
+            return owner>=0;
+#else
+            return !!owner;
+#endif
+        }
+
         int holdcounter() const
         {
             if(!holdtime) return 0;
-#ifdef SERVMODE
-            if(owner<0)
-#else
-            if(!owner)
-#endif
-            {
-                if(droptime && droptime >= holdtime) return max((droptime - holdtime) - (lastmillis - droptime), 0);
-            }
+            if(!hasowner() && droptime && droptime >= holdtime) return max((droptime - holdtime) - (lastmillis - droptime), 0);
             return lastmillis - holdtime;
         }
     };
@@ -213,10 +215,11 @@ struct ctfclientmode : clientmode
     void deadflag(int i)
     {
         flag &f = flags[i];
-        if (f.holdtime)
+        if(f.holdtime)
         {
+            int limit = !f.hasowner() && f.droptime && f.droptime >= f.holdtime ? f.droptime : lastmillis;
             f.holdtime += HOLDDEATHPENALTY*1000;
-            if(f.holdtime >= lastmillis) f.holdtime = 0;
+            if(f.holdtime >= limit) f.holdtime = 0;
         }
     }
 
