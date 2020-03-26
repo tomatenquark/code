@@ -9,6 +9,7 @@ namespace game
     VAR(downloadmaps, 0, 0, 1);
     FVARP(minimapalpha, 0, 1, 1);
     static char servercontent[MAXTRANS];
+    static char* archive;
 
     void getservercontent()
     {
@@ -528,13 +529,14 @@ namespace game
         }
         
         if (downloadmaps && strlen(servercontent) && multiplayer(true) && !m_edit) {
-            //char *downloadUrl;
-            //sprintf(downloadUrl, "%s/packages/base/%s", servercontent, name);
-            //const char *constDownloadUrl = downloadUrl;
+            // Unload the previously mounted zip archive
+            if (archive != NULL) {
+                removezip(archive);
+            }
             GoString source = { "http://localhost:8000/packages/base/curvedm.cfg", 47 };
             conoutf("Downloading map");
-            const char* archive = DownloadMap(source);
-            conoutf(archive);
+            archive = DownloadMap(source);
+            conoutf("%s", archive);
             addzip(archive);
         }
 
