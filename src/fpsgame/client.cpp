@@ -535,19 +535,17 @@ namespace game
             }
             conoutf("Downloading map %s", name);
             float bar = 1;
-            //defformatstring(text, "creating cubes... %d%%", int(bar*100));
-            //renderprogress(bar, text);
             archive = StartDownload((char*)servercontent, (char*)name);
             int status = 1;
             int downloadBar = 1;
             defformatstring(text, "downloading map... %d%%", downloadBar);
-            //renderprogress(bar, text);
+            renderprogress(bar, text);
             // Wait for download to complete
             while (status == 1) {
                 status = GetStatus(archive);
                 downloadBar = (downloadBar == 100) ? 1 : downloadBar + 1;
                 defformatstring(text, "downloading map... %d%%", downloadBar);
-                //renderprogress(bar, text);
+                renderprogress(bar, text);
             }
             if (status == 2) {
                 addzip(archive);
