@@ -3462,7 +3462,7 @@ void saveimage(const char *filename, int format, ImageData &image, bool flip = f
             {
                 switch(format) {
                     case IMG_JPG:
-#if SDL_IMAGE_VERSION_ATLEAST(2, 0, 2)
+#if defined(SDL_IMAGE_VERSION_ATLEAST) && SDL_IMAGE_VERSION_ATLEAST(2, 0, 2)
                         IMG_SaveJPG_RW(s, f->rwops(), 1, screenshotquality);
 #else
                         conoutf(CON_ERROR, "JPG screenshot support requires SDL_image 2.0.2");
