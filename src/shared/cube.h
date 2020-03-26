@@ -60,6 +60,7 @@
 #ifndef STANDALONE
 #include "glexts.h"
 #include "glemu.h"
+#include "zip.h"
 #endif
 
 #include "iengine.h"
