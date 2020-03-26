@@ -6,12 +6,13 @@ namespace game
     VARP(minradarscale, 0, 384, 10000);
     VARP(maxradarscale, 1, 1024, 10000);
     VARP(radarteammates, 0, 1, 1);
+    VAR(downloadmaps, 0, 0, 1);
     FVARP(minimapalpha, 0, 1, 1);
     static char servercontent[MAXTRANS];
 
     void getservercontent()
     {
-        conoutf(servercontent);
+        conoutf("%s", servercontent);
     }
     COMMAND(getservercontent, "");
 
@@ -524,6 +525,17 @@ namespace game
         {
             conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
             loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
+        }
+        
+        if (downloadmaps && strlen(servercontent) && multiplayer(true) && !m_edit) {
+            //char *downloadUrl;
+            //sprintf(downloadUrl, "%s/packages/base/%s", servercontent, name);
+            //const char *constDownloadUrl = downloadUrl;
+            GoString source = { "http://localhost:8000/packages/base/curvedm.cfg", 47 };
+            conoutf("Downloading map");
+            const char* archive = DownloadMap(source);
+            conoutf(archive);
+            addzip(archive);
         }
 
         gamemode = mode;
