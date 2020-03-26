@@ -533,9 +533,8 @@ namespace game
             if (archive != NULL) {
                 removezip(archive);
             }
-            GoString source = { "http://localhost:8000/packages/base/curvedm.cfg", 47 };
             conoutf("Downloading map");
-            archive = DownloadMap(source);
+            archive = DownloadMap((char*)servercontent, (char*)name);
             conoutf("%s", archive);
             addzip(archive);
         }
