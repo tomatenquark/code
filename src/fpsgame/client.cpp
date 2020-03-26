@@ -528,11 +528,10 @@ namespace game
             loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
+        // Unload the previously mounted zip archive if any
+        if (archive != NULL) removezip(archive); archive = NULL;
+        
         if (downloadmaps && strlen(servercontent) && multiplayer(true) && !m_edit) {
-            // Unload the previously mounted zip archive
-            if (archive != NULL) {
-                removezip(archive);
-            }
             conoutf("Downloading map %s", name);
             float bar = 1;
             archive = StartDownload((char*)servercontent, (char*)name);
