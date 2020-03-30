@@ -44,7 +44,7 @@ override WINDRES+= -F pe-i386
 endif
 CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iassetbundler
 STD_LIBS= -static-libgcc -static-libstdc++
-CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lzlib1 -lopengl32 -lenet -lws2_32 -lwinmm
+CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lzlib1 -lopengl32 -lenet -lws2_32 -lwinmm -lcurl
 else	
 ifneq (,$(findstring DARWIN,$(PLATFORM)))
 ifneq (,$(findstring CROSS,$(PLATFORM)))
@@ -63,17 +63,17 @@ override CXX+= -arch x86_64 -mmacosx-version-min=$(OSXMIN)
 CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iassetbundler
 CLIENT_LIBS= -Fxcode/Frameworks -framework SDL2 -framework SDL2_image
 CLIENT_LIBS+= -framework SDL2_mixer -framework CoreAudio -framework AudioToolbox
-CLIENT_LIBS+= -framework AudioUnit -framework OpenGL -framework Cocoa -lz -Lenet -lenet
+CLIENT_LIBS+= -framework AudioUnit -framework OpenGL -framework Cocoa -lz -Lenet -lenet -lcurl -lpthread
 else
 CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl2-config --cflags` -Iassetbundler
-CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL
+CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL -lcurl -lpthread
 endif
 endif
 ifeq ($(PLATFORM),LINUX)
-CLIENT_LIBS+= -lrt
+CLIENT_LIBS+= -lrt -lstdc++fs
 else
 ifneq (,$(findstring GNU,$(PLATFORM)))
-CLIENT_LIBS+= -lrt 
+CLIENT_LIBS+= -lrt -lstdc++fs
 endif         
 endif
 CLIENT_OBJS= \
@@ -131,7 +131,8 @@ CLIENT_OBJS= \
 	fpsgame/scoreboard.o \
 	fpsgame/server.o \
 	fpsgame/waypoint.o \
-	fpsgame/weapon.o
+	fpsgame/weapon.o \
+	assetbundler/assetbundler.o
 
 CLIENT_PCH= shared/cube.h.gch engine/engine.h.gch fpsgame/game.h.gch
 
