@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <vector>
-#include <regex>
 #include <sstream>
 #include <map>
 #ifdef __linux__ 
@@ -11,8 +10,6 @@
 #else
 #include <filesystem>
 #endif
-#include <thread>
-#include <chrono>
 
 #include <curl/curl.h>
 

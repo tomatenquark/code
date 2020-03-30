@@ -5,6 +5,10 @@
 //  Created by Lennard Berger on 28.03.20.
 //
 
+#include <thread>
+#include <chrono>
+#include <regex>
+
 #ifndef assetbundler_h
 #define assetbundler_h
 
