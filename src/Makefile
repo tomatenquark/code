@@ -1,10 +1,10 @@
 CXXFLAGS= -O3 -fomit-frame-pointer -ffast-math
-override CXXFLAGS+= -Wall -fsigned-char -fno-exceptions -fno-rtti
+override CXXFLAGS+= -std=c++11 -Wall -fsigned-char -fno-exceptions -fno-rtti
 
 PLATFORM= $(shell uname -s | tr '[:lower:]' '[:upper:]')
 PLATFORM_PREFIX= native
 
-INCLUDES= -Ishared -Iengine -Ifpsgame -Ienet/include
+INCLUDES= -Ishared -Iengine -Ifpsgame -Ienet/include -Iassetbundler
 
 STRIP=
 ifeq (,$(findstring -g,$(CXXFLAGS)))
@@ -66,7 +66,7 @@ CLIENT_LIBS+= -framework SDL2_mixer -framework CoreAudio -framework AudioToolbox
 CLIENT_LIBS+= -framework AudioUnit -framework OpenGL -framework Cocoa -lz -Lenet -lenet
 else
 CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl2-config --cflags`
-CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL
+CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL -lcurl
 endif
 endif
 ifeq ($(PLATFORM),LINUX)
