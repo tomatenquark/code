@@ -42,7 +42,7 @@ WINBIN=../bin
 override CXX+= -m32
 override WINDRES+= -F pe-i386
 endif
-CLIENT_INCLUDES= $(INCLUDES) -Iinclude
+CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iassetbundler
 STD_LIBS= -static-libgcc -static-libstdc++
 CLIENT_LIBS= -mwindows $(STD_LIBS) -L$(WINBIN) -L$(WINLIB) -lSDL2 -lSDL2_image -lSDL2_mixer -lzlib1 -lopengl32 -lenet -lws2_32 -lwinmm
 else	
@@ -60,12 +60,12 @@ endif
 OSXMIN= 10.6
 override CC+= -arch x86_64 -mmacosx-version-min=$(OSXMIN)
 override CXX+= -arch x86_64 -mmacosx-version-min=$(OSXMIN)
-CLIENT_INCLUDES= $(INCLUDES) -Iinclude
+CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iassetbundler
 CLIENT_LIBS= -Fxcode/Frameworks -framework SDL2 -framework SDL2_image
 CLIENT_LIBS+= -framework SDL2_mixer -framework CoreAudio -framework AudioToolbox
 CLIENT_LIBS+= -framework AudioUnit -framework OpenGL -framework Cocoa -lz -Lenet -lenet
 else
-CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl2-config --cflags`
+CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl2-config --cflags` -Iassetbundler
 CLIENT_LIBS= -Lenet -lenet -L/usr/X11R6/lib -lX11 `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lz -lGL
 endif
 endif
