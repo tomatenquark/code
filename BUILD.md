@@ -8,7 +8,7 @@ Tested on: Ubuntu and Debian
 
 ```shell
 sudo apt-get update
-sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev
+sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev libcurl4-openssl-dev
 cd ./src
 make
 ```
