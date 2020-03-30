@@ -6,7 +6,11 @@
 #include <regex>
 #include <sstream>
 #include <map>
+#ifdef __linux__ 
+#include <experimental/filesystem>
+#else
 #include <filesystem>
+#endif
 #include <thread>
 #include <chrono>
 
@@ -14,9 +18,13 @@
 
 #include "assetbundler.h"
 
-namespace download {
-    namespace fs = std::filesystem;
+#ifdef __linux__ 
+namespace fs = std::experimental::filesystem;
+#else
+namespace fs = std::filesystem;
+#endif
 
+namespace download {
     // Writes data from stream to disk
     static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
         return fwrite(ptr, size, nmemb, (FILE *) stream);
@@ -206,8 +214,6 @@ namespace config {
 };
 
 namespace resources {
-    namespace fs = std::filesystem;
-
     /// Downloads and filters a config file and inserts it's resources to the specified resources vector
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
         // Create a temporary file path
@@ -297,7 +303,7 @@ namespace resources {
     }
 
     /// Download all the resources to their specified paths
-    void download(std::string url, std::filesystem::path server_directory, std::vector<config::Resource> resources, int* status) {
+    void download(std::string url, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
         for (const auto& resource: resources) {
             std::stringstream resource_url;
             std::string prefix = get_command_prefix(resource.command);
