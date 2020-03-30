@@ -314,14 +314,13 @@ namespace resources {
 };
 
 namespace assetbundler {
-
-    // Downloads a map
-    void download_map(char* servercontent, char* map, char* homedir, int* status) {
+    /// Implementation for download_map
+    void download_map(char* servercontent, char* map, char* serverdir, int* status) {
         // Prepare download paths
         std::string url(servercontent);
         // TODO: Remove trailing comma if there are any
         std::string server_map(map);
-        std::string server_directory(homedir);
+        std::string server_directory(serverdir);
         // Initialize resources vector
         std::vector<config::Resource> resources;
         // NOTE: This assumes that curl_global_init has already been called

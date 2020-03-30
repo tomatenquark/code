@@ -16,7 +16,6 @@ enum STATUS {
 };
 
 namespace assetbundler {
-
     /// Starts a download and returns the destination zip.
     ///
     /// Arguments
@@ -24,7 +23,14 @@ namespace assetbundler {
     /// - map - the map that will be downloaded e.g `curvedm`
     ///
     /// Call get_status continuously until the status is either ABORTED or FINISHED
-    void download_map(char* servercontent, char* map, char* homedir, int* status);
+    /// Downloads a map
+    ///
+    /// Arguments
+    /// - servercontent (the URL to download from) e.g http://localhost:8000
+    /// - map (the map to download) e.g curvedm
+    /// - homedir (the home directory to download to)
+    /// - status (a pointer to the status for async operations)
+    void download_map(char* servercontent, char* map, char* serverdir, int* status);
 };
 
 #endif /* assetbundler_h */
