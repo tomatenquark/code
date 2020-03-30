@@ -2,10 +2,6 @@
 
 First of all, welcome to Cube 2: Tomatenquark! To start off, if you are looking for help with the game itself, refer to the [Documentation](https://tomatenquark.org). Here are some places of interest on the internet, which are related to Cube / Cube 2: Tomatenquark.
 
-## Build instructions
-
-You can find the build instructions in [BUILD.md](./BUILD.md).
-
 ## Links
 
 - [Cube and Cube 2 Engines](http://cubeengine.com/): Start Page for the Cube Engine series.
@@ -39,6 +35,10 @@ Cube 2: Tomatenquark is an open source project derived from Cube 2: Sauerbraten,
 - Simple stereo positional sound system.
 - Particle engine, supporting text particles, volumetric explosions, soft particles, and decals.
 - 3d menu/gui system, for in-world representation of choices.
+
+## Build instructions
+
+You can find the build instructions in [BUILD.md](./BUILD.md).
 
 ### Additional developer documentation
 
