@@ -1,4 +1,10 @@
+#include <thread>
+#include <chrono>
+#include <regex>
+
 #include "game.h"
+#include "assetbundler.h"
+#include "uri.cpp"
 
 namespace game
 {
@@ -11,7 +17,7 @@ namespace game
 
     void getservercontent()
     {
-        conoutf(servercontent);
+        conoutf("%s", servercontent);
     }
     COMMAND(getservercontent, "");
 
@@ -524,6 +530,20 @@ namespace game
         {
             conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
             loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
+        }
+        
+        if(multiplayer(false) && downloadmaps && strlen(servercontent))
+        {
+            conoutf(CON_INFO, "downloading map %s", name);
+            int status = DOWNLOAD_PROGRESS;
+            string serverdir = "";
+            copystring(serverdir, homedir);
+            concatstring(serverdir, servercontent);
+            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
+            while (status == DOWNLOAD_PROGRESS) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
         }
 
         gamemode = mode;
