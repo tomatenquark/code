@@ -8,13 +8,14 @@
 #ifndef assetbundler_h
 #define assetbundler_h
 
+/// Describes which status the download is currently in.
+enum STATUS {
+    DOWNLOAD_ABORTED = -1,
+    DOWNLOAD_PROGRESS = 0,
+    DOWNLOAD_FINISHED = 1
+};
+
 namespace assetbundler {
-    /// Describes which status the download is currently in.
-    enum STATUS {
-        ABORTED = -1,
-        PROGRESS = 0,
-        FINISHED = 1
-    };
 
     /// Starts a download and returns the destination zip.
     ///
@@ -23,13 +24,7 @@ namespace assetbundler {
     /// - map - the map that will be downloaded e.g `curvedm`
     ///
     /// Call get_status continuously until the status is either ABORTED or FINISHED
-    extern const char* start_download(char* servercontent, char* map);
-
-    /// Returns the archive's download status.
-    ///
-    /// Arguments
-    /// archive - the path of the archive
-    extern int get_status(char* archive);
+    void download_map(char* servercontent, char* map, char* homedir, int* status);
 };
 
 #endif /* assetbundler_h */
