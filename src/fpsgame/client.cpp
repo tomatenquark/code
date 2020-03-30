@@ -1,11 +1,20 @@
 #include "game.h"
+#include "assetbundler.h"
 
 namespace game
 {
     VARP(minradarscale, 0, 384, 10000);
     VARP(maxradarscale, 1, 1024, 10000);
     VARP(radarteammates, 0, 1, 1);
+    VARP(downloadmaps, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
+    static char servercontent[MAXTRANS];
+
+    void getservercontent()
+    {
+        conoutf("%s", servercontent);
+    }
+    COMMAND(getservercontent, "");
 
     float calcradarscale()
     {
@@ -516,6 +525,20 @@ namespace game
         {
             conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
             loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
+        }
+        
+        if(multiplayer(false) && downloadmaps && strlen(servercontent))
+        {
+            conoutf(CON_INFO, "downloading map %s", name);
+            int status = DOWNLOAD_PROGRESS;
+            string serverdir = "";
+            copystring(serverdir, homedir);
+            concatstring(serverdir, servercontent);
+            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
+            while (status == DOWNLOAD_PROGRESS) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
         }
 
         gamemode = mode;
@@ -1347,6 +1370,11 @@ namespace game
                 break;
             }
 
+            case N_SERVERCONTENT:
+                getstring(text, p);
+                strcpy(servercontent, text);
+                break;
+                
             case N_MAPCHANGE:
                 getstring(text, p);
                 changemapserv(text, getint(p));

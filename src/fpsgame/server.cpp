@@ -615,6 +615,7 @@ namespace server
     SVAR(serverdesc, "");
     SVAR(serverpass, "");
     SVAR(adminpass, "");
+    SVAR(servercontent, "");
     VARF(publicserver, 0, 0, 2, {
 		switch(publicserver)
 		{
@@ -1791,6 +1792,10 @@ namespace server
     int welcomepacket(packetbuf &p, clientinfo *ci)
     {
         putint(p, N_WELCOME);
+        if (strlen(servercontent)) {
+            putint(p, N_SERVERCONTENT);
+            sendstring(servercontent, p);
+        }
         putint(p, N_MAPCHANGE);
         sendstring(smapname, p);
         putint(p, gamemode);

@@ -244,7 +244,7 @@ enum
     N_SWITCHNAME, N_SWITCHMODEL, N_SWITCHTEAM,
     N_INITTOKENS, N_TAKETOKEN, N_EXPIRETOKENS, N_DROPTOKENS, N_DEPOSITTOKENS, N_STEALTOKENS,
     N_SERVCMD,
-    N_DEMOPACKET,
+    N_DEMOPACKET, N_SERVERCONTENT,
     NUMMSG
 };
 
@@ -274,7 +274,7 @@ static const int msgsizes[] =               // size inclusive message token, 0 f
     N_SWITCHNAME, 0, N_SWITCHMODEL, 2, N_SWITCHTEAM, 0,
     N_INITTOKENS, 0, N_TAKETOKEN, 2, N_EXPIRETOKENS, 0, N_DROPTOKENS, 0, N_DEPOSITTOKENS, 2, N_STEALTOKENS, 0,
     N_SERVCMD, 0,
-    N_DEMOPACKET, 0,
+    N_DEMOPACKET, 0, N_SERVERCONTENT, 0,
     -1
 };
 
@@ -282,7 +282,7 @@ static const int msgsizes[] =               // size inclusive message token, 0 f
 #define SAUERBRATEN_SERVER_PORT 28785
 #define SAUERBRATEN_SERVINFO_PORT 28786
 #define SAUERBRATEN_MASTER_PORT 28787
-#define PROTOCOL_VERSION 260            // bump when protocol changes
+#define PROTOCOL_VERSION 261            // bump when protocol changes
 #define DEMO_VERSION 1                  // bump when demo format changes
 #define DEMO_MAGIC "SAUERBRATEN_DEMO"
 

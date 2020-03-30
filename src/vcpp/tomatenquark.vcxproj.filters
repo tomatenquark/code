@@ -64,9 +64,6 @@
     <ClCompile Include="..\engine\main.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\master.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\material.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -177,6 +174,9 @@
     </ClCompile>
     <ClCompile Include="..\fpsgame\weapon.cpp">
       <Filter>fpsgame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\assetbundler\assetbundler.cpp">
+      <Filter>assetbundler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,9 +300,12 @@
     <ClInclude Include="..\fpsgame\game.h">
       <Filter>fpsgame</Filter>
     </ClInclude>
+    <ClInclude Include="..\assetbundler\assetbundler.h">
+      <Filter>assetbundler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="tomatenquark.rc" />
+    <ResourceCompile Include="tomatenquarkrc.rc" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shared">
@@ -314,6 +317,8 @@
     <Filter Include="fpsgame">
       <UniqueIdentifier>{9b7a70df-c8ed-4662-8380-4ffe119eb216}</UniqueIdentifier>
     </Filter>
+    <Filter Include="assetbundler">
+      <UniqueIdentifier>{ce6c6d1b-844a-4b30-909f-ac19a688cce9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
-

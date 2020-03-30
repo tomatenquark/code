@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		073092AD2412C5950014E531 /* tomatenquark.icns in Resources */ = {isa = PBXBuildFile; fileRef = 073092AC2412C5950014E531 /* tomatenquark.icns */; };
+		073F210F2432447300B8EFC2 /* assetbundler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073F210D2432447300B8EFC2 /* assetbundler.cpp */; };
 		2D9FA6A523B9B042004A1465 /* glemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FA6A423B9B042004A1465 /* glemu.cpp */; };
 		B90ADD4509B344D800A5B00B /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B90ADD0009B344D800A5B00B /* callbacks.c */; };
 		B90ADD5709B344D800A5B00B /* host.c in Sources */ = {isa = PBXBuildFile; fileRef = B90ADD1309B344D800A5B00B /* host.c */; };
@@ -104,6 +105,8 @@
 
 /* Begin PBXFileReference section */
 		073092AC2412C5950014E531 /* tomatenquark.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = tomatenquark.icns; sourceTree = "<group>"; };
+		073F210D2432447300B8EFC2 /* assetbundler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assetbundler.cpp; sourceTree = "<group>"; };
+		073F210E2432447300B8EFC2 /* assetbundler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assetbundler.h; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -248,6 +251,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		073F210C2432447300B8EFC2 /* assetbundler */ = {
+			isa = PBXGroup;
+			children = (
+				073F210D2432447300B8EFC2 /* assetbundler.cpp */,
+				073F210E2432447300B8EFC2 /* assetbundler.h */,
+			);
+			name = assetbundler;
+			path = ../assetbundler;
+			sourceTree = "<group>";
+		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,6 +315,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				073F210C2432447300B8EFC2 /* assetbundler */,
 				B90ADCEE09B344D800A5B00B /* enet */,
 				B9AC7A830D06DB44005506F8 /* engine */,
 				B9AC7AAD0D06DB44005506F8 /* fpsgame */,
@@ -603,6 +617,7 @@
 				B9AC7AEE0D06DB44005506F8 /* shader.cpp in Sources */,
 				B9AC7AEF0D06DB44005506F8 /* shadowmap.cpp in Sources */,
 				B9AC7AF00D06DB44005506F8 /* sound.cpp in Sources */,
+				073F210F2432447300B8EFC2 /* assetbundler.cpp in Sources */,
 				B9AC7AF10D06DB44005506F8 /* texture.cpp in Sources */,
 				B9AC7AF40D06DB44005506F8 /* water.cpp in Sources */,
 				B9AC7AF50D06DB44005506F8 /* world.cpp in Sources */,
@@ -662,7 +677,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -671,12 +686,18 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = ../enet/include;
+				HEADER_SEARCH_PATHS = (
+					../enet/include,
+					../assetbundler,
+				);
 				INFOPLIST_FILE = tomatenquark.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lcurl",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -687,7 +708,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -696,12 +717,18 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = ../enet/include;
+				HEADER_SEARCH_PATHS = (
+					../enet/include,
+					../assetbundler,
+				);
 				INFOPLIST_FILE = tomatenquark.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lcurl",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -712,7 +739,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -721,12 +748,18 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = ../enet/include;
+				HEADER_SEARCH_PATHS = (
+					../enet/include,
+					../assetbundler,
+				);
 				INFOPLIST_FILE = tomatenquark.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lcurl",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.github.tomatenquark;
 				PRODUCT_NAME = tomatenquark;
 				USER_HEADER_SEARCH_PATHS = "";
