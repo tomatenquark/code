@@ -34,7 +34,7 @@ namespace download {
     void download_file(std::string url, fs::path destination) {
         if (!fs::exists(destination)) {
             /* open the file */
-            auto resource = fopen(destination.c_str(), "wb");
+            auto resource = fopen((const char*)destination.c_str(), "wb");
 
             /* init the curl session */
             auto curl_handle = curl_easy_init();
