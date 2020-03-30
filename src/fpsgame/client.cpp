@@ -4,7 +4,6 @@
 
 #include "game.h"
 #include "assetbundler.h"
-#include "uri.cpp"
 
 namespace game
 {

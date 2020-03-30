@@ -1,0 +1,5 @@
+﻿  pch.cpp
+  pch.cpp
+  pch.cpp
+  assetbundler.cpp
+C:\Users\berger.PEGASUS.000\Documents\GitHub\code\src\assetbundler\assetbundler.cpp(17,10): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "curl/curl.h": No such file or directory
