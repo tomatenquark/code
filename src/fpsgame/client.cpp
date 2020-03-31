@@ -1,5 +1,4 @@
 #include "game.h"
-#include "assetbundler.h"
 
 namespace game
 {

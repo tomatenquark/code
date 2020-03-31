@@ -11,8 +11,6 @@
 #include <filesystem>
 #endif
 
-#include <curl/curl.h>
-
 #include "assetbundler.h"
 
 #ifdef __linux__ 

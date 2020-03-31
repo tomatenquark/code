@@ -1,7 +1,5 @@
 // main.cpp: initialisation & main loop
 
-#include <curl/curl.h>
-
 #include "engine.h"
 
 extern void cleargamma();

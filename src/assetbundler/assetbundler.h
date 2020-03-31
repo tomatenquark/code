@@ -5,12 +5,14 @@
 //  Created by Lennard Berger on 28.03.20.
 //
 
+#ifndef assetbundler_h
+#define assetbundler_h
+
 #include <thread>
 #include <chrono>
 #include <regex>
 
-#ifndef assetbundler_h
-#define assetbundler_h
+#include <curl/curl.h>
 
 /// Describes which status the download is currently in.
 enum STATUS {
