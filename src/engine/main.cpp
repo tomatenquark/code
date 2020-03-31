@@ -1,5 +1,7 @@
 // main.cpp: initialisation & main loop
 
+#include <curl/curl.h>
+
 #include "engine.h"
 
 extern void cleargamma();
@@ -21,6 +23,7 @@ void cleanup()
     #ifdef __APPLE__
         if(screen) SDL_SetWindowFullscreen(screen, 0);
     #endif
+    curl_global_cleanup();
     SDL_Quit();
 }
 
@@ -1203,6 +1206,9 @@ int main(int argc, char **argv)
     gl_init();
     notexture = textureload("packages/textures/notexture.png");
     if(!notexture) fatal("could not find core textures");
+
+    logoutf("init: curl");
+    curl_global_init(CURL_GLOBAL_ALL);
 
     logoutf("init: console");
     if(!execfile("data/stdlib.cfg", false)) fatal("cannot find data files (you are running from the wrong folder, try .bat file in the main folder)");   // this is the first file we load.
