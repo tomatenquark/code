@@ -31,10 +31,10 @@ namespace download {
     void download_file(std::string url, fs::path destination) {
         if (!fs::exists(destination)) {
             /* open the file */
-            auto resource = fopen((const char*)destination.c_str(), "wb");
+            FILE* fp = fopen((const char*)destination.c_str(), "wb");
 
             /* init the curl session */
-            auto curl_handle = curl_easy_init();
+            CURL* curl_handle = curl_easy_init();
 
             /* set URL to get here */
             curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
@@ -45,15 +45,15 @@ namespace download {
             /* send all data to this function  */
             curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 
-            if (resource) {
+            if (fp) {
                 /* write the page body to this file handle */
-                curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, resource);
+                curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
 
                 /* get it! */
                 curl_easy_perform(curl_handle);
 
                 /* close the header file */
-                fclose(resource);
+                fclose(fp);
             }
 
             /* cleanup curl stuff */
@@ -186,7 +186,7 @@ namespace config {
             if (command_mapping.find(command) != command_mapping.end()) {
                 int& commandIndex = command_mapping.at(command);
                 // Check if command is valid
-                if ((fields.size() - 1) >= commandIndex) {
+                if ((fields.size() - 1) >= static_cast<unsigned int>(commandIndex)) {
                     string path = fields.at(commandIndex);
                     // Replace leading and trailing " characters
                     path.erase(remove(path.begin(), path.end(), '\"'), path.end());
@@ -215,9 +215,7 @@ namespace resources {
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
         // Create a temporary file path
         fs::path temp_config_path(fs::temp_directory_path());
-        char buffer [L_tmpnam];
-        std::tmpnam(buffer);
-        std::string tmpnam(buffer);
+        std::string tmpnam = std::tmpnam(nullptr);
         temp_config_path.append(tmpnam);
         // Download config file to this temporary path
         download::download_file(config_url, temp_config_path.string());
