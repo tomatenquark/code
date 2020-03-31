@@ -214,13 +214,11 @@ namespace resources {
     /// Downloads and filters a config file and inserts it's resources to the specified resources vector
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
         // Create a temporary file path
-        fs::path temp_config_path(fs::temp_directory_path());
         std::string tmpnam = std::tmpnam(nullptr);
-        temp_config_path.append(tmpnam);
         // Download config file to this temporary path
-        download::download_file(config_url, temp_config_path.string());
+        download::download_file(config_url, tmpnam);
         // Read the config file
-        std::ifstream config_file (temp_config_path.string());
+        std::ifstream config_file (tmpnam);
         std::vector<std::string> lines;
         std::string line;
         if (config_file.is_open())
