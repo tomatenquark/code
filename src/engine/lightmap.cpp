@@ -2444,7 +2444,7 @@ void genlightmaptexs(int flagmask, int flagval)
 {
     if(lightmaptexs.length() < LMID_RESERVED) genreservedlightmaptexs();
 
-    int remaining[3] = { 0, 0, 0 }, total = 0; 
+    int remaining[LM_TYPE+1] = { 0 }, total = 0; 
     loopv(lightmaps) 
     {
         LightMap &lm = lightmaps[i];
