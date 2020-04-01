@@ -518,6 +518,14 @@ namespace game
     int gamemode = INT_MAX, nextmode = INT_MAX;
     string clientmap = "";
 
+    void format_servercontent(char* content) {
+        if (strstr(content, "http://")) memmove(&content[0], &content[7], strlen(content) - 6);
+        if (strstr(content, "https://")) memmove(&content[0], &content[8], strlen(content) - 7);
+#ifdef _WIN32
+        replacechar(content, "/", "\\");
+#endif
+    }
+
     void changemapserv(const char *name, int mode)        // forced map change from the server
     {
         if(multiplayer(false) && !m_mp(mode))
@@ -531,8 +539,9 @@ namespace game
             conoutf(CON_INFO, "downloading map %s", name);
             int status = DOWNLOAD_PROGRESS;
             string serverdir = "";
-            copystring(serverdir, homedir);
-            concatstring(serverdir, servercontent);
+            copystring(serverdir, servercontent);
+            format_servercontent(serverdir);
+            prependstring(serverdir, homedir);
             assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
             renderbackground("downloading map... (esc to abort)");
             while (status == DOWNLOAD_PROGRESS) {

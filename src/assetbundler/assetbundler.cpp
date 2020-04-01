@@ -315,7 +315,6 @@ namespace assetbundler {
     void download_map(char* servercontent, char* map, char* serverdir, int* status) {
         // Prepare download paths
         std::string url(servercontent);
-        // TODO: Remove trailing comma if there are any
         std::string server_map(map);
         std::string server_directory(serverdir);
         // Initialize resources vector
