@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.23] - 2020-01-04
+## Fixed
+- fixed lightmaps crashing the game on windows
+- fixed path issues with assetbundler on windows
+- don't localconnect while the client initializes
+
 ## [0.0.22] - 2020-30-03
 ## Added
 - Added `maxhealth` display and colored health display
@@ -905,7 +911,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.0.22...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.0.23...HEAD
+[0.0.23]: https://github.com/tomatenquark/code/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/tomatenquark/code/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/tomatenquark/code/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/tomatenquark/code/compare/v0.0.19...v0.0.20
