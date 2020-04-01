@@ -180,6 +180,9 @@ inline char *prependstring(char *d, const char *s, size_t len)
 }
 template<size_t N> inline char *prependstring(char (&d)[N], const char *s) { return prependstring(d, s, N); }
 
+/// Replaces all occurences of orig with rep in string str and returns the amount of matches replaced
+inline int replacechar(char *str, char orig, char rep) { char *ix = str; int n = 0; while((ix = strchr(ix, orig)) != NULL) { *ix++ = rep; n++; } return n; }
+
 inline void nformatstring(char *d, int len, const char *fmt, ...) PRINTFARGS(3, 4);
 inline void nformatstring(char *d, int len, const char *fmt, ...)
 {
