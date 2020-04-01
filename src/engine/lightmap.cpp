@@ -468,7 +468,7 @@ static bool packlightmap(lightmapinfo &l, layoutinfo &surface)
 
 static void updatelightmap(const layoutinfo &surface)
 {
-    if(max(LM_PACKW, LM_PACKH) > hwtexsize) return;
+    if(max(LM_PACKW, LM_PACKH) > hwtexsize || !lightmaps.inrange(surface.lmid-LMID_RESERVED)) return;
 
     LightMap &lm = lightmaps[surface.lmid-LMID_RESERVED];
     if(lm.tex < 0)
