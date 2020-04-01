@@ -29,7 +29,9 @@ namespace download {
     void download_file(std::string url, fs::path destination) {
         if (!fs::exists(destination)) {
             /* open the file */
-            FILE* fp = fopen((const char*)destination.c_str(), "wb");
+            std::string destination_str(destination.string()); // copy by value
+            const char* dest = destination_str.c_str();
+            FILE* fp = std::fopen(dest, "wb");
 
             /* init the curl session */
             CURL* curl_handle = curl_easy_init();
@@ -211,12 +213,10 @@ namespace config {
 namespace resources {
     /// Downloads and filters a config file and inserts it's resources to the specified resources vector
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
-        // Create a temporary file path
-        std::string tmpnam = std::tmpnam(nullptr);
-        // Download config file to this temporary path
-        download::download_file(config_url, tmpnam);
+        fs::create_directories(destination.parent_path());
+        download::download_file(config_url, destination);
         // Read the config file
-        std::ifstream config_file (tmpnam);
+        std::ifstream config_file (destination);
         std::vector<std::string> lines;
         std::string line;
         if (config_file.is_open())
@@ -230,7 +230,6 @@ namespace resources {
         config::parse_lines(&filtered_lines, resources);
         // Write the filtered file to disk
         std::ofstream filtered_config_file(destination);
-        fs::create_directories(destination.parent_path());
         for (const auto& l: filtered_lines) filtered_config_file << l << std::endl;
         //filtered_config_file.close(); // This prevents writing some configs to disk. Figure out why.
     }
@@ -247,10 +246,9 @@ namespace resources {
         std::stringstream start_url;
         start_url << url << "/packages/base/" << name << ".cfg";
         fs::path start_path(server_directory);
-        start_path.append("packages/base/");
-        name.append(".cfg");
-        start_path.append(name);
-        fs::create_directories(start_path.parent_path());
+        start_path.append("packages/base");
+        start_path.append(name + ".cfg");
+        fs::create_directories(start_path.parent_path().make_preferred());
         download_and_filter_config(start_url.str(), start_path, resources);
 
         std::vector<config::Resource> configs;
@@ -287,15 +285,17 @@ namespace resources {
 
     std::string get_command_prefix(std::string command) {
         std::string prefix = "packages";
-        if (command == "map") prefix.append("/base");
-        if (command == "mapsound") prefix.append("/sounds");
-        if (command == "mmodelfile") prefix.append("/models");
+        if (command == "map") prefix += ("/base");
+        if (command == "mapsound") prefix += ("/sounds");
+        if (command == "mmodelfile") prefix += ("/models");
         return prefix;
     }
 
     /// Download all the resources to their specified paths
     void download(std::string url, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
         for (const auto& resource: resources) {
+            // TODO: Support textures like autograss who use <dup:1,0> declaration
+            if (resource.path.empty() || std::regex_search(resource.path, std::regex("<.+>"))) continue;
             std::stringstream resource_url;
             std::string prefix = get_command_prefix(resource.command);
             resource_url << url << "/" << prefix << "/" << resource.path;
@@ -317,6 +317,7 @@ namespace assetbundler {
         std::string url(servercontent);
         std::string server_map(map);
         std::string server_directory(serverdir);
+        std::replace(server_directory.begin(), server_directory.end(), '\\', '/');
         // Initialize resources vector
         std::vector<config::Resource> resources;
         // NOTE: This assumes that curl_global_init has already been called

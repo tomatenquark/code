@@ -521,9 +521,9 @@ namespace game
     void format_servercontent(char* content) {
         if (strstr(content, "http://")) memmove(&content[0], &content[7], strlen(content) - 6);
         if (strstr(content, "https://")) memmove(&content[0], &content[8], strlen(content) - 7);
-#ifdef _WIN32
-        replacechar(content, "/", "\\");
-#endif
+        // Replace characters that would be invalid on Windows FS
+        for (int i = 0; i < strlen(content); i++) if (content[i] == '.') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
+        for (int i = 0; i < strlen(content); i++) if (content[i] == ':') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
     }
 
     void changemapserv(const char *name, int mode)        // forced map change from the server
