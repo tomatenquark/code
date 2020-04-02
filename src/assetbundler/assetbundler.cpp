@@ -57,7 +57,7 @@ namespace download {
         /* Limit the amount of simultaneous connections curl should allow: */
         curl_multi_setopt(cm, CURLMOPT_MAXCONNECTS, (long)max_parallel);
         
-        for(transfers = 0; transfers < std::min(static_cast<int>(sources.size()), max_parallel); transfers++) {
+        for(transfers = 0; transfers < min(static_cast<int>(sources.size()), max_parallel); transfers++) {
             std::string url(sources.at(transfers));
             std::string destination_str(destinations.at(transfers).string()); // copy by value
             const char* dest = destination_str.c_str();
@@ -76,7 +76,7 @@ namespace download {
                    curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &url);
                    fprintf(stderr, "R: %d - %s <%s>\n", msg->data.result, curl_easy_strerror(msg->data.result), url);
                    FILE* handle = handles[url];
-                   fclose(handle);
+                   if (handle) fclose(handle);
                    curl_multi_remove_handle(cm, e);
                    curl_easy_cleanup(e);
                }
