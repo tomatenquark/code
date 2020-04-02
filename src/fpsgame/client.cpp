@@ -543,12 +543,9 @@ namespace game
             format_servercontent(serverdir);
             prependstring(serverdir, homedir);
             assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
-            renderbackground("downloading map...");
-            float download_bar = 0.1f;
+            renderbackground("downloading map... (esc to abort)");
             while (status == DOWNLOAD_PROGRESS) {
-                download_bar = (download_bar < 1.0f) ? (download_bar+0.1f) : 0.1f;
-                defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
-                renderprogress(download_bar, download_text, NULL, true);
+                renderbackground("downloading map... (esc to abort)");
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
