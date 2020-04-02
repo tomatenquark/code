@@ -326,6 +326,11 @@ COMMAND(rdanimjoints, "i");
 
 vector<mapmodelinfo> mapmodels;
 
+void mmodelfile(char *name)
+{
+    logoutf("Declaring %s as a map model file", name);
+}
+
 void mmodel(char *name)
 {
     mapmodelinfo &mmi = mapmodels.add();
@@ -347,6 +352,7 @@ void mapmodelreset(int *n)
 mapmodelinfo *getmminfo(int i) { return mapmodels.inrange(i) ? &mapmodels[i] : 0; }
 const char *mapmodelname(int i) { return mapmodels.inrange(i) ? mapmodels[i].name : NULL; }
 
+COMMAND(mmodelfile, "s");
 COMMAND(mmodel, "s");
 COMMANDN(mapmodel, mapmodelcompat, "iiiss");
 COMMAND(mapmodelreset, "i");
