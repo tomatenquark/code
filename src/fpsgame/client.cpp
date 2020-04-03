@@ -546,6 +546,7 @@ namespace game
             renderbackground("downloading map... (esc to abort)");
             float download_bar = 0.0f;
             while (status == DOWNLOAD_PROGRESS) {
+                if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
                 download_bar = (download_bar < 0.99f) ? download_bar + 0.01f : 0.0f;
                 defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
                 renderprogress(download_bar, download_text);
