@@ -231,7 +231,7 @@ struct rendertarget
             glEnable(GL_SCISSOR_TEST);
         }
 
-        loopi(2)
+        for(int i = 0; i < int(2); i++)
         {
             setblurshader(i, i ? texh : texw, blursize, blurweights, bluroffsets);
 
@@ -428,7 +428,7 @@ struct rendertarget
                       vw = (x-xstart)*vxsz,
                       vh = (yend-y)*vysz;
                 if(flipdebug()) { vy = h - vy; vh = -vh; }
-                loopi(lines ? 1 : 2)
+                for(int i = 0; i < int(lines ? 1 : 2); i++)
                 {
                     if(!lines) gle::colorf(1, 1, i ? 1.0f : 0.5f);
                     gle::begin(lines || i ? GL_LINE_LOOP : GL_TRIANGLE_STRIP);

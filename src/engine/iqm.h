@@ -118,7 +118,7 @@ struct iqm : skelloader<iqm>
             float *vpos = NULL, *vnorm = NULL, *vtan = NULL, *vtc = NULL;
             uchar *vindex = NULL, *vweight = NULL;
             iqmvertexarray *vas = (iqmvertexarray *)&buf[hdr.ofs_vertexarrays];
-            loopi(hdr.num_vertexarrays)
+            for(int i = 0; i < int(hdr.num_vertexarrays); i++)
             {
                 iqmvertexarray &va = vas[i];
                 switch(va.type)
@@ -143,7 +143,7 @@ struct iqm : skelloader<iqm>
                 {
                     skel->numbones = hdr.num_joints;
                     skel->bones = new boneinfo[skel->numbones]; 
-                    loopi(hdr.num_joints)
+                    for(int i = 0; i < int(hdr.num_joints); i++)
                     {
                         iqmjoint &j = joints[i]; 
                         boneinfo &b = skel->bones[i];
@@ -166,7 +166,7 @@ struct iqm : skelloader<iqm>
                     skel->linkchildren();
             }
 
-            loopi(hdr.num_meshes)
+            for(int i = 0; i < int(hdr.num_meshes); i++)
             {
                 iqmmesh &im = imeshes[i];
                 skelmesh *m = new skelmesh;
@@ -260,7 +260,7 @@ struct iqm : skelloader<iqm>
             iqmpose *poses = (iqmpose *)&buf[hdr.ofs_poses];
             iqmanim *anims = (iqmanim *)&buf[hdr.ofs_anims];
             ushort *frames = (ushort *)&buf[hdr.ofs_frames];
-            loopi(hdr.num_anims)
+            for(int i = 0; i < int(hdr.num_anims); i++)
             {
                 iqmanim &a = anims[i];
                 string name;

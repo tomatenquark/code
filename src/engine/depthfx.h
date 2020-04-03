@@ -56,7 +56,7 @@ static struct depthfxtexture : rendertarget
     bool addscissorbox(const vec &bbmin, const vec &bbmax)
     {
         float sx1 = 1, sy1 = 1, sx2 = -1, sy2 = -1;
-        loopi(8)
+        for(int i = 0; i < int(8); i++)
         {
             vec v(i&1 ? bbmax.x : bbmin.x, i&2 ? bbmax.y : bbmin.y, i&4 ? bbmax.z : bbmin.z);
             addscissorvert(v, sx1, sy1, sx2, sy2);
@@ -156,7 +156,7 @@ void binddepthfxparams(float blend, float minblend = 0, bool allow = true, void 
             float select[4] = { 0, 0, 0, 0 };
             if(!depthfxtex.emulatehighprecision())
             {
-                loopi(numdepthfxranges) if(depthfxowners[i]==owner)
+                for(int i = 0; i < int(numdepthfxranges); i++) if(depthfxowners[i]==owner)
                 {
                     select[i] = float(depthfxscale)/blend;
                     scale = 1.0f/blend;

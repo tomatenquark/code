@@ -176,7 +176,7 @@ struct blobrenderer
         int numout = 0;
         const vec *p = &in[numin-1];
         float pc = (*p)[C];
-        loopi(numin)
+        for(int i = 0; i < int(numin); i++)
         {
             const vec &v = in[i];
             float c = v[C];
@@ -208,7 +208,7 @@ struct blobrenderer
         int numout = 0;
         const vec *p = &in[numin-1];
         float pc = (*p)[C];
-        loopi(numin)
+        for(int i = 0; i < int(numin); i++)
         {
             const vec &v = in[i];
             float c = v[C];
@@ -394,7 +394,7 @@ struct blobrenderer
     {
         materialsurface *matbuf = va->matbuf;
         int matsurfs = va->matsurfs;
-        loopi(matsurfs)
+        for(int i = 0; i < int(matsurfs); i++)
         {
             materialsurface &m = matbuf[i];
             if(!isclipped(m.material&MATF_VOLUME) || m.orient == O_BOTTOM) { i += m.skip; continue; }
@@ -419,7 +419,7 @@ struct blobrenderer
 
     void findescaped(cube *cu, const ivec &o, int size, int escaped)
     {
-        loopi(8)
+        for(int i = 0; i < int(8); i++)
         {
             if(escaped&(1<<i))
             {
@@ -437,7 +437,7 @@ struct blobrenderer
     void gentris(cube *cu, const ivec &o, int size, int escaped = 0)
     {
         int overlap = octaboxoverlap(o, size, bbmin, bbmax);
-        loopi(8)
+        for(int i = 0; i < int(8); i++)
         {
             if(overlap&(1<<i))
             {
@@ -715,13 +715,13 @@ void renderblob(int type, const vec &o, float radius, float fade)
 
 void flushblobs()
 {
-    loopi(sizeof(blobs)/sizeof(blobs[0])) blobs[i].flushblobs();
+    for(int i = 0; i < int(sizeof(blobs)/sizeof(blobs[0])); i++) blobs[i].flushblobs();
     if(blobrenderer::lastrender) blobrenderer::cleanuprenderstate();
     blobrenderer::lastrender = NULL;
 }
 
 void cleanupblobs()
 {
-    loopi(sizeof(blobs)/sizeof(blobs[0])) blobs[i].cleanup();
+    for(int i = 0; i < int(sizeof(blobs)/sizeof(blobs[0])); i++) blobs[i].cleanup();
 }
 

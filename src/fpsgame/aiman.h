@@ -20,7 +20,7 @@ namespace aiman
         teams.sort(teamscore::compare);
         if(teams.length() < int(sizeof(defaults)/sizeof(defaults[0])))
         {
-            loopi(sizeof(defaults)/sizeof(defaults[0])) if(teams.htfind(defaults[i]) < 0) teams.add(teamscore(defaults[i], 0));
+            for(int i = 0; i < int(sizeof(defaults)/sizeof(defaults[0])); i++) if(teams.htfind(defaults[i]) < 0) teams.add(teamscore(defaults[i], 0));
         }
     }
 

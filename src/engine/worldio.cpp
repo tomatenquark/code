@@ -6,7 +6,7 @@ void validmapname(char *dst, const char *src, const char *prefix = NULL, const c
 {
     if(prefix) while(*prefix) *dst++ = *prefix++;
     const char *start = dst;
-    if(src) loopi(maxlen)
+    if(src) for(int i = 0; i < int(maxlen); i++)
     {
         char c = *src++;
         if(iscubealnum(c) || c == '_' || c == '-' || c == '/' || c == '\\') *dst++ = c;
@@ -96,7 +96,7 @@ bool loadents(const char *fname, vector<entity> &ents, uint *crc)
         else lilswap(&hdr.numvslots, 1);
     }
 
-    loopi(hdr.numvars)
+    for(int i = 0; i < int(hdr.numvars); i++)
     {
         int type = f->getchar(), ilen = f->getlil<ushort>();
         f->seek(ilen, SEEK_CUR);
@@ -139,7 +139,7 @@ bool loadents(const char *fname, vector<entity> &ents, uint *crc)
         f->seek(nummru*sizeof(ushort), SEEK_CUR);
     }
 
-    loopi(min(hdr.numents, MAXENTS))
+    for(int i = 0; i < int(min(hdr.numents, MAXENTS)); i++)
     {
         entity &e = ents.add();
         f->read(&e, sizeof(entity));
@@ -219,7 +219,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
 {
     if((savemapprogress++&0xFFF)==0) renderprogress(float(savemapprogress)/allocnodes, "saving octree...");
 
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         ivec co(i, o, size);
         if(c[i].children)
@@ -399,7 +399,7 @@ void convertoldsurfaces(cube &c, const ivec &co, int size, surfacecompat *srcsur
     vertinfo verts[6*2*MAXFACEVERTS];
     int totalverts = 0, numsurfs = 6;
     memset(dstsurfs, 0, sizeof(dstsurfs));
-    loopi(6) if((hassurfs|hasnorms|hasmerges)&(1<<i))
+    for(int i = 0; i < int(6); i++) if((hassurfs|hasnorms|hasmerges)&(1<<i))
     {
         surfaceinfo &dst = dstsurfs[i];
         vertinfo *curverts = NULL;
@@ -514,7 +514,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
         case OCTSAV_NORMAL: f->read(c.edges, 12); break;
         default: failed = true; return;
     }
-    loopi(6) c.texture[i] = mapversion<14 ? f->getchar() : f->getlil<ushort>();
+    for(int i = 0; i < int(6); i++) c.texture[i] = mapversion<14 ? f->getchar() : f->getlil<ushort>();
     if(mapversion < 7) f->seek(3, SEEK_CUR);
     else if(mapversion <= 31)
     {
@@ -536,7 +536,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
         if(mask & 0x3F)
         {
             int numsurfs = 6;
-            loopi(numsurfs)
+            for(int i = 0; i < int(numsurfs); i++)
             {
                 if(i >= 6 || mask & (1 << i))
                 {
@@ -587,7 +587,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
                     if(mask)
                     {
                         hasmerges = mask&0x3F;
-                        loopi(6) if(mask&(1<<i))
+                        for(int i = 0; i < int(6); i++) if(mask&(1<<i))
                         {
                             mergecompat *m = &merges[i];
                             f->read(m, sizeof(mergecompat));
@@ -629,7 +629,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
             memset(c.ext->surfaces, 0, sizeof(c.ext->surfaces));
             memset(c.ext->verts(), 0, totalverts*sizeof(vertinfo));
             int offset = 0;
-            loopi(6) if(surfmask&(1<<i)) 
+            for(int i = 0; i < int(6); i++) if(surfmask&(1<<i))
             {
                 surfaceinfo &surf = c.ext->surfaces[i];
                 f->read(&surf, sizeof(surfaceinfo));
@@ -728,7 +728,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
 cube *loadchildren(stream *f, const ivec &co, int size, bool &failed)
 {
     cube *c = newcubes();
-    loopi(8) 
+    for(int i = 0; i < int(8); i++)
     {
         loadc(f, c[i], ivec(i, co, size), size, failed);
         if(failed) break;
@@ -782,7 +782,7 @@ void savevslots(stream *f, int numvslots)
     if(vslots.empty()) return;
     int *prev = new int[numvslots];
     memset(prev, -1, numvslots*sizeof(int));
-    loopi(numvslots)
+    for(int i = 0; i < int(numvslots); i++)
     {
         VSlot *vs = vslots[i];
         if(vs->changed) continue;
@@ -795,7 +795,7 @@ void savevslots(stream *f, int numvslots)
         } 
     }
     int lastroot = 0;
-    loopi(numvslots)
+    for(int i = 0; i < int(numvslots); i++)
     {
         VSlot &vs = *vslots[i];
         if(!vs.changed) continue;
@@ -814,7 +814,7 @@ void loadvslot(stream *f, VSlot &vs, int changed)
     {
         int numparams = f->getlil<ushort>();
         string name;
-        loopi(numparams)
+        for(int i = 0; i < int(numparams); i++)
         {
             SlotShaderParam &p = vs.params.add();
             int nlen = f->getlil<ushort>();
@@ -860,7 +860,7 @@ void loadvslots(stream *f, int numvslots)
         int changed = f->getlil<int>();
         if(changed < 0)
         {
-            loopi(-changed) vslots.add(new VSlot(NULL, vslots.length()));
+            for(int i = 0; i < int(-changed); i++) vslots.add(new VSlot(NULL, vslots.length()));
             numvslots += changed;
         }
         else
@@ -1075,7 +1075,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     renderprogress(0, "loading vars...");
     char *skybox; // Read skybox separately as it could be overriden by config
 
-    loopi(hdr.numvars)
+    for(int i = 0; i < int(hdr.numvars); i++)
     {
         int type = f->getchar(), ilen = f->getlil<ushort>();
         string name;
@@ -1154,12 +1154,12 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     {
         uchar oldtl[256];
         f->read(oldtl, sizeof(oldtl));
-        loopi(256) texmru.add(oldtl[i]);
+        for(int i = 0; i < int(256); i++) texmru.add(oldtl[i]);
     }
     else
     {
         ushort nummru = f->getlil<ushort>();
-        loopi(nummru) texmru.add(f->getlil<ushort>());
+        for(int i = 0; i < int(nummru); i++) texmru.add(f->getlil<ushort>());
     }
 
     renderprogress(0, "loading entities...");
@@ -1167,7 +1167,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     vector<extentity *> &ents = entities::getents();
     int einfosize = entities::extraentinfosize();
     char *ebuf = einfosize > 0 ? new char[einfosize] : NULL;
-    loopi(min(hdr.numents, MAXENTS))
+    for(int i = 0; i < int(min(hdr.numents, MAXENTS)); i++)
     {
         extentity &e = *entities::newentity();
         ents.add(&e);
@@ -1224,7 +1224,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
 
     if(!failed)
     {
-        if(hdr.version >= 7) loopi(hdr.lightmaps)
+        if(hdr.version >= 7) for(int i = 0; i < int(hdr.lightmaps); i++)
         {
             renderprogress(i/(float)hdr.lightmaps, "loading lightmaps...");
             LightMap &lm = lightmaps.add();

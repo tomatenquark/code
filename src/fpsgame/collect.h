@@ -238,7 +238,7 @@ struct collectclientmode : clientmode
         putint(p, int(ci->state.o.y*DMF));
         putint(p, int(ci->state.o.z*DMF));
         int numdrops = 1 + (penalty ? 0 : ci->state.tokens), yaw = rnd(360);
-        loopi(numdrops)
+        for(int i = 0; i < int(numdrops); i++)
         {
             token &t = droptoken(ci->state.o, yaw + (i*360)/numdrops, !i ? team : -team, lastmillis, ci->clientnum); 
             putint(p, t.id);
@@ -387,7 +387,7 @@ struct collectclientmode : clientmode
     void parsebases(ucharbuf &p, bool commit)
     {
         int numbases = getint(p);
-        loopi(numbases)
+        for(int i = 0; i < int(numbases); i++)
         {
             int team = getint(p);
             vec o;
@@ -414,7 +414,7 @@ struct collectclientmode : clientmode
         preloadmodel("skull/red");
         preloadmodel("skull/blue");
         static const int sounds[] = { S_FLAGDROP, S_FLAGSCORE, S_FLAGFAIL };
-        loopi(sizeof(sounds)/sizeof(sounds[0])) preloadsound(sounds[i]);
+        for(int i = 0; i < int(sizeof(sounds)/sizeof(sounds[0])); i++) preloadsound(sounds[i]);
     }
 
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, float size = 0.05f)
@@ -609,7 +609,7 @@ struct collectclientmode : clientmode
             if(commit) scores[k] = score;
         }
         int numtokens = getint(p);
-        loopi(numtokens)
+        for(int i = 0; i < int(numtokens); i++)
         {
             int id = getint(p), team = getint(p), yaw = getint(p);
             vec o;

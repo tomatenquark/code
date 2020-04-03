@@ -483,7 +483,7 @@ struct ctfclientmode : clientmode
     void parseflags(ucharbuf &p, bool commit)
     {
         int numflags = getint(p);
-        loopi(numflags)
+        for(int i = 0; i < int(numflags); i++)
         {
             int team = getint(p);
             vec o;
@@ -512,7 +512,7 @@ struct ctfclientmode : clientmode
             preloadmodel("flags/blue");
         }
         static const int sounds[] = { S_FLAGPICKUP, S_FLAGDROP, S_FLAGRETURN, S_FLAGSCORE, S_FLAGRESET, S_FLAGFAIL };
-        loopi(sizeof(sounds)/sizeof(sounds[0])) preloadsound(sounds[i]);
+        for(int i = 0; i < int(sizeof(sounds)/sizeof(sounds[0])); i++) preloadsound(sounds[i]);
     }
 
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, bool flagblip)
@@ -776,7 +776,7 @@ struct ctfclientmode : clientmode
             if(commit) scores[k] = score;
         }
         int numflags = getint(p);
-        loopi(numflags)
+        for(int i = 0; i < int(numflags); i++)
         {
             int version = getint(p), spawn = getint(p), owner = getint(p), invis = getint(p), dropped = 0, holdteam = -1, holdtime = 0;
             vec droploc(0, 0, 0);
@@ -1130,7 +1130,7 @@ struct ctfclientmode : clientmode
 				bool home = !m_hold && f.team == ctfteamflag(d->team);
 				ai::checkothers(targets, d, home ? ai::AI_S_DEFEND : ai::AI_S_PURSUE, ai::AI_T_AFFINITY, j, true);
 				fpsent *e = NULL;
-				loopi(numdynents()) if((e = (fpsent *)iterdynents(i)) && !e->ai && e->state == CS_ALIVE && isteam(d->team, e->team))
+				for(int i = 0; i < int(numdynents()); i++) if((e = (fpsent *)iterdynents(i)) && !e->ai && e->state == CS_ALIVE && isteam(d->team, e->team))
 				{ // try to guess what non ai are doing
 					vec ep = e->feetpos();
 					if(targets.find(e->clientnum) < 0 && (ep.squaredist(f.pos()) <= (FLAGRADIUS*FLAGRADIUS*4) || f.owner == e))
@@ -1210,7 +1210,7 @@ struct ctfclientmode : clientmode
 				targets.setsize(0);
 				ai::checkothers(targets, d, ai::AI_S_DEFEND, ai::AI_T_AFFINITY, b.target, true);
 				fpsent *e = NULL;
-				loopi(numdynents()) if((e = (fpsent *)iterdynents(i)) && !e->ai && e->state == CS_ALIVE && isteam(d->team, e->team))
+				for(int i = 0; i < int(numdynents()); i++) if((e = (fpsent *)iterdynents(i)) && !e->ai && e->state == CS_ALIVE && isteam(d->team, e->team))
 				{ // try to guess what non ai are doing
 					vec ep = e->feetpos();
 					if(targets.find(e->clientnum) < 0 && (ep.squaredist(f.pos()) <= (FLAGRADIUS*FLAGRADIUS*4) || f.owner == e))

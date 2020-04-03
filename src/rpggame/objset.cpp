@@ -15,7 +15,7 @@ namespace game
     void resetstack()
     {
         stack.setsize(0);
-        loopi(10) stack.add(playerobj);     // determines the stack depth    
+        for(int i = 0; i < int(10); i++) stack.add(playerobj);     // determines the stack depth
     }
     
     void clearworld()

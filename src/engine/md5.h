@@ -55,7 +55,7 @@ struct md5 : skelloader<md5>
 
         void buildverts(vector<md5joint> &joints)
         {
-            loopi(numverts)
+            for(int i = 0; i < int(numverts); i++)
             {
                 md5vert &v = vertinfo[i];
                 vec pos(0, 0, 0);

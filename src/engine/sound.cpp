@@ -326,7 +326,7 @@ template<class T> static void scalewav(T* dst, T* src, size_t len, int scale)
     else for(; src < end; src++)
     {
         T s = src[0];
-        loopi(scale) *dst++ = s;
+        for(int i = 0; i < int(scale); i++) *dst++ = s;
     }
 }
 
@@ -412,7 +412,7 @@ bool soundsample::load(bool msg)
 
     static const char * const exts[] = { "", ".wav", ".ogg" };
     string filename;
-    loopi(sizeof(exts)/sizeof(exts[0]))
+    for(int i = 0; i < int(sizeof(exts)/sizeof(exts[0])); i++)
     {
         formatstring(filename, "packages/sounds/%s%s", name, exts[i]);
         if(msg && !i) renderprogress(0, filename);

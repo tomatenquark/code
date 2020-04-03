@@ -233,20 +233,20 @@ ENetPacket *sendf(int cn, int chan, const char *format, ...)
         {
             int n = va_arg(args, int);
             int *v = va_arg(args, int *);
-            loopi(n) putint(p, v[i]);
+            for(int i = 0; i < int(n); i++) putint(p, v[i]);
             break;
         }
 
         case 'i': 
         {
             int n = isdigit(*format) ? *format++-'0' : 1;
-            loopi(n) putint(p, va_arg(args, int));
+            for(int i = 0; i < int(n); i++) putint(p, va_arg(args, int));
             break;
         }
         case 'f':
         {
             int n = isdigit(*format) ? *format++-'0' : 1;
-            loopi(n) putfloat(p, (float)va_arg(args, double));
+            for(int i = 0; i < int(n); i++) putfloat(p, (float)va_arg(args, double));
             break;
         }
         case 's': sendstring(va_arg(args, const char *), p); break;
@@ -284,7 +284,7 @@ ENetPacket *sendfile(int cn, int chan, stream *file, const char *format, ...)
         case 'i':
         {
             int n = isdigit(*format) ? *format++-'0' : 1;
-            loopi(n) putint(p, va_arg(args, int));
+            for(int i = 0; i < int(n); i++) putint(p, va_arg(args, int));
             break;
         }
         case 's': sendstring(va_arg(args, const char *), p); break;
@@ -554,7 +554,7 @@ void checkserversockets()        // reply all server info requests
 
     ENetBuffer buf;
     uchar pong[MAXTRANS];
-    loopi(2)
+    for(int i = 0; i < int(2); i++)
     {
         ENetSocket sock = i ? lansock : pongsock;
         if(sock == ENET_SOCKET_NULL || !ENET_SOCKETSET_CHECK(readset, sock)) continue;

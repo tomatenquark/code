@@ -12,7 +12,7 @@ FVAR(lnblendpower, 0, 0.25f, 1000);
 
 static void calclightningjitter(int frame)
 {
-    loopi(MAXLIGHTNINGSTEPS)
+    for(int i = 0; i < int(MAXLIGHTNINGSTEPS); i++)
     {
         lnjitterx[lnjitterframe][i] = -lnjitterradius + rnd(2*lnjitterradius + 1);
         lnjittery[lnjitterframe][i] = -lnjitterradius + rnd(2*lnjitterradius + 1);

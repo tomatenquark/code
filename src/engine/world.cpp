@@ -429,10 +429,10 @@ undoblock *copyundoents(undoblock *u)
 {
     entcancel();
     undoent *e = u->ents();
-    loopi(u->numents)
+    for(int i = 0; i < int(u->numents); i++)
         entadd(e[i].i);
     undoblock *c = newundoent();
-   	loopi(u->numents) if(e[i].e.type==ET_EMPTY)
+   	for(int i = 0; i < int(u->numents); i++) if(e[i].e.type==ET_EMPTY)
 		entgroup.removeobj(e[i].i);
     return c;
 }
@@ -449,7 +449,7 @@ void pasteundoent(int idx, const entity &ue)
 void pasteundoents(undoblock *u)
 {
     undoent *ue = u->ents();
-    loopi(u->numents)
+    for(int i = 0; i < int(u->numents); i++)
         entedit(ue[i].i, (entity &)e = ue[i].e);
 }
 
@@ -551,7 +551,7 @@ void renderentring(const extentity &e, float radius, int axis)
     if(radius <= 0) return;
     gle::defvertex();
     gle::begin(GL_LINE_LOOP);
-    loopi(15)
+    for(int i = 0; i < int(15); i++)
     {
         vec p(e.o);
         const vec2 &sc = sincos360[i*(360/15)];
@@ -596,7 +596,7 @@ void renderentarrow(const extentity &e, const vec &dir, float radius)
 
     gle::begin(GL_TRIANGLE_FAN);
     gle::attrib(target);
-    loopi(5) gle::attrib(vec(spoke).rotate(2*M_PI*i/4.0f, dir).add(arrowbase));
+    for(int i = 0; i < int(5); i++) gle::attrib(vec(spoke).rotate(2*M_PI*i/4.0f, dir).add(arrowbase));
     xtraverts += gle::end();
 }
 
@@ -611,7 +611,7 @@ void renderentcone(const extentity &e, const vec &dir, float radius, float angle
     gle::defvertex();
 
     gle::begin(GL_LINES);
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         gle::attrib(e.o);
         gle::attrib(vec(spoke).rotate(2*M_PI*i/8.0f, dir).add(spot));
@@ -619,7 +619,7 @@ void renderentcone(const extentity &e, const vec &dir, float radius, float angle
     xtraverts += gle::end();
 
     gle::begin(GL_LINE_LOOP);
-    loopi(8) gle::attrib(vec(spoke).rotate(2*M_PI*i/8.0f, dir).add(spot));
+    for(int i = 0; i < int(8); i++) gle::attrib(vec(spoke).rotate(2*M_PI*i/8.0f, dir).add(spot));
     xtraverts += gle::end();
 }
 
@@ -1206,7 +1206,7 @@ void findplayerspawn(dynent *d, int forceent, int tag)
 void splitocta(cube *c, int size)
 {
     if(size <= 0x1000) return;
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         if(!c[i].children) c[i].children = newcubes(isempty(c[i]) ? F_EMPTY : F_SOLID);
         splitocta(c[i].children, size>>1);
@@ -1254,7 +1254,7 @@ bool emptymap(int scale, bool force, const char *mname, bool usecfg)    // main 
     texmru.shrink(0);
     freeocta(worldroot);
     worldroot = newcubes(F_EMPTY);
-    loopi(4) solidfaces(worldroot[i]);
+    for(int i = 0; i < int(4); i++) solidfaces(worldroot[i]);
 
     if(worldsize > 0x1000) splitocta(worldroot, worldsize>>1);
 
@@ -1290,7 +1290,7 @@ bool enlargemap(bool force)
     worldsize *= 2;
     cube *c = newcubes(F_EMPTY);
     c[0].children = worldroot;
-    loopi(3) solidfaces(c[i+1]);
+    for(int i = 0; i < int(3); i++) solidfaces(c[i+1]);
     worldroot = c;
 
     if(worldsize > 0x1000) splitocta(worldroot, worldsize>>1);
@@ -1305,7 +1305,7 @@ bool enlargemap(bool force)
 static bool isallempty(cube &c)
 {
     if(!c.children) return isempty(c);
-    loopi(8) if(!isallempty(c.children[i])) return false;
+    for(int i = 0; i < int(8); i++) if(!isallempty(c.children[i])) return false;
     return true;
 }
 
@@ -1316,7 +1316,7 @@ void shrinkmap()
     if(worldsize <= 1<<10) return;
 
     int octant = -1;
-    loopi(8) if(!isallempty(worldroot[i]))
+    for(int i = 0; i < int(8); i++) if(!isallempty(worldroot[i]))
     {
         if(octant >= 0) return;
         octant = i;

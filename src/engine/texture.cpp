@@ -14,7 +14,7 @@ template<int BPP> static void halvetexture(uchar * RESTRICT src, uint sw, uint s
     {
         for(uchar *xend = &src[sw*BPP], *xsrc = src; xsrc < xend; xsrc += 2*BPP, dst += BPP)
         {
-            loopi(BPP) dst[i] = (uint(xsrc[i]) + uint(xsrc[i+BPP]) + uint(xsrc[stride+i]) + uint(xsrc[stride+i+BPP]))>>2;
+            for(int i = 0; i < int(BPP); i++) dst[i] = (uint(xsrc[i]) + uint(xsrc[i+BPP]) + uint(xsrc[stride+i]) + uint(xsrc[stride+i+BPP]))>>2;
         }
         src += 2*stride;
     }
@@ -36,9 +36,9 @@ template<int BPP> static void shifttexture(uchar * RESTRICT src, uint sw, uint s
                 ycur += stride, xend += stride)
             {
                 for(uchar *xcur = ycur; xcur < xend; xcur += BPP)
-                    loopi(BPP) t[i] += xcur[i];
+                    for(int i = 0; i < int(BPP); i++) t[i] += xcur[i];
             }
-            loopi(BPP) dst[i] = t[i] >> tshift;
+            for(int i = 0; i < int(BPP); i++) dst[i] = t[i] >> tshift;
         }
         src += hfrac*stride;
     }
@@ -66,8 +66,8 @@ template<int BPP> static void scaletexture(uchar * RESTRICT src, uint sw, uint s
             const uchar *xsrc = &ysrc[xi*BPP], *xend = &xsrc[w*BPP];
             uint t[BPP] = {0};
             for(const uchar *xcur = &xsrc[BPP]; xcur < xend; xcur += BPP)
-                loopi(BPP) t[i] += xcur[i];
-            loopi(BPP) t[i] = (ylow*(t[i] + ((xsrc[i]*xlow + xend[i]*xhigh)>>12)))>>cscale;
+                for(int i = 0; i < int(BPP); i++) t[i] += xcur[i];
+            for(int i = 0; i < int(BPP); i++) t[i] = (ylow*(t[i] + ((xsrc[i]*xlow + xend[i]*xhigh)>>12)))>>cscale;
             if(h)
             {
                 xsrc += stride;
@@ -76,15 +76,15 @@ template<int BPP> static void scaletexture(uchar * RESTRICT src, uint sw, uint s
                 {
                     uint c[BPP] = {0};
                     for(const uchar *xcur = &xsrc[BPP]; xcur < xend; xcur += BPP)
-                        loopi(BPP) c[i] += xcur[i];
-                    loopi(BPP) t[i] += ((c[i]<<12) + xsrc[i]*xlow + xend[i]*xhigh)>>cscale;
+                        for(int i = 0; i < int(BPP); i++) c[i] += xcur[i];
+                    for(int i = 0; i < int(BPP); i++) t[i] += ((c[i]<<12) + xsrc[i]*xlow + xend[i]*xhigh)>>cscale;
                 }
                 uint c[BPP] = {0};
                 for(const uchar *xcur = &xsrc[BPP]; xcur < xend; xcur += BPP)
-                    loopi(BPP) c[i] += xcur[i];
-                loopi(BPP) t[i] += (yhigh*(c[i] + ((xsrc[i]*xlow + xend[i]*xhigh)>>12)))>>cscale;
+                    for(int i = 0; i < int(BPP); i++) c[i] += xcur[i];
+                for(int i = 0; i < int(BPP); i++) t[i] += (yhigh*(c[i] + ((xsrc[i]*xlow + xend[i]*xhigh)>>12)))>>cscale;
             }
-            loopi(BPP) dst[i] = (t[i] * area)>>dscale;
+            for(int i = 0; i < int(BPP); i++) dst[i] = (t[i] * area)>>dscale;
         }
     }
 }
@@ -130,7 +130,7 @@ static void reorientnormals(uchar * RESTRICT src, int sw, int sh, int bpp, int s
     if(flipx) { dst += (sw-1)*stridex; stridex = -stridex; }
     if(flipy) { dst += (sh-1)*stridey; stridey = -stridey; }
     uchar *srcrow = src;
-    loopi(sh)
+    for(int i = 0; i < int(sh); i++)
     {
         for(uchar *curdst = dst, *src = srcrow, *end = &srcrow[sw*bpp]; src < end;)
         {
@@ -157,7 +157,7 @@ static inline void reorienttexture(uchar * RESTRICT src, int sw, int sh, int str
     if(flipx) { dst += (sw-1)*stridex; stridex = -stridex; }
     if(flipy) { dst += (sh-1)*stridey; stridey = -stridey; }
     uchar *srcrow = src;
-    loopi(sh)
+    for(int i = 0; i < int(sh); i++)
     {
         for(uchar *curdst = dst, *src = srcrow, *end = &srcrow[sw*BPP]; src < end;)
         {
@@ -186,7 +186,7 @@ static void reorients3tc(GLenum format, int blocksize, int w, int h, uchar *src,
     if(swapxy) stridex *= bw; else stridey *= bh;
     if(flipx) { dst += (bw-1)*stridex; stridex = -stridex; bx1 += 4-bx2; bx2 = 4; }
     if(flipy) { dst += (bh-1)*stridey; stridey = -stridey; by1 += 4-by2; by2 = 4; }
-    loopi(bh)
+    for(int i = 0; i < int(bh); i++)
     {
         for(uchar *curdst = dst, *end = &src[bw*blocksize]; src < end; src += blocksize, curdst += stridex)
         {
@@ -271,7 +271,7 @@ static void reorientrgtc(GLenum format, int blocksize, int w, int h, uchar *src,
     if(flipx) { dst += (bw-1)*stridex; stridex = -stridex; bx1 += 4-bx2; bx2 = 4; }
     if(flipy) { dst += (bh-1)*stridey; stridey = -stridey; by1 += 4-by2; by2 = 4; }
     stridex -= blocksize;
-    loopi(bh)
+    for(int i = 0; i < int(bh); i++)
     {
         for(uchar *curdst = dst, *end = &src[bw*blocksize]; src < end; curdst += stridex)
         {
@@ -408,7 +408,7 @@ void texreorient(ImageData &s, bool flipx, bool flipy, bool swapxy, int type = T
     case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
         {
             uchar *dst = d.data, *src = s.data;
-            loopi(s.levels)
+            for(int i = 0; i < int(s.levels); i++)
             {
                 reorients3tc(s.compressed, s.bpp, max(s.w>>i, 1), max(s.h>>i, 1), src, dst, flipx, flipy, swapxy, type==TEX_NORMAL);
                 src += s.calclevelsize(i);
@@ -422,7 +422,7 @@ void texreorient(ImageData &s, bool flipx, bool flipy, bool swapxy, int type = T
     case GL_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT:
         {
             uchar *dst = d.data, *src = s.data;
-            loopi(s.levels)
+            for(int i = 0; i < int(s.levels); i++)
             {
                 reorientrgtc(s.compressed, s.bpp, max(s.w>>i, 1), max(s.h>>i, 1), src, dst, flipx, flipy, swapxy);
                 src += s.calclevelsize(i);
@@ -717,7 +717,7 @@ void uploadtexture(GLenum target, GLenum internal, int tw, int th, GLenum format
         {
             row = 0;
             buf = new uchar[tw*th*bpp];
-            loopi(th) memcpy(&buf[i*tw*bpp], &((uchar *)pixels)[i*pitch], tw*bpp);
+            for(int i = 0; i < int(th); i++) memcpy(&buf[i*tw*bpp], &((uchar *)pixels)[i*pitch], tw*bpp);
         }
     }
     for(int level = 0, align = 0;; level++)
@@ -745,7 +745,7 @@ void uploadcompressedtexture(GLenum target, GLenum subtarget, GLenum format, int
     int hwlimit = target==GL_TEXTURE_CUBE_MAP ? hwcubetexsize : hwtexsize,
         sizelimit = levels > 1 && maxtexsize ? min(maxtexsize, hwlimit) : hwlimit;
     int level = 0;
-    loopi(levels)
+    for(int i = 0; i < int(levels); i++)
     {
         int size = ((w + align-1)/align) * ((h + align-1)/align) * blocksize;
         if(w <= sizelimit && h <= sizelimit)
@@ -1049,7 +1049,7 @@ static Texture *newtexture(Texture *t, const char *rname, ImageData &s, int clam
     {
         uchar *data = s.data;
         int levels = s.levels, level = 0;
-        if(canreduce && texreduce) loopi(min(texreduce, s.levels-1))
+        if(canreduce && texreduce) for(int i = 0; i < int(min(texreduce, s.levels-1)); i++)
         {
             data += s.calclevelsize(level++);
             levels--;
@@ -1120,7 +1120,7 @@ bool checkgrayscale(SDL_Surface *s)
     {
         if(s->format->palette->ncolors != 256 || SDL_GetColorKey(s, NULL) >= 0) return false;
         const SDL_Color *colors = s->format->palette->colors;
-        loopi(256) if(colors[i].r != i || colors[i].g != i || colors[i].b != i) return false;
+        for(int i = 0; i < int(256); i++) if(colors[i].r != i || colors[i].g != i || colors[i].b != i) return false;
     }
     return true;
 }
@@ -1155,7 +1155,7 @@ void texflip(ImageData &s)
 {
     ImageData d(s.w, s.h, s.bpp);
     uchar *dst = d.data, *src = &s.data[s.pitch*s.h];
-    loopi(s.h)
+    for(int i = 0; i < int(s.h); i++)
     {
         src -= s.pitch;
         memcpy(dst, src, s.bpp*s.w);
@@ -1282,7 +1282,7 @@ void blurnormals(int n, int w, int h, bvec *dst, const bvec *src, int margin)
 void texblur(ImageData &s, int n, int r)
 {
     if(s.bpp < 3) return;
-    loopi(r)
+    for(int i = 0; i < int(r); i++)
     {
         ImageData d(s.w, s.h, s.bpp);
         blurtexture(n, s.bpp, s.w, s.h, d.data, s.data);
@@ -1380,7 +1380,7 @@ static bool texturedata(ImageData &d, const char *tname, Slot::Tex *tex = NULL, 
             if(!end) break; \
             cmds = strchr(cmd, '<'); \
             size_t len = strcspn(cmd, ":,><"); \
-            loopi(4) \
+            for(int i = 0; i < int(4); i++) \
             { \
                 arg[i] = strchr(i ? arg[i-1] : cmd, i ? ',' : ':'); \
                 if(!arg[i] || arg[i] >= end) arg[i] = ""; \
@@ -1548,7 +1548,7 @@ COMMAND(texturereset, "i");
 void materialreset()
 {
     if(!(identflags&IDF_OVERRIDDEN) && !game::allowedittoggle()) return;
-    loopi((MATF_VOLUME|MATF_INDEX)+1) materialslots[i].reset();
+    for(int i = 0; i < int((MATF_VOLUME|MATF_INDEX)+1); i++) materialslots[i].reset();
 }
 
 COMMAND(materialreset, "");
@@ -1561,7 +1561,7 @@ void clearslots()
     resetslotshader();
     slots.deletecontents();
     vslots.deletecontents();
-    loopi((MATF_VOLUME|MATF_INDEX)+1) materialslots[i].reset();
+    for(int i = 0; i < int((MATF_VOLUME|MATF_INDEX)+1); i++) materialslots[i].reset();
     clonedvslots = 0;
 }
 
@@ -1600,7 +1600,7 @@ void compactvslot(VSlot &vs)
 void compactvslots(cube *c, int n)
 {
     if((compactvslotsprogress++&0xFFF)==0) renderprogress(min(float(compactvslotsprogress)/allocnodes, 1.0f), markingvslots ? "marking slots..." : "compacting slots...");
-    loopi(n)
+    for(int i = 0; i < int(n); i++)
     {
         if(c[i].children) compactvslots(c[i].children);
         else loopj(6) if(vslots.inrange(c[i].texture[j]))
@@ -1907,7 +1907,7 @@ bool unpackvslot(ucharbuf &buf, VSlot &dst, bool delta)
                 string name;
                 getstring(name, buf);
                 SlotShaderParam p = { name[0] ? getshaderparamname(name) : NULL, -1, { 0, 0, 0, 0 } };
-                loopi(4) p.val[i] = getfloat(buf);
+                for(int i = 0; i < int(4); i++) p.val[i] = getfloat(buf);
                 if(p.name) dst.params.add(p);
                 break;
             }
@@ -1996,7 +1996,7 @@ VSlot *editvslot(const VSlot &src, const VSlot &delta)
 
 static void fixinsidefaces(cube *c, const ivec &o, int size, int tex)
 {
-    loopi(8) 
+    for(int i = 0; i < int(8); i++)
     {
         ivec co(i, o, size);
         if(c[i].children) fixinsidefaces(c[i].children, co, size>>1, tex);
@@ -2032,7 +2032,7 @@ const struct slottex
 
 int findslottex(const char *name)
 {
-    loopi(sizeof(slottexs)/sizeof(slottex))
+    for(int i = 0; i < int(sizeof(slottexs)/sizeof(slottex)); i++)
     {
         if(!strcmp(slottexs[i].name, name)) return slottexs[i].id;
     }
@@ -2322,7 +2322,7 @@ void linkslotshaders()
 {
     loopv(slots) if(slots[i]->loaded) linkslotshader(*slots[i]);
     loopv(vslots) if(vslots[i]->linked) linkvslotshader(*vslots[i]);
-    loopi((MATF_VOLUME|MATF_INDEX)+1) if(materialslots[i].loaded) 
+    for(int i = 0; i < int((MATF_VOLUME|MATF_INDEX)+1); i++) if(materialslots[i].loaded)
     {
         linkslotshader(materialslots[i]);
         linkvslotshader(materialslots[i]);
@@ -2443,7 +2443,7 @@ void forcecubemapload(GLuint tex)
     gle::deftexcoord0(3);
     gle::defcolor(4);
     gle::begin(GL_LINES);
-    loopi(2)
+    for(int i = 0; i < int(2); i++)
     {
         gle::attribf(i*1e-3f, 0);
         gle::attribf(0, 0, 1);
@@ -2485,7 +2485,7 @@ Texture *cubemaploadwildcard(Texture *t, const char *name, bool mipit, bool msg,
     string sname;
     if(!wildcard) copystring(sname, tname);
     int tsize = 0, compress = 0;
-    loopi(6)
+    for(int i = 0; i < int(6); i++)
     {
         if(wildcard)
         {
@@ -2529,7 +2529,7 @@ Texture *cubemaploadwildcard(Texture *t, const char *name, bool mipit, bool msg,
         t->bpp = surface[0].bpp;
         if(hasTRG && !hasTSW && swizzlemask(format))
         {
-            loopi(6) swizzleimage(surface[i]);
+            for(int i = 0; i < int(6); i++) swizzleimage(surface[i]);
             format = texformat(surface[0].bpp, true);
             t->bpp = surface[0].bpp;
         }
@@ -2550,7 +2550,7 @@ Texture *cubemaploadwildcard(Texture *t, const char *name, bool mipit, bool msg,
         }
     }
     glGenTextures(1, &t->id);
-    loopi(6)
+    for(int i = 0; i < int(6); i++)
     {
         ImageData &s = surface[i];
         const cubemapside &side = cubemapsides[i];
@@ -2637,7 +2637,7 @@ GLuint genenvmap(const vec &o, int envmapsize, int blur)
     float yaw = 0, pitch = 0;
     uchar *pixels = new uchar[3*rendersize*rendersize*2];
     glPixelStorei(GL_PACK_ALIGNMENT, texalign(pixels, rendersize, 3));
-    loopi(6)
+    for(int i = 0; i < int(6); i++)
     {
         const cubemapside &side = cubemapsides[i];
         switch(side.target)
@@ -2780,7 +2780,7 @@ void cleanuptextures()
     clearenvmaps();
     loopv(slots) slots[i]->cleanup();
     loopv(vslots) vslots[i]->cleanup();
-    loopi((MATF_VOLUME|MATF_INDEX)+1) materialslots[i].cleanup();
+    for(int i = 0; i < int((MATF_VOLUME|MATF_INDEX)+1); i++) materialslots[i].cleanup();
     enumerate(textures, Texture, tex, cleanuptexture(&tex));
 }
 
@@ -3279,7 +3279,7 @@ void savepng(const char *filename, ImageData &image, bool flip)
     z.next_out = (Bytef *)buf;
     z.avail_out = sizeof(buf);
 
-    loopi(image.h)
+    for(int i = 0; i < int(image.h); i++)
     {
         uchar filter = 0;
         loopj(2)
@@ -3371,7 +3371,7 @@ void savetga(const char *filename, ImageData &image, bool flip)
     f->write(&hdr, sizeof(hdr));
 
     uchar buf[128*4];
-    loopi(image.h)
+    for(int i = 0; i < int(image.h); i++)
     {
         uchar *src = image.data + (flip ? i : image.h - i - 1)*image.pitch;
         for(int remaining = image.w; remaining > 0;)
@@ -3437,7 +3437,7 @@ const char *imageexts[NUMIMG] = { ".bmp", ".tga", ".png", ".jpg" };
 int guessimageformat(const char *filename, int format = IMG_BMP)
 {
     int len = strlen(filename);
-    loopi(NUMIMG)
+    for(int i = 0; i < int(NUMIMG); i++)
     {
         int extlen = strlen(imageexts[i]);
         if(len >= extlen && !strcasecmp(&filename[len-extlen], imageexts[i])) return i;

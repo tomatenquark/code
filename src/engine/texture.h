@@ -141,7 +141,7 @@ struct Shader
 
     Shader() : name(NULL), vsstr(NULL), psstr(NULL), defer(NULL), type(SHADER_DEFAULT), program(0), vsobj(0), psobj(0), detailshader(NULL), variantshader(NULL), altshader(NULL), variantrows(NULL), standard(false), forced(false), used(false), reusevs(NULL), reuseps(NULL), owner(NULL)
     {
-        loopi(MAXSHADERDETAIL) fastshader[i] = this;
+        for(int i = 0; i < int(MAXSHADERDETAIL); i++) fastshader[i] = this;
     }
 
     ~Shader()
@@ -490,7 +490,7 @@ struct ImageData
         if(!align) return w*h*bpp;
         int lw = w, lh = h,
             size = 0;
-        loopi(levels)
+        for(int i = 0; i < int(levels); i++)
         {
             if(lw<=0) lw = 1;
             if(lh<=0) lh = 1;

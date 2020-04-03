@@ -79,7 +79,7 @@ namespace game
             maxspeed = (float)t.speed*4;
             health = t.health;
             armour = 0;
-            loopi(NUMGUNS) ammo[i] = 10000;
+            for(int i = 0; i < int(NUMGUNS); i++) ammo[i] = 10000;
             pitch = 0;
             roll = 0;
             state = CS_ALIVE;
@@ -283,7 +283,7 @@ namespace game
 
     void preloadmonsters()
     {
-        loopi(NUMMONSTERTYPES) preloadmodel(monstertypes[i].mdlname);
+        for(int i = 0; i < int(NUMMONSTERTYPES); i++) preloadmodel(monstertypes[i].mdlname);
         for(int i = S_GRUNT1; i <= S_SLIMEBALL; i++) preloadsound(i);
         if(m_dmsp) preloadsound(S_V_FIGHT);
         if(m_classicsp) preloadsound(S_V_RESPAWNPOINT);

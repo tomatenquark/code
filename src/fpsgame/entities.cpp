@@ -89,7 +89,7 @@ namespace entities
 
     void preloadentities()
     {
-        loopi(MAXENTTYPES)
+        for(int i = 0; i < int(MAXENTTYPES); i++)
         {
             switch(i)
             {

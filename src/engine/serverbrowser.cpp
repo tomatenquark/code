@@ -65,7 +65,7 @@ void resolverinit()
     resultcond = SDL_CreateCond();
 
     SDL_LockMutex(resolvermutex);
-    loopi(RESOLVERTHREADS)
+    for(int i = 0; i < int(RESOLVERTHREADS); i++)
     {
         resolverthread &rt = resolverthreads.add();
         rt.query = NULL;
@@ -435,7 +435,7 @@ void pingservers()
 
     static int lastping = 0;
     if(lastping >= servers.length()) lastping = 0;
-    loopi(maxservpings ? min(servers.length(), maxservpings) : servers.length())
+    for(int i = 0; i < int(maxservpings ? min(servers.length(), maxservpings) : servers.length()); i++)
     {
         serverinfo &si = *servers[lastping];
         if(++lastping >= servers.length()) lastping = 0;
@@ -576,7 +576,7 @@ const char *showservers(g3d_gui *cgui, uint *header, int pagemin, int pagemax)
         if(header) execute(header);
         int end = servers.length();
         cgui->pushlist();
-        loopi(10)
+        for(int i = 0; i < int(10); i++)
         {
             if (!showserverhost && (i == 6 || i == 7)) continue;
             if(!game::serverinfostartcolumn(cgui, i)) break;

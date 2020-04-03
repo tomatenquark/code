@@ -105,7 +105,7 @@ namespace server
 
         bool remove(int val)
         {
-            loopi(numprojs) if(projs[i]==val)
+            for(int i = 0; i < int(numprojs); i++) if(projs[i]==val)
             {
                 projs[i] = projs[--numprojs];
                 return true;
@@ -434,7 +434,7 @@ namespace server
 
         int findmode(int mode) const
         {
-            if(!hasmode(mode)) loopi(NUMGAMEMODES) if(hasmode(i, 0)) return i+STARTGAMEMODE;
+            if(!hasmode(mode)) for(int i = 0; i < int(NUMGAMEMODES); i++) if(hasmode(i, 0)) return i+STARTGAMEMODE;
             return mode;
         }
 
@@ -973,7 +973,7 @@ namespace server
             if(!selected) break;
             remaining -= selected;
         }
-        loopi(sizeof(team)/sizeof(team[0]))
+        for(int i = 0; i < int(sizeof(team)/sizeof(team[0])); i++)
         {
             addteaminfo(teamnames[i]);
             loopvj(team[i])
@@ -1015,7 +1015,7 @@ namespace server
             }
         }
         teamrank *worst = &teamranks[numteams-1];
-        loopi(numteams-1)
+        for(int i = 0; i < int(numteams-1); i++)
         {
             teamrank &ts = teamranks[i];
             if(smode && smode->hidefrags())
@@ -1031,7 +1031,7 @@ namespace server
     {
         int n = clamp(demos.length() + extra - maxdemos, 0, demos.length());
         if(n <= 0) return;
-        loopi(n) delete[] demos[i].data;
+        for(int i = 0; i < int(n); i++) delete[] demos[i].data;
         demos.remove(0, n);
     }
  
@@ -1721,7 +1721,7 @@ namespace server
         putint(p, gs.armour);
         putint(p, gs.armourtype);
         putint(p, gs.gunselect);
-        loopi(GUN_PISTOL-GUN_SG+1) putint(p, gs.ammo[GUN_SG+i]);
+        for(int i = 0; i < int(GUN_PISTOL-GUN_SG+1); i++) putint(p, gs.ammo[GUN_SG+i]);
     }
 
     void spawnstate(clientinfo *ci)
@@ -3579,7 +3579,7 @@ namespace server
             {
                 int size = server::msgsizelookup(type);
                 if(size<=0) { disconnect_client(sender, DISC_MSGERR); return; }
-                loopi(size-1) getint(p);
+                for(int i = 0; i < int(size-1); i++) getint(p);
                 if(p.remaining() < 2) { disconnect_client(sender, DISC_MSGERR); return; }
                 int extra = lilswap(*(const ushort *)p.pad(2));
                 if(p.remaining() < extra) { disconnect_client(sender, DISC_MSGERR); return; }
@@ -3630,7 +3630,7 @@ namespace server
             {
                 int size = server::msgsizelookup(type);
                 if(size<=0) { disconnect_client(sender, DISC_MSGERR); return; }
-                loopi(size-1) getint(p);
+                for(int i = 0; i < int(size-1); i++) getint(p);
                 if(ci) switch(msgfilter[type])
                 {
                     case 2: case 3: if(ci->state.state != CS_SPECTATOR) QUEUE_MSG; break;

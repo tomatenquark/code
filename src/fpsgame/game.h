@@ -445,7 +445,7 @@ struct fpsstate
         quadmillis = 0;
         gunselect = GUN_PISTOL;
         gunwait = 0;
-        loopi(NUMGUNS) ammo[i] = 0;
+        for(int i = 0; i < int(NUMGUNS); i++) ammo[i] = 0;
         ammo[GUN_FIST] = 1;
     }
 
@@ -486,7 +486,7 @@ struct fpsstate
         {
             armourtype = A_GREEN;
             armour = 100;
-            loopi(5) baseammo(i+1);
+            for(int i = 0; i < int(5); i++) baseammo(i+1);
             gunselect = GUN_CG;
             ammo[GUN_CG] /= 2;
         }

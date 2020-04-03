@@ -56,7 +56,7 @@ FVARR(grassanimscale, 0, 0.03f, 1);
 
 static void animategrass()
 {
-    loopi(NUMGRASSOFFSETS) grassanimoffsets[i] = grassanimscale*sinf(2*M_PI*(grassoffsets[i] + lastmillis/float(grassanimmillis)));
+    for(int i = 0; i < int(NUMGRASSOFFSETS); i++) grassanimoffsets[i] = grassanimscale*sinf(2*M_PI*(grassoffsets[i] + lastmillis/float(grassanimmillis)));
     lastgrassanim = lastmillis;
 }
 
@@ -214,7 +214,7 @@ static void gengrassquads(vtxarray *va)
         }
 
         grassgroup *group = NULL;
-        loopi(NUMGRASSWEDGES)
+        for(int i = 0; i < int(NUMGRASSWEDGES); i++)
         {
             grasswedge &w = grasswedges[i];    
             if(w.bound1.dist(g.center) > g.radius || w.bound2.dist(g.center) > g.radius) continue;
@@ -236,9 +236,9 @@ void generategrass()
     grassgroups.setsize(0);
     grassverts.setsize(0);
 
-    if(grassoffsets[0] < 0) loopi(NUMGRASSOFFSETS) grassoffsets[i] = rnd(0x1000000)/float(0x1000000);
+    if(grassoffsets[0] < 0) for(int i = 0; i < int(NUMGRASSOFFSETS); i++) grassoffsets[i] = rnd(0x1000000)/float(0x1000000);
 
-    loopi(NUMGRASSWEDGES)
+    for(int i = 0; i < int(NUMGRASSWEDGES); i++)
     {
         grasswedge &w = grasswedges[i];
         w.bound1.offset = -camera1->o.dot(w.bound1);

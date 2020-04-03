@@ -113,7 +113,7 @@ int drawconlines(int conskip, int confade, int conwidth, int conheight, int cono
     }
 
     int totalheight = 0;
-    loopi(numl) //determine visible height
+    for(int i = 0; i < int(numl); i++) //determine visible height
     {
         // shuffle backwards to fill if necessary
         int idx = offset+i < numl ? offset+i : --offset;
@@ -125,7 +125,7 @@ int drawconlines(int conskip, int confade, int conwidth, int conheight, int cono
         totalheight += height;
     }
     if(dir > 0) y = conoff;
-    loopi(numl)
+    for(int i = 0; i < int(numl); i++)
     {
         int idx = offset + (dir > 0 ? numl-i-1 : i);
         if(!(conlines[idx].type&filter)) continue;
@@ -172,8 +172,8 @@ struct keym
     char *actions[NUMACTIONS];
     bool pressed;
 
-    keym() : code(-1), name(NULL), pressed(false) { loopi(NUMACTIONS) actions[i] = newstring(""); }
-    ~keym() { DELETEA(name); loopi(NUMACTIONS) DELETEA(actions[i]); }
+    keym() : code(-1), name(NULL), pressed(false) { for(int i = 0; i < int(NUMACTIONS); i++) actions[i] = newstring(""); }
+    ~keym() { DELETEA(name); for(int i = 0; i < int(NUMACTIONS); i++) DELETEA(actions[i]); }
 };
 
 hashtable<int, keym> keyms(128);
@@ -521,7 +521,7 @@ bool consolekey(int code, bool isdown)
                 {
                     if(maxhistory && history.length() >= maxhistory)
                     {
-                        loopi(history.length()-maxhistory+1) delete history[i];
+                        for(int i = 0; i < int(history.length()-maxhistory+1); i++) delete history[i];
                         history.remove(0, history.length()-maxhistory+1);
                     }
                     history.add(h = new hline)->save();

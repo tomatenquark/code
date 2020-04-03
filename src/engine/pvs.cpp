@@ -17,7 +17,7 @@ static vector<pvsnode> origpvsnodes;
 
 static bool mergepvsnodes(pvsnode &p, pvsnode *children)
 {
-    loopi(7) if(children[i].flags!=children[7].flags) return false;
+    for(int i = 0; i < int(7); i++) if(children[i].flags!=children[7].flags) return false;
     bvec bbs[4];
     loop(x, 2) loop(y, 2)
     {
@@ -69,7 +69,7 @@ static bool mergepvsnodes(pvsnode &p, pvsnode *children)
 static void genpvsnodes(cube *c, int parent = 0, const ivec &co = ivec(0, 0, 0), int size = worldsize/2)
 {
     int index = origpvsnodes.length();
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         ivec o(i, co, size);
         pvsnode &n = origpvsnodes.add();
@@ -95,7 +95,7 @@ static void genpvsnodes(cube *c, int parent = 0, const ivec &co = ivec(0, 0, 0),
         }
     }
     int branches = 0;
-    loopi(8) if(c[i].children)
+    for(int i = 0; i < int(8); i++) if(c[i].children)
     {
         ivec o(i, co, size);
         genpvsnodes(c[i].children, index+i, o, size>>1);
@@ -181,7 +181,7 @@ struct shaft
     void calcshaft(const shaftbb &from, const shaftbb &to)
     {
         uchar match = 0, color = 0;
-        loopi(3)
+        for(int i = 0; i < int(3); i++)
         {
             if(to.min[i] < from.min[i]) { color |= 1<<i; bounds.min[i] = 0; }
             else if(to.min[i] > from.min[i]) bounds.min[i] = to.min[i]+1;
@@ -192,7 +192,7 @@ struct shaft
             else { match |= 8<<i; bounds.max[i] = to.max[i]; }
         }
         numplanes = 0;
-        loopi(5) if(!(match&(1<<i))) for(int j = i+1; j<6; j++) if(!(match&(1<<j)) && i+3!=j && ((color>>i)^(color>>j))&1)
+        for(int i = 0; i < int(5); i++) if(!(match&(1<<i))) for(int j = i+1; j<6; j++) if(!(match&(1<<j)) && i+3!=j && ((color>>i)^(color>>j))&1)
         {
             int r = i%3, c = j%3, d = (r+1)%3;
             if(d==c) d = (c+1)%3;
@@ -248,7 +248,7 @@ static vector<uchar> pvsbuf;
 static inline uint hthash(const pvsdata &k)
 {
     uint h = 5381;
-    loopi(k.len) h = ((h<<5)+h)^pvsbuf[k.offset+i];
+    for(int i = 0; i < int(k.len); i++) h = ((h<<5)+h)^pvsbuf[k.offset+i];
     return h;
 }
 
@@ -374,7 +374,7 @@ struct pvsworker
         if(p.children)
         {
             pvsnode *children = &pvsnodes[p.children];
-            loopi(8) hidepvs(children[i]);
+            for(int i = 0; i < int(8); i++) hidepvs(children[i]);
             p.flags |= PVS_HIDE_BB;
             return;
         }
@@ -392,7 +392,7 @@ struct pvsworker
         {
             pvsnode *children = &pvsnodes[p.children];
             uchar flags = 0xFF;
-            loopi(8)
+            for(int i = 0; i < int(8); i++)
             {
                 ivec o(i, co, size>>1);
                 shaftcullpvs(s, children[i], o, size>>1);
@@ -450,7 +450,7 @@ struct pvsworker
             order[j] = dxz;
             for(j = 6; j > 0 && dyz.dist < order[j-1].dist; --j) order[j] = order[j-1];
             order[j] = dyz;
-            loopi(8)
+            for(int i = 0; i < int(8); i++)
             {
                 int index = order[i].index^dir;
                 ivec o(index, co, csize);
@@ -466,7 +466,7 @@ struct pvsworker
         if(order[1].dist > order[0].dist) swap(order[0], order[1]);
         if(order[2].dist > order[1].dist) swap(order[1], order[2]);
         if(order[1].dist > order[0].dist) swap(order[0], order[1]);
-        loopi(6)
+        for(int i = 0; i < int(6); i++)
         {
             int dim = order[i >= 3 ? i-3 : i].index, dc = (i >= 3) != (geom.max[dim] <= viewcellbb.min[dim]) ? 1 : 0, r = R[dim], c = C[dim];
             int ccenter = geom.min[c];
@@ -641,14 +641,14 @@ struct pvsworker
         if(p.flags&PVS_HIDE_BB) { p.children = 0; return true; }
         pvsnode *children = &pvsnodes[p.children];
         bool canreduce = true;
-        loopi(8)
+        for(int i = 0; i < int(8); i++)
         {
             if(!compresspvs(children[i], size/2, threshold)) canreduce = false;
         }
         if(canreduce)
         {
             int hide = children[7].flags&PVS_HIDE_BB;
-            loopi(7) if((children[i].flags&PVS_HIDE_BB)!=hide) canreduce = false;
+            for(int i = 0; i < int(7); i++) if((children[i].flags&PVS_HIDE_BB)!=hide) canreduce = false;
             if(canreduce) 
             {
                 p.flags = (p.flags & ~PVS_HIDE_BB) | hide;
@@ -671,7 +671,7 @@ struct pvsworker
         if(!p.children)
         {
             outbuf.add(0xFF);
-            loopi(8) outbuf.add(p.flags&PVS_HIDE_BB ? 0xFF : 0);
+            for(int i = 0; i < int(8); i++) outbuf.add(p.flags&PVS_HIDE_BB ? 0xFF : 0);
             return true;
         }
         int index = outbuf.length();
@@ -748,7 +748,7 @@ struct pvsworker
         cullpvs(pvsnodes[0]);
 
         wateroccluded = 0;
-        loopi(numwaterplanes)
+        for(int i = 0; i < int(numwaterplanes); i++)
         {
             if(waterplanes[i].height < 0)
             {
@@ -757,7 +757,7 @@ struct pvsworker
             else if(waterplanes[i].matsurfs.length() && materialoccluded(waterplanes[i].matsurfs)) wateroccluded |= 1<<i;
         }
         waterbytes = 0;
-        loopi(4) if(wateroccluded&(0xFF<<(i*8))) waterbytes = i+1;
+        for(int i = 0; i < int(4); i++) if(wateroccluded&(0xFF<<(i*8))) waterbytes = i+1;
 
         compresspvs(pvsnodes[0], worldsize, pvsleafsize);
         outbuf.setsize(0);
@@ -782,7 +782,7 @@ struct pvsworker
         if(pvsmutex) SDL_LockMutex(pvsmutex);
         numviewcells++;
         pvsdata key(pvsbuf.length(), waterbytes + outbuf.length());
-        loopi(waterbytes) pvsbuf.add((wateroccluded>>(i*8))&0xFF);
+        for(int i = 0; i < int(waterbytes); i++) pvsbuf.add((wateroccluded>>(i*8))&0xFF);
         pvsbuf.put(outbuf.getbuf(), outbuf.length());
         int *val = pvscompress.access(key);
         if(val) pvsbuf.setsize(key.offset);
@@ -824,11 +824,11 @@ struct viewcellnode
 
     viewcellnode() : leafmask(0xFF)
     {
-        loopi(8) children[i].pvs = -1;
+        for(int i = 0; i < int(8); i++) children[i].pvs = -1;
     }
     ~viewcellnode()
     {
-        loopi(8) if(!(leafmask&(1<<i))) delete children[i].node;
+        for(int i = 0; i < int(8); i++) if(!(leafmask&(1<<i))) delete children[i].node;
     }
 };
 
@@ -877,7 +877,7 @@ static void calcpvsbounds()
 
 static inline bool isallclip(cube *c)
 {
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         cube &h = c[i];
         if(h.children ? !isallclip(h.children) : (!isentirelysolid(h) && (h.material&MATF_CLIP)!=MAT_CLIP))
@@ -889,7 +889,7 @@ static inline bool isallclip(cube *c)
 static int countviewcells(cube *c, const ivec &co, int size, int threshold)
 {
     int count = 0;
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         ivec o(i, co, size);
         if(pvsbounds.outside(o, size)) continue;
@@ -912,7 +912,7 @@ static int countviewcells(cube *c, const ivec &co, int size, int threshold)
 static void genviewcells(viewcellnode &p, cube *c, const ivec &co, int size, int threshold)
 {
     if(genpvs_canceled) return;
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         ivec o(i, co, size);
         if(pvsbounds.outside(o, size)) continue;
@@ -977,8 +977,8 @@ static void lockpvs_(bool lock)
     lockedpvs = new uchar[len];
     memcpy(lockedpvs, &pvsbuf[d->offset + wbytes], len);
     lockedwaterpvs = 0;
-    loopi(wbytes) lockedwaterpvs |= pvsbuf[d->offset + i] << (i*8);
-    loopi(MAXWATERPVS) lockedwaterplanes[i] = waterplanes[i].height;
+    for(int i = 0; i < int(wbytes); i++) lockedwaterpvs |= pvsbuf[d->offset + i] << (i*8);
+    for(int i = 0; i < int(MAXWATERPVS); i++) lockedwaterplanes[i] = waterplanes[i].height;
     conoutf("locked view cell at %.1f, %.1f, %.1f", camera1->o.x, camera1->o.y, camera1->o.z);
 }
 
@@ -1002,7 +1002,7 @@ void setviewcell(const vec &p)
         curwaterpvs = 0;
         if(d)
         {
-            loopi(d->len%9) curwaterpvs |= *curpvs++ << (i*8);
+            for(int i = 0; i < int(d->len%9); i++) curwaterpvs |= *curpvs++ << (i*8);
         }
     }
     if(!usepvs || !usewaterpvs) curwaterpvs = 0;
@@ -1023,7 +1023,7 @@ COMMAND(clearpvs, "");
 
 static void findwaterplanes()
 {
-    loopi(MAXWATERPVS)
+    for(int i = 0; i < int(MAXWATERPVS); i++)
     {
         waterplanes[i].height = -1;
         waterplanes[i].matsurfs.setsize(0);
@@ -1065,7 +1065,7 @@ void testpvs(int *vcsize)
 
     uint oldnumwaterplanes = numwaterplanes;
     int oldwaterplanes[MAXWATERPVS];
-    loopi(numwaterplanes) oldwaterplanes[i] = waterplanes[i].height;
+    for(int i = 0; i < int(numwaterplanes); i++) oldwaterplanes[i] = waterplanes[i].height;
 
     findwaterplanes();
 
@@ -1085,13 +1085,13 @@ void testpvs(int *vcsize)
     pvsworker w;
     int len;
     lockedpvs = w.testviewcell(o, size, &lockedwaterpvs, &len);
-    loopi(MAXWATERPVS) lockedwaterplanes[i] = waterplanes[i].height;
+    for(int i = 0; i < int(MAXWATERPVS); i++) lockedwaterplanes[i] = waterplanes[i].height;
     lockpvs = 1;
     conoutf("generated test view cell of size %d at %.1f, %.1f, %.1f (%d B)", size, camera1->o.x, camera1->o.y, camera1->o.z, len);
 
     origpvsnodes.setsize(0);
     numwaterplanes = oldnumwaterplanes;
-    loopi(numwaterplanes) waterplanes[i].height = oldwaterplanes[i];
+    for(int i = 0; i < int(numwaterplanes); i++) waterplanes[i].height = oldwaterplanes[i];
 }
 
 COMMAND(testpvs, "i");
@@ -1142,7 +1142,7 @@ void genpvs(int *viewcellsize)
         renderprogress(0, "creating threads");
         if(!pvsmutex) pvsmutex = SDL_CreateMutex();
         if(!viewcellmutex) viewcellmutex = SDL_CreateMutex();
-        loopi(numthreads)
+        for(int i = 0; i < int(numthreads); i++)
         {
             pvsworker *w = pvsworkers.add(new pvsworker);
             w->thread = SDL_CreateThread(pvsworker::run, "pvs worker", w);
@@ -1241,11 +1241,11 @@ bool waterpvsoccluded(int height)
     if(!curwaterpvs) return false;
     if(lockedpvs)
     {
-        loopi(MAXWATERPVS) if(lockedwaterplanes[i]==height) return (curwaterpvs&(1<<i))!=0;
+        for(int i = 0; i < int(MAXWATERPVS); i++) if(lockedwaterplanes[i]==height) return (curwaterpvs&(1<<i))!=0;
     }
     else
     {
-        loopi(numwaterplanes) if(waterplanes[i].height==height) return (curwaterpvs&(1<<i))!=0;
+        for(int i = 0; i < int(numwaterplanes); i++) if(waterplanes[i].height==height) return (curwaterpvs&(1<<i))!=0;
     }
     return false;
 }
@@ -1253,7 +1253,7 @@ bool waterpvsoccluded(int height)
 void saveviewcells(stream *f, viewcellnode &p)
 {
     f->putchar(p.leafmask);
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         if(p.leafmask&(1<<i)) f->putlil<int>(p.children[i].pvs);
         else saveviewcells(f, *p.children[i].node);
@@ -1267,7 +1267,7 @@ void savepvs(stream *f)
     if(numwaterplanes>0)
     {
         f->putlil<uint>(numwaterplanes);
-        loopi(numwaterplanes)
+        for(int i = 0; i < int(numwaterplanes); i++)
         {
             f->putlil<int>(waterplanes[i].height);
             if(waterplanes[i].height < 0) break;
@@ -1282,7 +1282,7 @@ viewcellnode *loadviewcells(stream *f)
 {
     viewcellnode *p = new viewcellnode;
     p->leafmask = f->getchar();
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         if(p->leafmask&(1<<i)) p->children[i].pvs = f->getlil<int>();
         else p->children[i].node = loadviewcells(f);
@@ -1297,10 +1297,10 @@ void loadpvs(stream *f, int numpvs)
     {
         totallen &= ~0x80000000U;
         numwaterplanes = f->getlil<uint>();
-        loopi(numwaterplanes) waterplanes[i].height = f->getlil<int>();
+        for(int i = 0; i < int(numwaterplanes); i++) waterplanes[i].height = f->getlil<int>();
     }
     int offset = 0;
-    loopi(numpvs)
+    for(int i = 0; i < int(numpvs); i++)
     {
         ushort len = f->getlil<ushort>();
         pvs.add(pvsdata(offset, len));
