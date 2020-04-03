@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2020-03-04
+## Changed
+- No more armor in regen capture
+- Use multiple file downloads method to download map resources
+
+## Added
+- `showserverhost` which will hide IP and port of servers by default
+- `mmodelfile` to indicate resources
+
 ## [0.0.23] - 2020-01-04
 ## Fixed
 - fixed lightmaps crashing the game on windows
