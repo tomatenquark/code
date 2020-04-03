@@ -578,10 +578,10 @@ const char *showservers(g3d_gui *cgui, uint *header, int pagemin, int pagemax)
         cgui->pushlist();
         loopi(10)
         {
+            if (!showserverhost && (i == 6 || i == 7)) continue;
             if(!game::serverinfostartcolumn(cgui, i)) break;
             for(int j = start; j < end; j++)
             {
-                if (!showserverhost && (i == 6 || i == 7)) continue;
                 if(!i && j+1 - start >= pagemin && (j+1 - start >= pagemax || cgui->shouldtab())) { end = j; break; }
                 serverinfo &si = *servers[j];
                 const char *sdesc = si.sdesc;
