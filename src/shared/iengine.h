@@ -484,6 +484,9 @@ extern void *genchallenge(void *pubkey, const void *seed, int seedlen, vector<ch
 extern void freechallenge(void *answer);
 extern bool checkchallenge(const char *answerstr, void *correct);
 
+// sdl event handling
+extern bool interceptkey(int sym);
+
 // 3dgui
 struct Texture;
 struct VSlot;
