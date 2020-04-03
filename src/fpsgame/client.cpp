@@ -526,47 +526,6 @@ namespace game
         for (int i = 0; i < strlen(content); i++) if (content[i] == ':') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
     }
 
-    void changemapserv(const char *name, int mode)        // forced map change from the server
-    {
-        if(multiplayer(false) && !m_mp(mode))
-        {
-            conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
-            loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
-        }
-        
-        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
-        {
-            conoutf(CON_INFO, "downloading map %s", name);
-            int status = DOWNLOAD_PROGRESS;
-            string serverdir = "";
-            copystring(serverdir, servercontent);
-            format_servercontent(serverdir);
-            prependstring(serverdir, homedir);
-            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
-            renderbackground("downloading map... (esc to abort)");
-            float download_bar = 0.0f;
-            while (status == DOWNLOAD_PROGRESS) {
-                if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
-                download_bar = (download_bar < 0.99f) ? download_bar + 0.01f : 0.0f;
-                defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
-                renderprogress(download_bar, download_text);
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
-        }
-
-        gamemode = mode;
-        nextmode = mode;
-        if(editmode) toggleedit();
-        if(m_demo) { entities::resetspawns(); return; }
-        if((m_edit && !name[0]) || !load_world(name))
-        {
-            emptymap(0, true, name);
-            senditemstoserver = false;
-        }
-        startgame();
-    }
-
     void setmode(int mode)
     {
         if(multiplayer(false) && !m_mp(mode))
@@ -1088,6 +1047,48 @@ namespace game
             lastping = totalmillis;
         }
         sendclientpacket(p.finalize(), 1);
+    }
+
+    void changemapserv(const char *name, int mode)        // forced map change from the server
+    {
+        if(multiplayer(false) && !m_mp(mode))
+        {
+            conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
+            loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
+        }
+        
+        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
+        {
+            conoutf(CON_INFO, "downloading map %s", name);
+            int status = DOWNLOAD_PROGRESS;
+            string serverdir = "";
+            copystring(serverdir, servercontent);
+            format_servercontent(serverdir);
+            prependstring(serverdir, homedir);
+            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
+            renderbackground("downloading map... (esc to abort)");
+            float download_bar = 0.0f;
+            while (status == DOWNLOAD_PROGRESS) {
+                if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
+                download_bar = (download_bar < 0.99f) ? download_bar + 0.01f : 0.0f;
+                defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
+                renderprogress(download_bar, download_text);
+                sendmessages();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
+        }
+
+        gamemode = mode;
+        nextmode = mode;
+        if(editmode) toggleedit();
+        if(m_demo) { entities::resetspawns(); return; }
+        if((m_edit && !name[0]) || !load_world(name))
+        {
+            emptymap(0, true, name);
+            senditemstoserver = false;
+        }
+        startgame();
     }
 
     void c2sinfo(bool force) // send update to the server
