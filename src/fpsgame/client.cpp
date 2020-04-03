@@ -534,7 +534,7 @@ namespace game
             loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && downloadmaps && strlen(servercontent))
+        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
         {
             conoutf(CON_INFO, "downloading map %s", name);
             int status = DOWNLOAD_PROGRESS;
@@ -544,8 +544,11 @@ namespace game
             prependstring(serverdir, homedir);
             assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
             renderbackground("downloading map... (esc to abort)");
+            float download_bar = 0.0f;
             while (status == DOWNLOAD_PROGRESS) {
-                renderbackground("downloading map... (esc to abort)");
+                download_bar = (download_bar < 0.99f) ? download_bar + 0.01f : 0.0f;
+                defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
+                renderprogress(download_bar, download_text);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
@@ -947,6 +950,7 @@ namespace game
         gamepaused = false;
         gamespeed = 100;
         clearclients(false);
+        copystring(servercontent, "");
         if(cleanup)
         {
             nextmode = gamemode = INT_MAX;
