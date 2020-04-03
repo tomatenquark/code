@@ -831,7 +831,7 @@ struct gui : g3d_gui
             bool quads = false;
             if(passes>1) glDepthFunc(j ? GL_LEQUAL : GL_GREATER);
             gle::color(j ? light : vec(1, 1, 1), passes<=1 || j ? alpha : alpha/2); //ghost when its behind something in depth
-            loopi(n)
+            for(int i = 0; i < int(n); i++)
             {
                 const patch &p = patches[start+i];
                 int left = skinx[p.left]*SKIN_SCALE, right = skinx[p.right]*SKIN_SCALE,

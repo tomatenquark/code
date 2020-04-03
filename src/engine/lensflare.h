@@ -144,7 +144,7 @@ struct flarerenderer : partrenderer
         gle::defattrib(gle::ATTRIB_TEXCOORD0, 2, GL_FLOAT);
         gle::defattrib(gle::ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE);
         gle::begin(GL_QUADS);
-        loopi(numflares)
+        for(int i = 0; i < int(numflares); i++)
         {
             const flare &f = flares[i];
             vec center = f.center;

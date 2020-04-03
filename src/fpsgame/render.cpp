@@ -107,7 +107,7 @@ namespace game
 
     void preloadplayermodel()
     {
-        loopi(sizeof(playermodels)/sizeof(playermodels[0]))
+        for(int i = 0; i < int(sizeof(playermodels)/sizeof(playermodels[0])); i++)
         {
             const playermodelinfo *mdl = getplayermodelinfo(i);
             if(!mdl) break;
@@ -391,7 +391,7 @@ namespace game
             previewent = new fpsent;
             previewent->light.color = vec(1, 1, 1);
             previewent->light.dir = vec(0, -1, 2).normalize();
-            loopi(GUN_PISTOL-GUN_FIST) previewent->ammo[GUN_FIST+1+i] = 1;
+            for(int i = 0; i < int(GUN_PISTOL-GUN_FIST); i++) previewent->ammo[GUN_FIST+1+i] = 1;
         }
         float height = previewent->eyeheight + previewent->aboveeye,
               zrad = height/2;
@@ -435,7 +435,7 @@ namespace game
     void preloadweapons()
     {
         const playermodelinfo &mdl = getplayermodelinfo(player1);
-        loopi(NUMGUNS)
+        for(int i = 0; i < int(NUMGUNS); i++)
         {
             const char *file = guns[i].file;
             if(!file) continue;

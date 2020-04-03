@@ -195,7 +195,7 @@ void parseglexts()
     {
         GLint numexts = 0;
         glGetIntegerv(GL_NUM_EXTENSIONS, &numexts);
-        loopi(numexts)
+        for(int i = 0; i < int(numexts); i++)
         {
             const char *ext = (const char *)glGetStringi_(GL_EXTENSIONS, i);
             glexts.add(newstring(ext));
@@ -1677,7 +1677,7 @@ void bindminimap()
 
 void clipminimap(ivec &bbmin, ivec &bbmax, cube *c = worldroot, const ivec &co = ivec(0, 0, 0), int size = worldsize>>1)
 {
-    loopi(8)
+    for(int i = 0; i < int(8); i++)
     {
         ivec o(i, co, size);
         if(c[i].children) clipminimap(bbmin, bbmax, c[i].children, o, size>>1);
@@ -1758,7 +1758,7 @@ void drawminimap()
     queryreflections();
     drawreflections();
 
-    loopi(minimapheight > 0 && minimapheight < minimapcenter.z + minimapradius.z ? 2 : 1)
+    for(int i = 0; i < int(minimapheight > 0 && minimapheight < minimapcenter.z + minimapradius.z ? 2 : 1); i++)
     {
         if(i)
         {
@@ -2001,7 +2001,7 @@ void drawdamagecompass(int w, int h)
 
     int dirs = 0;
     float size = damagecompasssize/100.0f*min(h, w)/2.0f;
-    loopi(8) if(damagedirs[i]>0)
+    for(int i = 0; i < int(8); i++) if(damagedirs[i]>0)
     {
         if(!dirs)
         {
@@ -2111,7 +2111,7 @@ ICOMMAND(getcrosshair, "i", (int *i),
  
 void writecrosshairs(stream *f)
 {
-    loopi(MAXCROSSHAIRS) if(crosshairs[i] && crosshairs[i]!=notexture)
+    for(int i = 0; i < int(MAXCROSSHAIRS); i++) if(crosshairs[i] && crosshairs[i]!=notexture)
         f->printf("loadcrosshair %s %d\n", escapestring(crosshairs[i]->name), i);
     f->printf("\n");
 }
@@ -2249,7 +2249,7 @@ void gl_drawhud()
                 }
                 int nextfps[3];
                 getfps(nextfps[0], nextfps[1], nextfps[2]);
-                loopi(3) if(prevfps[i]==curfps[i]) curfps[i] = nextfps[i];
+                for(int i = 0; i < int(3); i++) if(prevfps[i]==curfps[i]) curfps[i] = nextfps[i];
                 if(showfpsrange) draw_textf("fps %d+%d-%d", conw-7*FONTH, conh-FONTH*3/2, curfps[0], curfps[1], curfps[2]);
                 else draw_textf("fps %d", conw-5*FONTH, conh-FONTH*3/2, curfps[0]);
                 roffset += FONTH;
@@ -2293,7 +2293,7 @@ void gl_drawhud()
                     getnumqueries(),
                     rplanes
                 };
-                loopi(8) if(prevstats[i]==curstats[i]) curstats[i] = nextstats[i];
+                for(int i = 0; i < int(8); i++) if(prevstats[i]==curstats[i]) curstats[i] = nextstats[i];
 
                 abovehud -= 2*FONTH;
                 draw_textf("wtr:%dk(%d%%) wvt:%dk(%d%%) evt:%dk eva:%dk", FONTH/2, abovehud, wtris/1024, curstats[0], wverts/1024, curstats[1], curstats[2], curstats[3]);

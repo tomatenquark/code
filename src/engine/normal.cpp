@@ -142,7 +142,7 @@ void addnormals(cube &c, const ivec &o, int size)
     {
         progress++;
         size >>= 1;
-        loopi(8) addnormals(c.children[i], ivec(i, o, size), size);
+        for(int i = 0; i < int(8); i++) addnormals(c.children[i], ivec(i, o, size), size);
         return;
     }
     else if(isempty(c)) return;
@@ -150,7 +150,7 @@ void addnormals(cube &c, const ivec &o, int size)
     vec pos[MAXFACEVERTS];
     int norms[MAXFACEVERTS];
     int tj = usetnormals && c.ext ? c.ext->tjoints : -1, vis;
-    loopi(6) if((vis = visibletris(c, i, o, size)))
+    for(int i = 0; i < int(6); i++) if((vis = visibletris(c, i, o, size)))
     {
         CHECK_CALCLIGHT_PROGRESS(return, show_addnormals_progress);
         if(c.texture[i] == DEFAULT_SKY) continue;
@@ -234,7 +234,7 @@ void calcnormals(bool lerptjoints)
     if(usetnormals) findtjoints();
     lerpthreshold = cos(lerpangle*RAD) - 1e-5f; 
     progress = 1;
-    loopi(8) addnormals(worldroot[i], ivec(i, ivec(0, 0, 0), worldsize/2), worldsize/2);
+    for(int i = 0; i < int(8); i++) addnormals(worldroot[i], ivec(i, ivec(0, 0, 0), worldsize/2), worldsize/2);
 }
 
 void clearnormals()
@@ -292,7 +292,7 @@ void setlerpstep(float v, lerpbounds &bounds)
 void initlerpbounds(float u, float v, const lerpvert *lv, int numv, lerpbounds &start, lerpbounds &end)
 {
     const lerpvert *first = &lv[0], *second = NULL;
-    loopi(numv-1)
+    for(int i = 0; i < int(numv-1); i++)
     {
         if(lv[i+1].tc.y < first->tc.y) { second = first; first = &lv[i+1]; }
         else if(!second || lv[i+1].tc.y < second->tc.y) second = &lv[i+1];

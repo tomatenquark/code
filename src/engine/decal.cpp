@@ -357,7 +357,7 @@ struct decalrenderer
         int numout = 0;
         const vec *p = &in[numin-1];
         float pc = dir.dot(*p);
-        loopi(numin)
+        for(int i = 0; i < int(numin); i++)
         {
             const vec &v = in[i];
             float c = dir.dot(v);
@@ -506,7 +506,7 @@ struct decalrenderer
     {
         materialsurface *matbuf = va->matbuf;
         int matsurfs = va->matsurfs;
-        loopi(matsurfs)
+        for(int i = 0; i < int(matsurfs); i++)
         {
             materialsurface &m = matbuf[i];
             if(!isclipped(m.material&MATF_VOLUME)) { i += m.skip; continue; }
@@ -533,7 +533,7 @@ struct decalrenderer
 
     void findescaped(cube *cu, const ivec &o, int size, int escaped)
     {
-        loopi(8)
+        for(int i = 0; i < int(8); i++)
         {
             if(escaped&(1<<i)) 
             { 
@@ -551,7 +551,7 @@ struct decalrenderer
     void gentris(cube *cu, const ivec &o, int size, int escaped = 0)
     {
         int overlap = octaboxoverlap(o, size, bbmin, bbmax);
-        loopi(8) 
+        for(int i = 0; i < int(8); i++)
         {
             if(overlap&(1<<i))
             {
@@ -592,17 +592,17 @@ decalrenderer decals[] =
 
 void initdecals()
 {
-    loopi(sizeof(decals)/sizeof(decals[0])) decals[i].init(maxdecaltris);
+    for(int i = 0; i < int(sizeof(decals)/sizeof(decals[0])); i++) decals[i].init(maxdecaltris);
 }
 
 void cleardecals()
 {
-    loopi(sizeof(decals)/sizeof(decals[0])) decals[i].cleardecals();
+    for(int i = 0; i < int(sizeof(decals)/sizeof(decals[0])); i++) decals[i].cleardecals();
 }
 
 void cleanupdecals()
 {
-    loopi(sizeof(decals)/sizeof(decals[0])) decals[i].cleanup();
+    for(int i = 0; i < int(sizeof(decals)/sizeof(decals[0])); i++) decals[i].cleanup();
 }
 
 VARNP(decals, showdecals, 0, 1, 1);
@@ -610,7 +610,7 @@ VARNP(decals, showdecals, 0, 1, 1);
 void renderdecals(bool mainpass)
 {
     bool rendered = false;
-    loopi(sizeof(decals)/sizeof(decals[0]))
+    for(int i = 0; i < int(sizeof(decals)/sizeof(decals[0])); i++)
     {
         decalrenderer &d = decals[i];
         if(mainpass)

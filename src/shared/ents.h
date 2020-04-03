@@ -221,7 +221,7 @@ struct dynent : physent                         // animated characters, or chara
     {
         physent::reset();
         stopmoving();
-        loopi(MAXANIMPARTS) animinterp[i].reset();
+        for(int i = 0; i < int(MAXANIMPARTS); i++) animinterp[i].reset();
     }
 
     vec abovehead() { return vec(o).add(vec(0, 0, aboveeye+4)); }

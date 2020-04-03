@@ -93,7 +93,7 @@ struct md2 : vertloader<md2>
                 bool isfan = numvertex<0;
                 if(isfan) numvertex = -numvertex;
                 idxs.setsize(0);
-                loopi(numvertex)
+                for(int i = 0; i < int(numvertex); i++)
                 {
                     union { int i; float f; } u, v;
                     u.i = *command++;
@@ -111,7 +111,7 @@ struct md2 : vertloader<md2>
                     }
                     idxs.add(*idx);
                 }
-                loopi(numvertex-2)
+                for(int i = 0; i < int(numvertex-2); i++)
                 {
                     tri &t = tris.add();
                     if(isfan)
@@ -176,7 +176,7 @@ struct md2 : vertloader<md2>
             md2_vertex *tmpverts = new md2_vertex[header.numvertices];
             int frame_offset = header.offsetframes;
             vert *curvert = m.verts;
-            loopi(header.numframes)
+            for(int i = 0; i < int(header.numframes); i++)
             {
                 md2_frame frame;
                 file->seek(frame_offset, SEEK_SET);

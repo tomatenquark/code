@@ -31,7 +31,7 @@ struct BlendMapBranch
 
     ~BlendMapBranch()
     {
-        loopi(4) children[i].cleanup(type[i]);
+        for(int i = 0; i < int(4); i++) children[i].cleanup(type[i]);
     }
 
     uchar shrink(BlendMapNode &child, int quadrant);
@@ -76,7 +76,7 @@ void BlendMapNode::splitsolid(uchar &type, uchar val)
     cleanup(type);
     type = BM_BRANCH;
     branch = new BlendMapBranch;
-    loopi(4)
+    for(int i = 0; i < int(4); i++)
     {
         branch->type[i] = BM_SOLID;
         branch->children[i].solid = &bmsolids[val];
@@ -230,7 +230,7 @@ static void fillblendmap(uchar &type, BlendMapNode &node, int size, uchar val, i
             if(x2 > size) fillblendmap(node.branch->type[3], node.branch->children[3], size, val,
                                         max(x1-size, 0), max(y1-size, 0), x2-size, y2-size);
         }
-        loopi(4) if(node.branch->type[i]!=BM_SOLID || node.branch->children[i].solid->val!=val) return;
+        for(int i = 0; i < int(4); i++) if(node.branch->type[i]!=BM_SOLID || node.branch->children[i].solid->val!=val) return;
         node.cleanup(type);
         type = BM_SOLID;
         node.solid = &bmsolids[val];
@@ -254,7 +254,7 @@ static void fillblendmap(uchar &type, BlendMapNode &node, int size, uchar val, i
     }
     
     uchar *dst = &node.image->data[y1*BM_IMAGE_SIZE + x1];
-    loopi(y2-y1)
+    for(int i = 0; i < int(y2-y1); i++)
     {
         memset(dst, val, x2-x1);
         dst += BM_IMAGE_SIZE;
@@ -300,7 +300,7 @@ static void invertblendmap(uchar &type, BlendMapNode &node, int size, int x1, in
     else if(type==BM_IMAGE)
     {
         uchar *dst = &node.image->data[y1*BM_IMAGE_SIZE + x1];
-        loopi(y2-y1)
+        for(int i = 0; i < int(y2-y1); i++)
         {
             loopj(x2-x1) dst[j] = 255-dst[j];
             dst += BM_IMAGE_SIZE;
@@ -337,10 +337,10 @@ static void optimizeblendmap(uchar &type, BlendMapNode &node)
         }
         case BM_BRANCH:
         {
-            loopi(4) optimizeblendmap(node.branch->type[i], node.branch->children[i]);
+            for(int i = 0; i < int(4); i++) optimizeblendmap(node.branch->type[i], node.branch->children[i]);
             if(node.branch->type[3]!=BM_SOLID) return;
             uint val = node.branch->children[3].solid->val;
-            loopi(3) if(node.branch->type[i]!=BM_SOLID || node.branch->children[i].solid->val != val) return;
+            for(int i = 0; i < int(3); i++) if(node.branch->type[i]!=BM_SOLID || node.branch->children[i].solid->val != val) return;
             node.cleanup(type);
             type = BM_SOLID;
             node.solid = &bmsolids[val];
@@ -395,7 +395,7 @@ static void blitblendmap(uchar &type, BlendMapNode &node, int bmx, int bmy, int 
         x2 = clamp(sx+sw - bmx, 0, bmsize), y2 = clamp(sy+sh - bmy, 0, bmsize);
     uchar *dst = &node.image->data[y1*BM_IMAGE_SIZE + x1];
     src += max(bmy - sy, 0)*sw + max(bmx - sx, 0);
-    loopi(y2-y1)
+    for(int i = 0; i < int(y2-y1); i++)
     {
         switch(smode)
         {
@@ -404,19 +404,19 @@ static void blitblendmap(uchar &type, BlendMapNode &node, int bmx, int bmy, int 
                 break;
 
             case 2:
-                loopi(x2 - x1) dst[i] = min(dst[i], src[i]); 
+                for(int i = 0; i < int(x2 - x1); i++) dst[i] = min(dst[i], src[i]);
                 break;
 
             case 3:
-                loopi(x2 - x1) dst[i] = max(dst[i], src[i]);
+                for(int i = 0; i < int(x2 - x1); i++) dst[i] = max(dst[i], src[i]);
                 break;
 
             case 4:
-                loopi(x2 - x1) dst[i] = min(dst[i], uchar(0xFF - src[i]));
+                for(int i = 0; i < int(x2 - x1); i++) dst[i] = min(dst[i], uchar(0xFF - src[i]));
                 break;
 
             case 5:
-                loopi(x2 - x1) dst[i] = max(dst[i], uchar(0xFF - src[i]));
+                for(int i = 0; i < int(x2 - x1); i++) dst[i] = max(dst[i], uchar(0xFF - src[i]));
                 break;
         }
         dst += BM_IMAGE_SIZE;
@@ -444,7 +444,7 @@ void enlargeblendmap()
     BlendMapBranch *branch = new BlendMapBranch;
     branch->type[0] = blendmap.type;
     branch->children[0] = blendmap;
-    loopi(3)
+    for(int i = 0; i < int(3); i++)
     {
         branch->type[i+1] = BM_SOLID;
         branch->children[i+1].solid = &bmsolids[0xFF];
@@ -516,7 +516,7 @@ struct BlendBrush
         if(!tex) glGenTextures(1, &tex);
         uchar *buf = new uchar[2*w*h];
         uchar *dst = buf, *src = data;
-        loopi(h)
+        for(int i = 0; i < int(h); i++)
         {
             loopj(w) *dst++ = 255 - *src++;
         }
@@ -536,7 +536,7 @@ struct BlendBrush
         uchar *src = data, *dst = rdata;
         if(flipx) { dst += (w-1)*stridex; stridex = -stridex; }
         if(flipy) { dst += (h-1)*stridey; stridey = -stridey; }
-        loopi(h)
+        for(int i = 0; i < int(h); i++)
         {
             uchar *curdst = dst;
             loopj(w) 
@@ -592,7 +592,7 @@ void addblendbrush(const char *name, const char *imgname)
     BlendBrush *brush = new BlendBrush(name, s.w, s.h);
 
     uchar *dst = brush->data, *srcrow = s.data;
-    loopi(s.h)
+    for(int i = 0; i < int(s.h); i++)
     {
         for(uchar *src = srcrow, *end = &srcrow[s.w*s.bpp]; src < end; src += s.bpp)
             *dst++ = src[0];
@@ -812,8 +812,8 @@ bool loadblendmap(stream *f, uchar &type, BlendMapNode &node)
 
         case BM_BRANCH:
             node.branch = new BlendMapBranch;
-            loopi(4) { node.branch->type[i] = BM_SOLID; node.branch->children[i].solid = &bmsolids[0xFF]; }
-            loopi(4) if(!loadblendmap(f, node.branch->type[i], node.branch->children[i]))
+            for(int i = 0; i < int(4); i++) { node.branch->type[i] = BM_SOLID; node.branch->children[i].solid = &bmsolids[0xFF]; }
+            for(int i = 0; i < int(4); i++) if(!loadblendmap(f, node.branch->type[i], node.branch->children[i]))
                 return false;
             break;
 
@@ -845,7 +845,7 @@ void saveblendmap(stream *f, uchar type, BlendMapNode &node)
             break;
 
         case BM_BRANCH:
-            loopi(4) saveblendmap(f, node.branch->type[i], node.branch->children[i]);
+            for(int i = 0; i < int(4); i++) saveblendmap(f, node.branch->type[i], node.branch->children[i]);
             break;
     }
 }

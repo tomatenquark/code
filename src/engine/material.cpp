@@ -6,11 +6,11 @@ struct QuadNode
     uint filled;
     QuadNode *child[4];
 
-    QuadNode(int x, int y, int size) : x(x), y(y), size(size), filled(0) { loopi(4) child[i] = 0; }
+    QuadNode(int x, int y, int size) : x(x), y(y), size(size), filled(0) { for(int i = 0; i < int(4); i++) child[i] = 0; }
 
     void clear() 
     {
-        loopi(4) DELETEP(child[i]);
+        for(int i = 0; i < int(4); i++) DELETEP(child[i]);
     }
     
     ~QuadNode()
@@ -65,10 +65,10 @@ struct QuadNode
         else if(filled)
         {
             int csize = size>>1;
-            loopi(4) if(filled & (1 << i))
+            for(int i = 0; i < int(4); i++) if(filled & (1 << i))
                 genmatsurf(mat, orient, flags, i&1 ? x+csize : x, i&2 ? y+csize : y, z, csize, matbuf);
         }
-        loopi(4) if(child[i]) child[i]->genmatsurfs(mat, orient, flags, z, matbuf);
+        for(int i = 0; i < int(4); i++) if(child[i]) child[i]->genmatsurfs(mat, orient, flags, z, matbuf);
     }
 };
 
@@ -161,7 +161,7 @@ const struct material
 
 int findmaterial(const char *name)
 {
-    loopi(sizeof(materials)/sizeof(material))
+    for(int i = 0; i < int(sizeof(materials)/sizeof(material)); i++)
     {
         if(!strcmp(materials[i].name, name)) return materials[i].id;
     } 
@@ -170,7 +170,7 @@ int findmaterial(const char *name)
 
 const char *findmaterialname(int mat)
 {
-    loopi(sizeof(materials)/sizeof(materials[0])) if(materials[i].id == mat) return materials[i].name;
+    for(int i = 0; i < int(sizeof(materials)/sizeof(materials[0])); i++) if(materials[i].id == mat) return materials[i].name;
     return NULL;
 }
    
@@ -179,15 +179,17 @@ const char *getmaterialdesc(int mat, const char *prefix)
     static const ushort matmasks[] = { MATF_VOLUME|MATF_INDEX, MATF_CLIP, MAT_DEATH, MAT_ALPHA };
     static string desc;
     desc[0] = '\0';
-    loopi(sizeof(matmasks)/sizeof(matmasks[0])) if(mat&matmasks[i])
-    {
-        const char *matname = findmaterialname(mat&matmasks[i]);
-        if(matname)    
-        {
-            concatstring(desc, desc[0] ? ", " : prefix);
-            concatstring(desc, matname);
+    for(int i = 0; i < sizeof(matmasks)/sizeof(matmasks[0]); i++) {
+        if(mat&matmasks[i]) {
+            const char *matname = findmaterialname(mat&matmasks[i]);
+            if(matname)
+            {
+                concatstring(desc, desc[0] ? ", " : prefix);
+                concatstring(desc, matname);
+            }
         }
     }
+
     return desc;
 }
  
@@ -220,7 +222,7 @@ int visiblematerial(const cube &c, int orient, const ivec &co, int size, ushort 
 
 void genmatsurfs(const cube &c, const ivec &co, int size, vector<materialsurface> &matsurfs)
 {
-    loopi(6)
+    for(int i = 0; i < int(6); i++)
     {
         static const ushort matmasks[] = { MATF_VOLUME|MATF_INDEX, MATF_CLIP, MAT_DEATH, MAT_ALPHA };
         loopj(sizeof(matmasks)/sizeof(matmasks[0]))
@@ -301,7 +303,7 @@ static int mergemats(materialsurface *m, int sz)
     quicksort(m, sz, mergematcmp);
 
     int nsz = 0;
-    loopi(sz) nsz = mergemat(m, nsz, m[i]);
+    for(int i = 0; i < int(sz); i++) nsz = mergemat(m, nsz, m[i]);
     return nsz;
 }
 
@@ -340,7 +342,7 @@ int optimizematsurfs(materialsurface *matbuf, int matsurfs)
          else if(cur-start>=4)
          {
             QuadNode vmats(0, 0, worldsize);
-            loopi(cur-start) vmats.insert(start[i].o[C[dim]], start[i].o[R[dim]], start[i].csize);
+            for(int i = 0; i < int(cur-start); i++) vmats.insert(start[i].o[C[dim]], start[i].o[R[dim]], start[i].csize);
             vmats.genmatsurfs(start->material, start->orient, start->visible, start->o[dim], matbuf);
          }
          else
@@ -457,13 +459,13 @@ void setupmaterials(int start, int len)
     {
         loadcaustics(true);
         preloadwatershaders(true);
-        loopi(4) if(hasmat&(1<<(MAT_WATER+i))) lookupmaterialslot(MAT_WATER+i);
+        for(int i = 0; i < int(4); i++) if(hasmat&(1<<(MAT_WATER+i))) lookupmaterialslot(MAT_WATER+i);
     }
     if(hasmat&(0xF<<MAT_LAVA)) 
     {
         useshaderbyname("lava");
         useshaderbyname("lavaglare");
-        loopi(4) if(hasmat&(1<<(MAT_LAVA+i))) lookupmaterialslot(MAT_LAVA+i);
+        for(int i = 0; i < int(4); i++) if(hasmat&(1<<(MAT_LAVA+i))) lookupmaterialslot(MAT_LAVA+i);
     }
     if(hasmat&(0xF<<MAT_GLASS)) useshaderbyname("glass");
 }
@@ -483,7 +485,7 @@ static inline bool vismatcmp(const materialsurface *xm, const materialsurface *y
         else if((y.material&MATF_VOLUME) == MAT_LAVA) return false;
     }
     int xdim = dimension(x.orient), ydim = dimension(y.orient);
-    loopi(3)
+    for(int i = 0; i < int(3); i++)
     {
         int dim = sortdim[i], xmin, xmax, ymin, ymax;
         xmin = xmax = x.o[dim];
@@ -514,7 +516,7 @@ void sortmaterials(vector<materialsurface *> &vismats)
     if(reflecting) sortorigin.z = int(reflectz - (camera1->o.z - reflectz));
     vec dir;
     vecfromyawpitch(camera1->yaw, reflecting ? -camera1->pitch : camera1->pitch, 1, 0, dir);
-    loopi(3) { dir[i] = fabs(dir[i]); sortdim[i] = i; }
+    for(int i = 0; i < int(3); i++) { dir[i] = fabs(dir[i]); sortdim[i] = i; }
     if(dir[sortdim[2]] > dir[sortdim[1]]) swap(sortdim[2], sortdim[1]);
     if(dir[sortdim[1]] > dir[sortdim[0]]) swap(sortdim[1], sortdim[0]);
     if(dir[sortdim[2]] > dir[sortdim[1]]) swap(sortdim[2], sortdim[1]);
@@ -523,7 +525,7 @@ void sortmaterials(vector<materialsurface *> &vismats)
     {
         if(!va->matsurfs || va->occluded >= OCCLUDE_BB) continue;
         if(reflecting || refracting>0 ? va->o.z+va->size <= reflectz : va->o.z >= reflectz) continue;
-        loopi(va->matsurfs)
+        for(int i = 0; i < int(va->matsurfs); i++)
         {
             materialsurface &m = va->matbuf[i];
             if(!editmode || !showmat || drawtex)

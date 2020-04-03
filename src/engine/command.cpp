@@ -745,7 +745,7 @@ static char *conc(vector<char> &buf, tagval *v, int n, bool space, const char *p
         buf.put(prefix, prefixlen);
         if(space && n) buf.add(' ');
     }
-    loopi(n)
+    for(int i = 0; i < int(n); i++)
     {
         const char *s = "";
         int len = 0;
@@ -1704,9 +1704,9 @@ static const uint *runcode(const uint *code, tagval &result)
             {
                 identstack locals[MAXARGS];
                 freearg(result);
-                loopi(numargs) pushalias(*args[i].id, locals[i]);
+                for(int i = 0; i < int(numargs); i++) pushalias(*args[i].id, locals[i]);
                 code = runcode(code, result);
-                loopi(numargs) popalias(*args[i].id);
+                for(int i = 0; i < int(numargs); i++) popalias(*args[i].id);
                 goto exit;
             }
         
@@ -2417,7 +2417,7 @@ ICOMMAND(loop, "rie", (ident *id, int *n, uint *body),
 {
     if(*n <= 0 || id->type!=ID_ALIAS) return;
     identstack stack;
-    loopi(*n)
+    for(int i = 0; i < int(*n); i++)
     {
         setiter(*id, i, stack);
         execute(body);
@@ -2428,7 +2428,7 @@ ICOMMAND(loopwhile, "riee", (ident *id, int *n, uint *cond, uint *body),
 {
     if(*n <= 0 || id->type!=ID_ALIAS) return;
     identstack stack;
-    loopi(*n)
+    for(int i = 0; i < int(*n); i++)
     {
         setiter(*id, i, stack);
         if(!executebool(cond)) break;
@@ -2442,7 +2442,7 @@ char *loopconc(ident *id, int n, uint *body, bool space)
 {
     identstack stack;
     vector<char> s;
-    loopi(n)
+    for(int i = 0; i < int(n); i++)
     {
         setiter(*id, i, stack);
         tagval v;
@@ -2604,7 +2604,7 @@ void explodelist(const char *s, vector<char *> &elems, int limit)
 
 char *indexlist(const char *s, int pos)
 {
-    loopi(pos) if(!parselist(s)) return newstring("");
+    for(int i = 0; i < int(pos); i++) if(!parselist(s)) return newstring("");
     const char *start, *end;
     return parselist(s, start, end) ? newstring(start, end-start) : newstring("");
 }
@@ -2642,7 +2642,7 @@ COMMAND(substr, "siiN");
 void sublist(const char *s, int *skip, int *count, int *numargs)
 {
     int offset = max(*skip, 0), len = *numargs >= 3 ? max(*count, 0) : -1;
-    loopi(offset) if(!parselist(s)) break;
+    for(int i = 0; i < int(offset); i++) if(!parselist(s)) break;
     if(len < 0) { if(offset > 0) skiplist(s); commandret->setstr(newstring(s)); return; }
     const char *list = s, *start, *end, *qstart, *qend = s;
     if(len > 0 && parselist(s, start, end, list, qend)) while(--len > 0 && parselist(s, start, end, qstart, qend));
@@ -2815,7 +2815,7 @@ void listsplice(const char *s, const char *vals, int *skip, int *count)
 {
     int offset = max(*skip, 0), len = max(*count, 0);
     const char *list = s, *start, *end, *qstart, *qend = s;
-    loopi(offset) if(!parselist(s, start, end, qstart, qend)) break;
+    for(int i = 0; i < int(offset); i++) if(!parselist(s, start, end, qstart, qend)) break;
     vector<char> p;
     if(qend > list) p.put(list, qend-list);
     if(*vals)
@@ -2823,7 +2823,7 @@ void listsplice(const char *s, const char *vals, int *skip, int *count)
         if(!p.empty()) p.add(' ');
         p.put(vals, strlen(vals));
     }
-    loopi(len) if(!parselist(s)) break;
+    for(int i = 0; i < int(len); i++) if(!parselist(s)) break;
     skiplist(s);
     switch(*s)
     {
@@ -2988,7 +2988,7 @@ ICOMMAND(>>, "ii", (int *a, int *b), intret(*a >> clamp(*b, 0, 31)));
 ICOMMAND(&&, "e1V", (tagval *args, int numargs),
 {
     if(!numargs) intret(1);
-    else loopi(numargs) 
+    else for(int i = 0; i < int(numargs); i++)
     {   
         if(i) freearg(*commandret);
         executeret(args[i].code, *commandret);
@@ -2998,7 +2998,7 @@ ICOMMAND(&&, "e1V", (tagval *args, int numargs),
 ICOMMAND(||, "e1V", (tagval *args, int numargs),
 {
     if(!numargs) intret(0);
-    else loopi(numargs)
+    else for(int i = 0; i < int(numargs); i++)
     { 
         if(i) freearg(*commandret);
         executeret(args[i].code, *commandret);
@@ -3026,25 +3026,25 @@ ICOMMAND(exp, "f", (float *a), floatret(exp(*a)));
 ICOMMAND(min, "V", (tagval *args, int numargs),
 {
     int val = numargs > 0 ? args[numargs - 1].getint() : 0;
-    loopi(numargs - 1) val = min(val, args[i].getint());
+    for(int i = 0; i < int(numargs - 1); i++) val = min(val, args[i].getint());
     intret(val);
 });
 ICOMMAND(max, "V", (tagval *args, int numargs),
 {
     int val = numargs > 0 ? args[numargs - 1].getint() : 0;
-    loopi(numargs - 1) val = max(val, args[i].getint());
+    for(int i = 0; i < int(numargs - 1); i++) val = max(val, args[i].getint());
     intret(val);
 });
 ICOMMAND(minf, "V", (tagval *args, int numargs),
 {
     float val = numargs > 0 ? args[numargs - 1].getfloat() : 0.0f;
-    loopi(numargs - 1) val = min(val, args[i].getfloat());
+    for(int i = 0; i < int(numargs - 1); i++) val = min(val, args[i].getfloat());
     floatret(val);
 });
 ICOMMAND(maxf, "V", (tagval *args, int numargs),
 {
     float val = numargs > 0 ? args[numargs - 1].getfloat() : 0.0f;
-    loopi(numargs - 1) val = max(val, args[i].getfloat());
+    for(int i = 0; i < int(numargs - 1); i++) val = max(val, args[i].getfloat());
     floatret(val);
 });
 ICOMMAND(abs, "i", (int *n), intret(abs(*n)));
@@ -3141,7 +3141,7 @@ ICOMMAND(unistr, "i", (int *i), { char *s = newstring(1); s[0] = uni2cube(*i); s
     { \
         int len = strlen(s); \
         char *m = newstring(len); \
-        loopi(len) m[i] = map(s[i]); \
+        for(int i = 0; i < int(len); i++) m[i] = map(s[i]); \
         m[len] = '\0'; \
         stringret(m); \
     })

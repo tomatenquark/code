@@ -34,7 +34,7 @@ namespace game
         if(player1->state!=CS_ALIVE) return;
         dir = (dir < 0 ? NUMGUNS-1 : 1);
         int gun = player1->gunselect;
-        loopi(NUMGUNS)
+        for(int i = 0; i < int(NUMGUNS); i++)
         {
             gun = (gun + dir)%NUMGUNS;
             if(force || player1->ammo[gun]) break;
@@ -48,7 +48,7 @@ namespace game
     {
         const char *abbrevs[] = { "FI", "SG", "CG", "RL", "RI", "GL", "PI" };
         if(isdigit(name[0])) return parseint(name);
-        else loopi(sizeof(abbrevs)/sizeof(abbrevs[0])) if(!strcasecmp(abbrevs[i], name)) return i;
+        else for(int i = 0; i < int(sizeof(abbrevs)/sizeof(abbrevs[0])); i++) if(!strcasecmp(abbrevs[i], name)) return i;
         return -1;
     }
 
@@ -65,8 +65,8 @@ namespace game
     {
         if(numguns<=0 || player1->state!=CS_ALIVE) return;
         int offset = 0;
-        loopi(numguns) if(guns[i] == player1->gunselect) { offset = i+1; break; }
-        loopi(numguns)
+        for(int i = 0; i < int(numguns); i++) if(guns[i] == player1->gunselect) { offset = i+1; break; }
+        for(int i = 0; i < int(numguns); i++)
         {
             int gun = guns[(i+offset)%numguns];
             if(gun>=0 && gun<NUMGUNS && (force || player1->ammo[gun]))
@@ -81,7 +81,7 @@ namespace game
     {
          int numguns = min(numargs, 7);
          int guns[7];
-         loopi(numguns) guns[i] = getweapon(args[i].getstr());
+         for(int i = 0; i < int(numguns); i++) guns[i] = getweapon(args[i].getstr());
          cycleweapon(numguns, guns);
     });
 
@@ -103,7 +103,7 @@ namespace game
     ICOMMAND(weapon, "V", (tagval *args, int numargs),
     {
         if(player1->state!=CS_ALIVE) return;
-        loopi(7)
+        for(int i = 0; i < int(7); i++)
         {
             const char *name = i < numargs ? args[i].getstr() : "";
             if(name[0])
@@ -132,7 +132,7 @@ namespace game
 
     void createrays(int gun, const vec &from, const vec &to)             // create random spread of rays
     {
-        loopi(guns[gun].rays) offsetray(from, to, guns[gun].spread, guns[gun].range, rays[i]);
+        for(int i = 0; i < int(guns[gun].rays); i++) offsetray(from, to, guns[gun].spread, guns[gun].range, rays[i]);
     }
 
     enum { BNC_GRENADE, BNC_GIBS, BNC_DEBRIS, BNC_BARRELDEBRIS };
@@ -316,7 +316,7 @@ namespace game
     {
         // can't use loopv here due to strange GCC optimizer bug
         int len = projs.length();
-        loopi(len) if(projs[i].owner==owner) { projs.remove(i--); len--; }
+        for(int i = 0; i < int(len); i++) if(projs[i].owner==owner) { projs.remove(i--); len--; }
     }
 
     VARP(blood, 0, 1, 1);
@@ -346,7 +346,7 @@ namespace game
     {
         if(!blood || damage <= 0) return;
         vec from = d->abovehead();
-        loopi(min(damage/25, 40)+1) spawnbouncer(from, vel, d, BNC_GIBS);
+        for(int i = 0; i < int(min(damage/25, 40)+1); i++) spawnbouncer(from, vel, d, BNC_GIBS);
     }
 
     void hit(int damage, dynent *d, fpsent *at, const vec &vel, int gun, float info1, int info2 = 1)
@@ -438,12 +438,12 @@ namespace game
         {
             entitylight light;
             lightreaching(debrisorigin, light.color, light.dir);
-            loopi(numdebris)
+            for(int i = 0; i < int(numdebris); i++)
                 spawnbouncer(debrisorigin, debrisvel, owner, gun==GUN_BARREL ? BNC_BARRELDEBRIS : BNC_DEBRIS, &light);
         }
         if(!local) return;
         int numdyn = numdynents();
-        loopi(numdyn)
+        for(int i = 0; i < int(numdyn); i++)
         {
             dynent *o = iterdynents(i);
             if(o->o.reject(v, o->radius + guns[gun].exprad) || o==safe) continue;
@@ -599,7 +599,7 @@ namespace game
                 if(!local) createrays(gun, from, to);
                 if(muzzleflash && d->muzzle.x >= 0)
                     particle_flare(d->muzzle, d->muzzle, 200, PART_MUZZLE_FLASH3, 0xFFFFFF, 2.75f, d);
-                loopi(guns[gun].rays)
+                for(int i = 0; i < int(guns[gun].rays); i++)
                 {
                     particle_splash(PART_SPARK, 20, 250, rays[i], 0xB49B4B, 0.24f);
                     particle_flare(hudgunorigin(gun, from, rays[i], d), rays[i], 300, PART_STREAK, 0xFFC864, 0.28f);
@@ -711,7 +711,7 @@ namespace game
     {
         dynent *best = NULL;
         bestdist = 1e16f;
-        loopi(numdynents())
+        for(int i = 0; i < int(numdynents()); i++)
         {
             dynent *o = iterdynents(i);
             if(o==at || o->state!=CS_ALIVE) continue;
@@ -742,12 +742,12 @@ namespace game
         {
             dynent *hits[MAXRAYS];
             int maxrays = guns[d->gunselect].rays;
-            loopi(maxrays) 
+            for(int i = 0; i < int(maxrays); i++)
             {
                 if((hits[i] = intersectclosest(from, rays[i], d, dist))) shorten(from, rays[i], dist);
                 else adddecal(DECAL_BULLET, rays[i], vec(from).sub(rays[i]).safenormalize(), 2.0f);
             }
-            loopi(maxrays) if(hits[i])
+            for(int i = 0; i < int(maxrays); i++) if(hits[i])
             {
                 o = hits[i];
                 hits[i] = NULL;
@@ -849,10 +849,10 @@ namespace game
          
     void preloadbouncers()
     {
-        loopi(sizeof(projnames)/sizeof(projnames[0])) preloadmodel(projnames[i]);
-        loopi(sizeof(gibnames)/sizeof(gibnames[0])) preloadmodel(gibnames[i]);
-        loopi(sizeof(debrisnames)/sizeof(debrisnames[0])) preloadmodel(debrisnames[i]);
-        loopi(sizeof(barreldebrisnames)/sizeof(barreldebrisnames[0])) preloadmodel(barreldebrisnames[i]);
+        for(int i = 0; i < int(sizeof(projnames)/sizeof(projnames[0])); i++) preloadmodel(projnames[i]);
+        for(int i = 0; i < int(sizeof(gibnames)/sizeof(gibnames[0])); i++) preloadmodel(gibnames[i]);
+        for(int i = 0; i < int(sizeof(debrisnames)/sizeof(debrisnames[0])); i++) preloadmodel(debrisnames[i]);
+        for(int i = 0; i < int(sizeof(barreldebrisnames)/sizeof(barreldebrisnames[0])); i++) preloadmodel(barreldebrisnames[i]);
     }
 
     void renderbouncers()

@@ -129,7 +129,7 @@ namespace game
             g.players.setsize(0);
             g.players.add(o);
         }
-        loopi(numgroups) groups[i]->players.sort(playersort);
+        for(int i = 0; i < int(numgroups); i++) groups[i]->players.sort(playersort);
         spectators.sort(playersort);
         groups.sort(scoregroupcmp, 0, numgroups);
         return numgroups;

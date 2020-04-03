@@ -23,7 +23,7 @@ vtxarray *visibleva;
 
 bool isfoggedsphere(float rad, const vec &cv)
 {
-    loopi(4) if(vfcP[i].dist(cv) < -rad) return true;
+    for(int i = 0; i < int(4); i++) if(vfcP[i].dist(cv) < -rad) return true;
     float dist = vfcP[4].dist(cv);
     return dist < -rad || dist > vfcDfog + rad;
 }
@@ -33,7 +33,7 @@ int isvisiblesphere(float rad, const vec &cv)
     int v = VFC_FULL_VISIBLE;
     float dist;
 
-    loopi(5)
+    for(int i = 0; i < int(5); i++)
     {
         dist = vfcP[i].dist(cv);
         if(dist < -rad) return VFC_NOT_VISIBLE;
@@ -49,13 +49,13 @@ int isvisiblesphere(float rad, const vec &cv)
 
 static inline int ishiddencube(const ivec &o, int size)
 {
-    loopi(5) if(o.dist(vfcP[i]) < -vfcDfar[i]*size) return true;
+    for(int i = 0; i < int(5); i++) if(o.dist(vfcP[i]) < -vfcDfar[i]*size) return true;
     return false;
 }
 
 static inline int isfoggedcube(const ivec &o, int size)
 {
-    loopi(4) if(o.dist(vfcP[i]) < -vfcDfar[i]*size) return true;
+    for(int i = 0; i < int(4); i++) if(o.dist(vfcP[i]) < -vfcDfar[i]*size) return true;
     float dist = o.dist(vfcP[4]);
     return dist < -vfcDfar[4]*size || dist > vfcDfog - vfcDnear[4]*size;
 }
@@ -65,7 +65,7 @@ int isvisiblecube(const ivec &o, int size)
     int v = VFC_FULL_VISIBLE;
     float dist;
 
-    loopi(5)
+    for(int i = 0; i < int(5); i++)
     {
         dist = o.dist(vfcP[i]);
         if(dist < -vfcDfar[i]*size) return VFC_NOT_VISIBLE;
@@ -110,7 +110,7 @@ void sortvisiblevas()
 {
     visibleva = NULL; 
     vtxarray **last = &visibleva;
-    loopi(VASORTSIZE) if(vasort[i])
+    for(int i = 0; i < int(VASORTSIZE); i++) if(vasort[i])
     {
         vtxarray *va = vasort[i];
         *last = va;
@@ -146,7 +146,7 @@ void findvisiblevas(vector<vtxarray *> &vas, bool resetocclude = false)
 
 void calcvfcD()
 {
-    loopi(5)
+    for(int i = 0; i < int(5); i++)
     {
         plane &p = vfcP[i];
         vfcDnear[i] = vfcDfar[i] = 0;
@@ -163,7 +163,7 @@ void setvfcP(float z, const vec &bbmin, const vec &bbmax)
     vfcP[2] = plane(vec4(pw).mul(-bbmin.y).add(py)).normalize(); // bottom plane
     vfcP[3] = plane(vec4(pw).mul(bbmax.y).sub(py)).normalize(); // top plane
     vfcP[4] = plane(vec4(pw).add(pz)).normalize(); // near/far planes
-    if(z >= 0) loopi(5) vfcP[i].reflectz(z);
+    if(z >= 0) for(int i = 0; i < int(5); i++) vfcP[i].reflectz(z);
 
     vfcDfog = fog;
     calcvfcD();
@@ -231,7 +231,7 @@ struct queryframe
 
     queryframe() : cur(0), max(0) {}
 
-    void flip() { loopi(cur) queries[i].owner = NULL; cur = 0; }
+    void flip() { for(int i = 0; i < int(cur); i++) queries[i].owner = NULL; cur = 0; }
 
     occludequery *newquery(void *owner)
     {
@@ -246,11 +246,11 @@ struct queryframe
         return query;
     }
 
-    void reset() { loopi(max) queries[i].owner = NULL; }
+    void reset() { for(int i = 0; i < int(max); i++) queries[i].owner = NULL; }
 
     void cleanup()
     {
-        loopi(max)
+        for(int i = 0; i < int(max); i++)
         {
             glDeleteQueries_(1, &queries[i].id);
             queries[i].owner = NULL;
@@ -280,12 +280,12 @@ occludequery *newquery(void *owner)
 
 void resetqueries()
 {
-    loopi(MAXQUERYFRAMES) queryframes[i].reset();
+    for(int i = 0; i < int(MAXQUERYFRAMES); i++) queryframes[i].reset();
 }
 
 void clearqueries()
 {
-    loopi(MAXQUERYFRAMES) queryframes[i].cleanup();
+    for(int i = 0; i < int(MAXQUERYFRAMES); i++) queryframes[i].cleanup();
 }
 
 VAR(oqfrags, 0, 8, 64);
@@ -328,7 +328,7 @@ static void setupbb()
         glGenBuffers_(1, &bbvbo);
         gle::bindvbo(bbvbo);
         vec verts[8];
-        loopi(8) verts[i] = vec(i&1, (i>>1)&1, (i>>2)&1);
+        for(int i = 0; i < int(8); i++) verts[i] = vec(i&1, (i>>1)&1, (i>>2)&1);
         glBufferData_(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
         gle::clearvbo();
     }
@@ -774,7 +774,7 @@ void renderdepthobstacles(const vec &bbmin, const vec &bbmax, float scale, float
     {
         SETSHADER(depthfxsplitworld);
 
-        loopi(-numranges)
+        for(int i = 0; i < int(-numranges); i++)
         {
             if(!i) scales[i] = 1.0f/scale;
             else scales[i] = scales[i-1]*256;
@@ -784,8 +784,8 @@ void renderdepthobstacles(const vec &bbmin, const vec &bbmax, float scale, float
     {
         SETSHADER(depthfxworld);
 
-        if(!numranges) loopi(4) scales[i] = 1.0f/scale;
-        else loopi(numranges) 
+        if(!numranges) for(int i = 0; i < int(4); i++) scales[i] = 1.0f/scale;
+        else for(int i = 0; i < int(numranges); i++)
         {
             scales[i] = 1.0f/scale;
             offsets[i] = -ranges[i]/scale;
@@ -954,7 +954,7 @@ static void mergetexs(renderstate &cur, vtxarray *va, elementset *texs = NULL, i
     {
         firstbatch = geombatches.length();
         numbatches = numtexs;
-        loopi(numtexs-1) 
+        for(int i = 0; i < int(numtexs-1); i++)
         {
             geombatches.add(geombatch(texs[i], edata, va)).next = i+1;
             edata += texs[i].length[1];
@@ -1429,7 +1429,7 @@ void loadcaustics(bool force)
     if(!caustics || !needcaustics) return;
     useshaderbyname("caustic");
     if(caustictex[0]) return;
-    loopi(NUMCAUSTICS)
+    for(int i = 0; i < int(NUMCAUSTICS); i++)
     {
         defformatstring(name, "<grey><noswizzle>packages/caustics/caust%.2d.png", i);
         caustictex[i] = textureload(name);
@@ -1442,7 +1442,7 @@ void cleanupva()
     clearqueries();
     cleanupbb();
     cleanupgrass();
-    loopi(NUMCAUSTICS) caustictex[i] = NULL;
+    for(int i = 0; i < int(NUMCAUSTICS); i++) caustictex[i] = NULL;
 }
 
 VARR(causticscale, 0, 50, 10000);
@@ -1457,7 +1457,7 @@ void setupcaustics(float blend)
     vec s = vec(0.011f, 0, 0.0066f).mul(100.0f/causticscale), t = vec(0, 0.011f, 0.0066f).mul(100.0f/causticscale);
     int tex = (lastmillis/causticmillis)%NUMCAUSTICS;
     float frac = float(lastmillis%causticmillis)/causticmillis;
-    loopi(2)
+    for(int i = 0; i < int(2); i++)
     {
         glActiveTexture_(GL_TEXTURE0+i);
         glBindTexture(GL_TEXTURE_2D, caustictex[(tex+i)%NUMCAUSTICS]->id);

@@ -12,7 +12,7 @@ struct ragdollskel
 
         bool shareverts(const tri &t) const
         {
-            loopi(3) loopj(3) if(vert[i] == t.vert[j]) return true;
+            for(int i = 0; i < int(3); i++) loopj(3) if(vert[i] == t.vert[j]) return true;
             return false;
         }
     };
@@ -423,7 +423,7 @@ VAR(ragdollconstrain, 1, 5, 100);
 
 void ragdolldata::constrain()
 {
-    loopi(ragdollconstrain)
+    for(int i = 0; i < int(ragdollconstrain); i++)
     {
         constraindist();
         updatepos();

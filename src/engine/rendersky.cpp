@@ -5,7 +5,7 @@ Texture *sky[6] = { 0, 0, 0, 0, 0, 0 }, *clouds[6] = { 0, 0, 0, 0, 0, 0 };
 void loadsky(const char *basename, Texture *texs[6])
 {
     const char *wildcard = strchr(basename, '*');
-    loopi(6)
+    for(int i = 0; i < int(6); i++)
     {
         const char *side = cubemapsides[i].name;
         string name;
@@ -147,7 +147,7 @@ void drawenvoverlay(int w, Texture *overlay = NULL, float tx = 0, float ty = 0)
     gle::defvertex();
     gle::deftexcoord0();
     gle::begin(GL_TRIANGLE_FAN);
-    loopi(cloudsubdiv+1)
+    for(int i = 0; i < int(cloudsubdiv+1); i++)
     {
         vec p(1, 1, 0);
         p.rotate_around_z((-2.0f*M_PI*i)/cloudsubdiv);
@@ -160,7 +160,7 @@ void drawenvoverlay(int w, Texture *overlay = NULL, float tx = 0, float ty = 0)
     gle::deftexcoord0();
     gle::defcolor(4);
     gle::begin(GL_TRIANGLE_STRIP);
-    loopi(cloudsubdiv+1)
+    for(int i = 0; i < int(cloudsubdiv+1); i++)
     {
         vec p(1, 1, 0);
         p.rotate_around_z((-2.0f*M_PI*i)/cloudsubdiv);
@@ -222,8 +222,8 @@ namespace fogdome
     {
         if(depth-- <= 0) return;
         int idx[6];
-        loopi(3) idx[i] = indices[face+2-i];
-        loopi(3)
+        for(int i = 0; i < int(3); i++) idx[i] = indices[face+2-i];
+        for(int i = 0; i < int(3); i++)
         {
             int curvert = numverts++;
             verts[curvert] = vert(verts[idx[i]], verts[idx[(i+1)%3]]); //push on to unit sphere
@@ -231,7 +231,7 @@ namespace fogdome
             indices[face+2-i] = curvert;
         }
         subdivide(depth, face);
-        loopi(3) genface(depth, idx[i], idx[3+i], idx[3+(i+2)%3]);
+        for(int i = 0; i < int(3); i++) genface(depth, idx[i], idx[3+i], idx[3+(i+2)%3]);
     }
     
     int sortcap(GLushort x, GLushort y)
@@ -249,25 +249,25 @@ namespace fogdome
         if(clipz >= 1)
         {
             verts[numverts++] = vert(vec(0.0f, 0.0f, 1.0f), color, minalpha); //build initial 'hres' sided pyramid
-            loopi(hres) verts[numverts++] = vert(vec(sincos360[(360*i)/hres], 0.0f), color, maxalpha);
-            loopi(hres) genface(depth, 0, i+1, 1+(i+1)%hres);
+            for(int i = 0; i < int(hres); i++) verts[numverts++] = vert(vec(sincos360[(360*i)/hres], 0.0f), color, maxalpha);
+            for(int i = 0; i < int(hres); i++) genface(depth, 0, i+1, 1+(i+1)%hres);
         }
         else if(clipz <= 0)
         {
-            loopi(hres<<depth) verts[numverts++] = vert(vec(sincos360[(360*i)/(hres<<depth)], 0.0f), color, maxalpha);
+            for(int i = 0; i < int(hres<<depth); i++) verts[numverts++] = vert(vec(sincos360[(360*i)/(hres<<depth)], 0.0f), color, maxalpha);
         }
         else
         {
             float clipxy = sqrtf(1 - clipz*clipz);
             const vec2 &scm = sincos360[180/hres];
-            loopi(hres)
+            for(int i = 0; i < int(hres); i++)
             {
                 const vec2 &sc = sincos360[(360*i)/hres];
                 verts[numverts++] = vert(vec(sc.x*clipxy, sc.y*clipxy, clipz), color, minalpha);
                 verts[numverts++] = vert(vec(sc.x, sc.y, 0.0f), color, maxalpha);
                 verts[numverts++] = vert(vec(sc.x*scm.x - sc.y*scm.y, sc.y*scm.x + sc.x*scm.y, 0.0f), color, maxalpha);
             }
-            loopi(hres)
+            for(int i = 0; i < int(hres); i++)
             {
                 genface(depth-1, 3*i, 3*i+1, 3*i+2);
                 genface(depth-1, 3*i, 3*i+2, 3*((i+1)%hres));
@@ -279,10 +279,10 @@ namespace fogdome
         {
             GLushort *cap = &indices[numindices];
             int capverts = 0;
-            loopi(numverts) if(!verts[i].pos.z) cap[capverts++] = i;
+            for(int i = 0; i < int(numverts); i++) if(!verts[i].pos.z) cap[capverts++] = i;
             verts[numverts++] = vert(vec(0.0f, 0.0f, -capsize), color, maxalpha);
             quicksort(cap, capverts, sortcap); 
-            loopi(capverts)
+            for(int i = 0; i < int(capverts); i++)
             {
                 int n = capverts-1-i;
                 cap[n*3] = cap[n];

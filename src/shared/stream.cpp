@@ -595,7 +595,7 @@ stream::offset stream::size()
 
 bool stream::getline(char *str, size_t len)
 {
-    loopi(len-1)
+    for(int i = 0; i < int(len-1); i++)
     {
         if(read(&str[i], 1) != 1) { str[i] = '\0'; return i > 0; }
         else if(str[i] == '\n') { str[i+1] = '\0'; return true; }
@@ -848,8 +848,8 @@ struct gzstream : stream
         if(dbggz)
         {
             uint checkcrc = 0, checksize = 0;
-            loopi(4) checkcrc |= uint(readbyte()) << (i*8);
-            loopi(4) checksize |= uint(readbyte()) << (i*8);
+            for(int i = 0; i < int(4); i++) checkcrc |= uint(readbyte()) << (i*8);
+            for(int i = 0; i < int(4); i++) checksize |= uint(readbyte()) << (i*8);
             if(checkcrc != crc)
                 conoutf(CON_DEBUG, "gzip crc check failed: read %X, calculated %X", checkcrc, crc);
             if(checksize != zfile.total_out)

@@ -30,7 +30,7 @@ namespace game
         gle::defvertex(2);
         gle::deftexcoord0();
         gle::begin(GL_TRIANGLE_FAN);
-        loopi(16)
+        for(int i = 0; i < int(16); i++)
         {
             vec v = vec(0, -1, 0).rotate_around_z(i/16.0f*2*M_PI);
             gle::attribf(x + 0.5f*s*(1.0f + v.x), y + 0.5f*s*(1.0f + v.y));
@@ -837,7 +837,7 @@ namespace game
                 {
                     int n = va_arg(args, int);
                     int *v = va_arg(args, int *);
-                    loopi(n) putint(p, v[i]);
+                    for(int i = 0; i < int(n); i++) putint(p, v[i]);
                     numi += n;
                     break;
                 }
@@ -845,14 +845,14 @@ namespace game
                 case 'i':
                 {
                     int n = isdigit(*fmt) ? *fmt++-'0' : 1;
-                    loopi(n) putint(p, va_arg(args, int));
+                    for(int i = 0; i < int(n); i++) putint(p, va_arg(args, int));
                     numi += n;
                     break;
                 }
                 case 'f':
                 {
                     int n = isdigit(*fmt) ? *fmt++-'0' : 1;
-                    loopi(n) putfloat(p, (float)va_arg(args, double));
+                    for(int i = 0; i < int(n); i++) putfloat(p, (float)va_arg(args, double));
                     numf += n;
                     break;
                 }
@@ -1057,7 +1057,7 @@ namespace game
         if(multiplayer(false) && !m_mp(mode))
         {
             conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
-            loopi(NUMGAMEMODES) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
+            for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
         if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
@@ -1276,13 +1276,13 @@ namespace game
         if(resume && d==player1)
         {
             getint(p);
-            loopi(GUN_PISTOL-GUN_SG+1) getint(p);
+            for(int i = 0; i < int(GUN_PISTOL-GUN_SG+1); i++) getint(p);
         }
         else
         {
             int gun = getint(p);
             d->gunselect = clamp(gun, int(GUN_FIST), int(GUN_PISTOL));
-            loopi(GUN_PISTOL-GUN_SG+1) d->ammo[GUN_SG+i] = getint(p);
+            for(int i = 0; i < int(GUN_PISTOL-GUN_SG+1); i++) d->ammo[GUN_SG+i] = getint(p);
         }
     }
 
@@ -1819,7 +1819,7 @@ namespace game
             {
                 int demos = getint(p);
                 if(demos <= 0) conoutf("no demos available");
-                else loopi(demos)
+                else for(int i = 0; i < int(demos); i++)
                 {
                     getstring(text, p);
                     if(p.overread()) break;
