@@ -25,40 +25,115 @@ namespace download {
         return fwrite(ptr, size, nmemb, (FILE *) stream);
     }
 
+    // Adds a transfer to a curl multi handle
+    void add_transfer(CURLM *cm, const char* url, FILE* fp) {
+        CURL *eh = curl_easy_init();
+        curl_easy_setopt(eh, CURLOPT_URL, url);
+        curl_easy_setopt(eh, CURLOPT_PRIVATE, url);
+        curl_easy_setopt(eh, CURLOPT_VERBOSE, 1L);
+        if (fp) {
+            curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, write_data);
+            curl_easy_setopt(eh, CURLOPT_WRITEDATA, fp);
+        }
+        curl_multi_add_handle(cm, eh);
+    };
+    
+    // Downloads multiple files using curl_multi
+    // sources - a list of URL sources to download from
+    // destinations - a list of fs paths to download to
+    void download_multiple_files(std::vector<std::string> sources, std::vector<fs::path> destinations) {
+        if (sources.size() != destinations.size()) return; // Something is wrong here
+        
+        unsigned int max_parallel = 10;
+        std::vector<std::unique_ptr<FILE, decltype(&fclose)>> handles;
+        
+        CURLM *cm;
+        CURLMsg *msg;
+        unsigned int transfers = 0;
+        int messages_left = -1;
+        int still_alive = 1;
+        
+        cm = curl_multi_init();
+        /* Limit the amount of simultaneous connections curl should allow: */
+        curl_multi_setopt(cm, CURLMOPT_MAXCONNECTS, (long)max_parallel);
+
+        unsigned int initial_transfers = (static_cast<unsigned int>(sources.size()) > max_parallel ? max_parallel : static_cast<unsigned int>(sources.size()));
+        for(transfers = 0; transfers < initial_transfers; transfers++) {
+            std::string url(sources.at(transfers));
+            std::string destination_str(destinations.at(transfers).make_preferred().string()); // copy by value
+            const char* dest = destination_str.c_str();
+            std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(dest, "wb"), fclose);
+            handles.push_back(std::move(fp));
+            add_transfer(cm, sources.at(transfers).c_str(), handles.back().get());
+        }
+     
+        do {
+           curl_multi_perform(cm, &still_alive);
+        
+           while((msg = curl_multi_info_read(cm, &messages_left))) {
+               if(msg->msg == CURLMSG_DONE) {
+                   const char *url;
+                   CURL *e = msg->easy_handle;
+                   curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &url);
+                   fprintf(stderr, "R: %d - %s <%s>\n", msg->data.result, curl_easy_strerror(msg->data.result), url);
+                   curl_multi_remove_handle(cm, e);
+                   curl_easy_cleanup(e);
+               }
+               else {
+                   fprintf(stderr, "E: CURLMsg (%d)\n", msg->msg);
+               }
+               if(transfers < (sources.size() - 1)) {
+                   transfers++;
+                   std::string destination_str(destinations.at(transfers).make_preferred().string()); // copy by value
+                   const char* dest = destination_str.c_str();
+                   std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(dest, "wb"), fclose);
+                   handles.push_back(std::move(fp));
+                   add_transfer(cm, sources.at(transfers).c_str(), handles.back().get());
+               }
+           }
+           if(still_alive)
+             curl_multi_wait(cm, NULL, 0, 1000, NULL);
+        
+        } while(still_alive || transfers < (sources.size() - 1));
+        
+         curl_multi_cleanup(cm);
+    }
+
     // Downloads a file using curl_easy_setup
     void download_file(std::string url, fs::path destination) {
-        if (!fs::exists(destination)) {
-            /* open the file */
-            std::string destination_str(destination.string()); // copy by value
-            const char* dest = destination_str.c_str();
-            FILE* fp = std::fopen(dest, "wb");
+        /* open the file */
+        std::string destination_str(destination.make_preferred().string()); // copy by value
+        const char* dest = destination_str.c_str();
+        FILE* fp = fopen(dest, "wb");
 
-            /* init the curl session */
-            CURL* curl_handle = curl_easy_init();
+        /* init the curl session */
+        CURL* curl_handle = curl_easy_init();
 
-            /* set URL to get here */
-            curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+        /* set URL to get here */
+        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
 
-            /* Switch on full protocol/debug output while testing */
-            curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
+        /* Switch on full protocol/debug output while testing */
+        curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
 
-            /* send all data to this function  */
-            curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+        /* send all data to this function  */
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 
-            if (fp) {
-                /* write the page body to this file handle */
-                curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
+        if (fp) {
+            /* write the page body to this file handle */
+            curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
 
-                /* get it! */
-                curl_easy_perform(curl_handle);
+            /* complete within 2 seconds */
+            curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 2L);
 
-                /* close the header file */
-                fclose(fp);
-            }
+            /* get it! */
+            curl_easy_perform(curl_handle);
 
-            /* cleanup curl stuff */
-            curl_easy_cleanup(curl_handle);
+            /* close the header file */
+            fclose(fp);
         }
+
+        /* cleanup curl stuff */
+        curl_easy_cleanup(curl_handle);
     }
 };
 
@@ -66,7 +141,7 @@ namespace config {
     using namespace std;
 
     /// Whitelist contains all valid ICOMMAND instructions in map configs
-    array<const string, 82> command_whitelist = {
+    array<const string, 79> command_whitelist = {
         "ambient",
         "autograss",
         "base_1",
@@ -89,7 +164,7 @@ namespace config {
         "cloudcolour",
         "cloudfade",
         "cloudheight",
-        "cloudlayer",
+        //"cloudlayer",
         "cloudscale",
         "cloudscrollx",
         "cloudscrolly",
@@ -106,7 +181,7 @@ namespace config {
         "grassalpha",
         "lightprecision",
         "lmshadows",
-        "loadsky",
+        //"loadsky",
         "mapmodel",
         "mapmodelreset",
         "mapmsg",
@@ -121,7 +196,7 @@ namespace config {
         "setshaderparam",
         "shadowmapambient",
         "shadowmapangle",
-        "skybox",
+        //"skybox",
         "skyboxcolour",
         "skylight",
         "skytexture",
@@ -158,7 +233,7 @@ namespace config {
         {"mapsound", 1},
         {"skybox", 1},
         {"exec", 1},
-        {"cloudlayer", 1}
+        //{"cloudlayer", 1}
     };
 
     /// Check for any characters before processing the line
@@ -293,6 +368,9 @@ namespace resources {
 
     /// Download all the resources to their specified paths
     void download(std::string url, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
+        std::vector<std::string> sources;
+        std::vector<fs::path> destinations;
+        
         for (const auto& resource: resources) {
             // TODO: Support textures like autograss who use <dup:1,0> declaration
             if (resource.path.empty() || std::regex_search(resource.path, std::regex("<.+>"))) continue;
@@ -302,9 +380,15 @@ namespace resources {
             fs::path resource_path(server_directory);
             resource_path.append(prefix);
             resource_path.append(resource.path);
-            fs::create_directories(resource_path.parent_path());
-            download::download_file(resource_url.str(), resource_path);
+            if (!fs::exists(resource_path)) {
+                fs::create_directories(resource_path.parent_path());
+                sources.push_back(resource_url.str());
+                destinations.push_back(resource_path);
+            }
         }
+        // Only start downloading something if there is actually files left
+        if (!sources.empty()) download::download_multiple_files(sources, destinations);
+        
         // NOTE: CAUTION This is not thread-safe and should not be attempted with multiple calls to download
         *status = DOWNLOAD_FINISHED;
     }
