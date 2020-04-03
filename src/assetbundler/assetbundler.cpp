@@ -28,11 +28,11 @@ namespace download {
     // Adds a transfer to a curl multi handle
     void add_transfer(CURLM *cm, const char* url, FILE* fp) {
         CURL *eh = curl_easy_init();
-        curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(eh, CURLOPT_URL, url);
         curl_easy_setopt(eh, CURLOPT_PRIVATE, url);
         curl_easy_setopt(eh, CURLOPT_VERBOSE, 1L);
         if (fp) {
+            curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, write_data);
             curl_easy_setopt(eh, CURLOPT_WRITEDATA, fp);
         }
         curl_multi_add_handle(cm, eh);
@@ -44,9 +44,9 @@ namespace download {
     void download_multiple_files(std::vector<std::string> sources, std::vector<fs::path> destinations) {
         if (sources.size() != destinations.size()) return; // Something is wrong here
         
-        int max_parallel = 10;
+        unsigned int max_parallel = 10;
+        std::vector<std::unique_ptr<FILE, decltype(&fclose)>> handles;
         
-        std::map<const char*, FILE*> handles;
         CURLM *cm;
         CURLMsg *msg;
         unsigned int transfers = 0;
@@ -56,14 +56,15 @@ namespace download {
         cm = curl_multi_init();
         /* Limit the amount of simultaneous connections curl should allow: */
         curl_multi_setopt(cm, CURLMOPT_MAXCONNECTS, (long)max_parallel);
-        
-        for(transfers = 0; transfers < min(static_cast<int>(sources.size()), max_parallel); transfers++) {
+
+        unsigned int initial_transfers = (static_cast<unsigned int>(sources.size()) > max_parallel ? max_parallel : static_cast<unsigned int>(sources.size()));
+        for(transfers = 0; transfers < initial_transfers; transfers++) {
             std::string url(sources.at(transfers));
-            std::string destination_str(destinations.at(transfers).string()); // copy by value
+            std::string destination_str(destinations.at(transfers).make_preferred().string()); // copy by value
             const char* dest = destination_str.c_str();
-            FILE* fp = std::fopen(dest, "wb");
-            handles[dest] = fp;
-            add_transfer(cm, sources.at(transfers).c_str(), fp);
+            std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(dest, "wb"), fclose);
+            handles.push_back(std::move(fp));
+            add_transfer(cm, sources.at(transfers).c_str(), handles.back().get());
         }
      
         do {
@@ -75,8 +76,6 @@ namespace download {
                    CURL *e = msg->easy_handle;
                    curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &url);
                    fprintf(stderr, "R: %d - %s <%s>\n", msg->data.result, curl_easy_strerror(msg->data.result), url);
-                   FILE* handle = handles[url];
-                   if (handle) fclose(handle);
                    curl_multi_remove_handle(cm, e);
                    curl_easy_cleanup(e);
                }
@@ -85,11 +84,11 @@ namespace download {
                }
                if(transfers < (sources.size() - 1)) {
                    transfers++;
-                   std::string destination_str(destinations.at(transfers).string()); // copy by value
+                   std::string destination_str(destinations.at(transfers).make_preferred().string()); // copy by value
                    const char* dest = destination_str.c_str();
-                   FILE* fp = std::fopen(dest, "wb");
-                   handles[dest] = fp;
-                   add_transfer(cm, sources.at(transfers).c_str(), fp);
+                   std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(dest, "wb"), fclose);
+                   handles.push_back(std::move(fp));
+                   add_transfer(cm, sources.at(transfers).c_str(), handles.back().get());
                }
            }
            if(still_alive)
@@ -103,9 +102,9 @@ namespace download {
     // Downloads a file using curl_easy_setup
     void download_file(std::string url, fs::path destination) {
         /* open the file */
-        std::string destination_str(destination.string()); // copy by value
+        std::string destination_str(destination.make_preferred().string()); // copy by value
         const char* dest = destination_str.c_str();
-        FILE* fp = std::fopen(dest, "wb");
+        FILE* fp = fopen(dest, "wb");
 
         /* init the curl session */
         CURL* curl_handle = curl_easy_init();
@@ -123,6 +122,9 @@ namespace download {
             /* write the page body to this file handle */
             curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
 
+            /* complete within 2 seconds */
+            curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 2L);
+
             /* get it! */
             curl_easy_perform(curl_handle);
 
@@ -139,7 +141,7 @@ namespace config {
     using namespace std;
 
     /// Whitelist contains all valid ICOMMAND instructions in map configs
-    array<const string, 82> command_whitelist = {
+    array<const string, 79> command_whitelist = {
         "ambient",
         "autograss",
         "base_1",
@@ -162,7 +164,7 @@ namespace config {
         "cloudcolour",
         "cloudfade",
         "cloudheight",
-        "cloudlayer",
+        //"cloudlayer",
         "cloudscale",
         "cloudscrollx",
         "cloudscrolly",
@@ -179,7 +181,7 @@ namespace config {
         "grassalpha",
         "lightprecision",
         "lmshadows",
-        "loadsky",
+        //"loadsky",
         "mapmodel",
         "mapmodelreset",
         "mapmsg",
@@ -194,7 +196,7 @@ namespace config {
         "setshaderparam",
         "shadowmapambient",
         "shadowmapangle",
-        "skybox",
+        //"skybox",
         "skyboxcolour",
         "skylight",
         "skytexture",
@@ -231,7 +233,7 @@ namespace config {
         {"mapsound", 1},
         {"skybox", 1},
         {"exec", 1},
-        {"cloudlayer", 1}
+        //{"cloudlayer", 1}
     };
 
     /// Check for any characters before processing the line
