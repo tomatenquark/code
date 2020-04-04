@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2020-04-04
+## Changed
+- added progress bar to downloads
+- added escape key to downloads
+
+## Fixed
+- fix issue with serverbrowser
+- use a proper regex to fix GTX bugs
+- add a timeout to downloads
+- reset servercontent variable when disconnecting
+- send ping message so clients wont be disconnected while downloading
+
 ## [0.1.0] - 2020-03-04
 ## Changed
 - No more armor in regen capture
@@ -920,7 +932,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.0.23...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/tomatenquark/code/compare/v0.1.0...0.1.1
+[0.1.0]: https://github.com/tomatenquark/code/compare/v0.0.23...0.1.0
 [0.0.23]: https://github.com/tomatenquark/code/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/tomatenquark/code/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/tomatenquark/code/compare/v0.0.20...v0.0.21
