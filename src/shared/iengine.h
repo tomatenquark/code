@@ -484,11 +484,15 @@ extern void *genchallenge(void *pubkey, const void *seed, int seedlen, vector<ch
 extern void freechallenge(void *answer);
 extern bool checkchallenge(const char *answerstr, void *correct);
 
+// sdl event handling
+extern bool interceptkey(int sym);
+
 // 3dgui
 struct Texture;
 struct VSlot;
 
 extern void renderbackground(const char *caption = NULL, Texture *mapshot = NULL, const char *mapname = NULL, const char *mapinfo = NULL, bool restore = false, bool force = false);
+extern void renderprogress(float bar, const char *text, uint32_t tex = 0, bool background = false);
 
 enum { G3D_DOWN = 1, G3D_UP = 2, G3D_PRESSED = 4, G3D_ROLLOVER = 8, G3D_DRAGGED = 16 };
 
