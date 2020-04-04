@@ -100,7 +100,7 @@ namespace download {
     }
 
     // Downloads a file using curl_easy_setup
-    void download_file(std::string url, fs::path destination) {
+    void download_file(std::string url, fs::path destination, long timeout = 0L) {
         /* open the file */
         std::string destination_str(destination.make_preferred().string()); // copy by value
         const char* dest = destination_str.c_str();
@@ -117,6 +117,9 @@ namespace download {
 
         /* send all data to this function  */
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+
+        /* complete within n seconds */
+        curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, timeout);
 
         if (fp) {
             /* write the page body to this file handle */
@@ -289,7 +292,7 @@ namespace resources {
     /// Downloads and filters a config file and inserts it's resources to the specified resources vector
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
         fs::create_directories(destination.parent_path());
-        download::download_file(config_url, destination);
+        download::download_file(config_url, destination, 5L);
         // Read the config file
         std::ifstream config_file (destination);
         std::vector<std::string> lines;
