@@ -410,11 +410,6 @@ namespace assetbundler {
         // NOTE: This assumes that curl_global_init has already been called
         // Collects all the resources from the map
         resources::collect(url, map, &resources, server_directory);
-        // If there are no resources something went wrong with the download. Abort
-        if (resources.empty()) {
-            *status = DOWNLOAD_ABORTED;
-            return;
-        }
         // Add missing map files
         std::array<std::string, 3> map_resources = {"ogz", "wpt", "jpg"};
         server_map += ".";
