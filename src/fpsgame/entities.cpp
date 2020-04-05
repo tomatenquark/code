@@ -173,14 +173,15 @@ namespace entities
         ents[n]->clearspawned();
         if(!d) return;
         itemstat &is = itemstats[type-I_SHELLS];
-        if(d!=player1 || isthirdperson())
+        fpsent *h = hudplayer();
+        if(d!=h || isthirdperson())
         {
             //particle_text(d->abovehead(), is.name, PART_TEXT, 2000, 0xFFC864, 4.0f, -8);
             particle_icon(d->abovehead(), is.icon%4, is.icon/4, PART_HUD_ICON_GREY, 2000, 0xFFFFFF, 2.0f, -8);
         }
-        playsound(itemstats[type-I_SHELLS].sound, d!=player1 ? &d->o : NULL, NULL, 0, 0, 0, -1, 0, 1500);
+        playsound(itemstats[type-I_SHELLS].sound, d!=h ? &d->o : NULL, NULL, 0, 0, 0, -1, 0, 1500);
         d->pickup(type);
-        if(d==player1) switch(type)
+        if(d==h) switch(type)
         {
             case I_BOOST:
                 conoutf(CON_GAMEINFO, "\f2you got the health boost!");
@@ -205,7 +206,7 @@ namespace entities
             {
                 int snd = S_TELEPORT, flags = 0;
                 if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                if(d == player1) playsound(snd, NULL, NULL, flags);
+                if(d == hudplayer()) playsound(snd, NULL, NULL, flags);
                 else
                 {
                     playsound(snd, &e.o, NULL, flags);
@@ -235,8 +236,7 @@ namespace entities
             {
                 int snd = S_JUMPPAD, flags = 0;
                 if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                if(d == player1) playsound(snd, NULL, NULL, flags);
-                else playsound(snd, &e.o, NULL, flags);
+                playsound(snd, d == hudplayer() ? NULL : &e.o, NULL, flags);
             }
         }
         if(local && d->clientnum >= 0)
@@ -350,8 +350,9 @@ namespace entities
         if(d->quadmillis && (d->quadmillis -= time)<=0)
         {
             d->quadmillis = 0;
-            playsound(S_PUPOUT, d==player1 ? NULL : &d->o);
-            if(d==player1) conoutf(CON_GAMEINFO, "\f2quad damage is over");
+            fpsent *h = hudplayer();
+            playsound(S_PUPOUT, d==h ? NULL : &d->o);
+            if(d==h) conoutf(CON_GAMEINFO, "\f2quad damage is over");
         }
     }
 
