@@ -2527,6 +2527,7 @@ void getslottex(int *idx)
     intret(slot.variants->index);
 }
 
+ICOMMAND(settex, "i", (int *tex), { if(!vslots.inrange(*tex) || noedit()) return; filltexlist(); edittex(*tex); });
 COMMANDN(edittex, edittex_, "i");
 COMMAND(gettex, "");
 COMMAND(getcurtex, "");
