@@ -36,7 +36,9 @@ namespace assetbundler {
     /// - map (the map to download) e.g curvedm
     /// - homedir (the home directory to download to)
     /// - status (a pointer to the status for async operations)
-    void download_map(char* servercontent, char* map, char* serverdir, int* status);
+    /// - current (a pointer to the amount of currently downloaded files)
+    /// - total (a pointer to the amount of total downloaded files)
+    void download_map(char* servercontent, char* map, char* serverdir, int* status, int* current, int *total);
 };
 
 #endif /* assetbundler_h */

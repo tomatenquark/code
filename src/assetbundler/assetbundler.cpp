@@ -41,7 +41,7 @@ namespace download {
     // Downloads multiple files using curl_multi
     // sources - a list of URL sources to download from
     // destinations - a list of fs paths to download to
-    void download_multiple_files(std::vector<std::string> sources, std::vector<fs::path> destinations) {
+    void download_multiple_files(std::vector<std::string> sources, std::vector<fs::path> destinations, int* current) {
         if (sources.size() != destinations.size()) return; // Something is wrong here
         
         unsigned int max_parallel = 10;
@@ -66,6 +66,9 @@ namespace download {
             handles.push_back(std::move(fp));
             add_transfer(cm, sources.at(transfers).c_str(), handles.back().get());
         }
+        
+        // Update amount of currently downloaded files
+        *current = static_cast<int>(transfers);
      
         do {
            curl_multi_perform(cm, &still_alive);
@@ -84,6 +87,7 @@ namespace download {
                }
                if(transfers < (sources.size() - 1)) {
                    transfers++;
+                   *current = static_cast<int>(transfers);
                    std::string destination_str(destinations.at(transfers).make_preferred().string()); // copy by value
                    const char* dest = destination_str.c_str();
                    std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(dest, "wb"), fclose);
@@ -361,7 +365,6 @@ namespace resources {
             processed_configs.push_back(config.path);
             std::copy(config_resources.begin(), config_resources.end(), std::back_inserter(*resources));
         }
-        // TODO: Set status to aborted if there are no resources
     }
 
     std::string get_command_prefix(std::string command) {
@@ -373,8 +376,9 @@ namespace resources {
     }
 
     /// Download all the resources to their specified paths
-    void download(std::string url, std::string map, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
+    void download(std::string url, std::string map, fs::path server_directory, std::vector<config::Resource> resources, int* status, int* current, int* total) {
         resources::collect_configs(url, map, &resources, server_directory);
+        *total = resources.size();
         
         std::vector<std::string> sources;
         std::vector<fs::path> destinations;
@@ -395,16 +399,16 @@ namespace resources {
             }
         }
         // Only start downloading something if there is actually files left
-        if (!sources.empty()) download::download_multiple_files(sources, destinations);
+        if (!sources.empty()) download::download_multiple_files(sources, destinations, current);
         
-        // NOTE: CAUTION This is not thread-safe and should not be attempted with multiple calls to download
         *status = DOWNLOAD_FINISHED;
     }
 };
 
 namespace assetbundler {
     /// Implementation for download_map
-    void download_map(char* servercontent, char* map, char* serverdir, int* status) {
+    /// CAUTION: This is not thread-safe and should not be attempted with multiple calls to download
+    void download_map(char* servercontent, char* map, char* serverdir, int* status, int* current, int *total) {
         // Prepare download paths
         std::string url(servercontent);
         std::string server_map(map);
@@ -419,8 +423,9 @@ namespace assetbundler {
         std::array<std::string, 3> map_resources = {"ogz", "wpt", "jpg"};
         server_map += ".";
         for (const auto& map_resource: map_resources) resources.push_back(config::Resource{"map", server_map + map_resource});
+        *total = resources.size();
         // Start download in a dedicated thread
-        std::thread download_thread(resources::download, url, map, server_directory, resources, status);
+        std::thread download_thread(resources::download, url, map, server_directory, resources, status, current, total);
         download_thread.detach();
         *status = DOWNLOAD_PROGRESS;
     }

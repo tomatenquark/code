@@ -1064,17 +1064,18 @@ namespace game
         {
             conoutf(CON_INFO, "downloading map %s", name);
             int status = DOWNLOAD_PROGRESS;
+            int total = 1;
+            int current = 0;
             copystring(serverdir, servercontent);
             format_servercontent(serverdir);
             prependstring(serverdir, homedir);
-            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status);
+            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status, &current, &total);
             renderbackground("downloading map... (esc to abort)");
-            float download_bar = 0.0f;
             while (status == DOWNLOAD_PROGRESS) {
                 if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
-                download_bar = (download_bar < 0.99f) ? download_bar + 0.01f : 0.0f;
-                defformatstring(download_text, "downloading map... %d%%", int(download_bar*100));
-                renderprogress(download_bar, download_text);
+                float percentage = (float(current)/float(total));
+                defformatstring(download_text, "downloading map... %d%%", int(percentage*100));
+                renderprogress(percentage, download_text);
                 sendmessages();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
