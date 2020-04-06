@@ -319,8 +319,8 @@ namespace resources {
         });
     }
 
-    /// Iterates through all the config files found in name and adds their resources respectively.
-    void collect(std::string url, std::string name, std::vector<config::Resource>* resources, fs::path server_directory) {
+    /// Downloads the main map config (if it can be found)
+    void download_map_config(std::string url, std::string name, std::vector<config::Resource>* resources, fs::path server_directory) {
         std::stringstream start_url;
         start_url << url << "/packages/base/" << name << ".cfg";
         fs::path start_path(server_directory);
@@ -328,7 +328,10 @@ namespace resources {
         start_path.append(name + ".cfg");
         fs::create_directories(start_path.parent_path().make_preferred());
         download_and_filter_config(start_url.str(), start_path, resources);
+    }
 
+    /// Iterates through all the config files found in name and adds their resources respectively.
+    void collect_configs(std::string url, std::string name, std::vector<config::Resource>* resources, fs::path server_directory) {
         std::vector<config::Resource> configs;
         std::vector<std::string> processed_configs;
         // Get configs declared in map config
@@ -370,7 +373,9 @@ namespace resources {
     }
 
     /// Download all the resources to their specified paths
-    void download(std::string url, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
+    void download(std::string url, std::string map, fs::path server_directory, std::vector<config::Resource> resources, int* status) {
+        resources::collect_configs(url, map, &resources, server_directory);
+        
         std::vector<std::string> sources;
         std::vector<fs::path> destinations;
         
@@ -409,13 +414,13 @@ namespace assetbundler {
         std::vector<config::Resource> resources;
         // NOTE: This assumes that curl_global_init has already been called
         // Collects all the resources from the map
-        resources::collect(url, map, &resources, server_directory);
+        resources::download_map_config(url, map, &resources, server_directory);
         // Add missing map files
         std::array<std::string, 3> map_resources = {"ogz", "wpt", "jpg"};
         server_map += ".";
         for (const auto& map_resource: map_resources) resources.push_back(config::Resource{"map", server_map + map_resource});
         // Start download in a dedicated thread
-        std::thread download_thread(resources::download, url, server_directory, resources, status);
+        std::thread download_thread(resources::download, url, map, server_directory, resources, status);
         download_thread.detach();
         *status = DOWNLOAD_PROGRESS;
     }
