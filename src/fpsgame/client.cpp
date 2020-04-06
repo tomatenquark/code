@@ -7,7 +7,9 @@ namespace game
     VARP(radarteammates, 0, 1, 1);
     VARP(downloadmaps, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
+    // Variables used for downloading
     static char servercontent[MAXTRANS];
+    string serverdir = "";
 
     void getservercontent()
     {
@@ -911,6 +913,7 @@ namespace game
         gamespeed = 100;
         clearclients(false);
         copystring(servercontent, "");
+        if (strlen(serverdir)) removepackagedir(serverdir);
         if(cleanup)
         {
             nextmode = gamemode = INT_MAX;
@@ -1061,7 +1064,6 @@ namespace game
         {
             conoutf(CON_INFO, "downloading map %s", name);
             int status = DOWNLOAD_PROGRESS;
-            string serverdir = "";
             copystring(serverdir, servercontent);
             format_servercontent(serverdir);
             prependstring(serverdir, homedir);

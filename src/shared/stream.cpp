@@ -420,6 +420,18 @@ const char *addpackagedir(const char *dir)
     return pf.dir;
 }
 
+bool removepackagedir(const char *dir)
+{
+    string pdir;
+    copystring(pdir, dir);
+    int package_index = -1;
+    for (int i = 0; i < packagedirs.length(); i++) {
+        if (strcmp(pdir, packagedirs[i].dir)) package_index = i;
+    }
+    if (package_index > -1) packagedirs.remove(package_index);
+    return (package_index > -1);
+}
+
 const char *findfile(const char *filename, const char *mode)
 {
     static string s;

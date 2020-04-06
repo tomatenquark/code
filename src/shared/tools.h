@@ -1324,6 +1324,7 @@ extern bool createdir(const char *path);
 extern size_t fixpackagedir(char *dir);
 extern const char *sethomedir(const char *dir);
 extern const char *addpackagedir(const char *dir);
+extern bool removepackagedir(const char* dir);
 extern const char *findfile(const char *filename, const char *mode);
 extern bool findzipfile(const char *filename);
 extern stream *openrawfile(const char *filename, const char *mode);
