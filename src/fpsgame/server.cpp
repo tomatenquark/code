@@ -1006,7 +1006,7 @@ namespace server
             ci->state.timeplayed += lastmillis - ci->state.lasttimeplayed;
             ci->state.lasttimeplayed = lastmillis;
 
-            loopj(numteams) if(!strcmp(ci->team, teamranks[j].name))
+            for(int j = 0; j < int(numteams); j++) if(!strcmp(ci->team, teamranks[j].name))
             {
                 teamrank &ts = teamranks[j];
                 ts.rank += ci->state.effectiveness/max(ci->state.timeplayed, 1);
@@ -2225,7 +2225,7 @@ namespace server
             if(!target || target->state.state!=CS_ALIVE || h.lifesequence!=target->state.lifesequence || h.dist<0 || h.dist>guns[gun].exprad) continue;
 
             bool dup = false;
-            loopj(i) if(hits[j].target==h.target) { dup = true; break; }
+            for(int j = 0; j < int(i); j++) if(hits[j].target==h.target) { dup = true; break; }
             if(dup) continue;
 
             int damage = guns[gun].damage;

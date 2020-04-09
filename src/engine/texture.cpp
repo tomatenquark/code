@@ -275,7 +275,7 @@ static void reorientrgtc(GLenum format, int blocksize, int w, int h, uchar *src,
     {
         for(uchar *curdst = dst, *end = &src[bw*blocksize]; src < end; curdst += stridex)
         {
-            loopj(blocksize/8)
+            for(int j = 0; j < int(blocksize/8); j++)
             {
                 uchar val1 = src[0], val2 = src[1];
                 ullong sval = lilswap(*(const ushort *)&src[2]) + ((ullong)lilswap(*(const uint *)&src[4] )<< 16), dval = 0;
@@ -1603,7 +1603,7 @@ void compactvslots(cube *c, int n)
     for(int i = 0; i < int(n); i++)
     {
         if(c[i].children) compactvslots(c[i].children);
-        else loopj(6) if(vslots.inrange(c[i].texture[j]))
+        else for(int j = 0; j < int(6); j++) if(vslots.inrange(c[i].texture[j]))
         {
             VSlot &vs = *vslots[c[i].texture[j]];
             if(vs.index < 0) assignvslot(vs);
@@ -1836,7 +1836,7 @@ void packvslot(vector<uchar> &buf, const VSlot &src)
             const SlotShaderParam &p = src.params[i];
             buf.put(VSLOT_SHPARAM);
             sendstring(p.name, buf);
-            loopj(4) putfloat(buf, p.val[j]);
+            for(int j = 0; j < int(4); j++) putfloat(buf, p.val[j]);
         }
     }
     if(src.changed & (1<<VSLOT_SCALE))
@@ -2000,7 +2000,7 @@ static void fixinsidefaces(cube *c, const ivec &o, int size, int tex)
     {
         ivec co(i, o, size);
         if(c[i].children) fixinsidefaces(c[i].children, co, size>>1, tex);
-        else loopj(6) if(!visibletris(c[i], j, co, size))
+        else for(int j = 0; j < int(6); j++) if(!visibletris(c[i], j, co, size))
             c[i].texture[j] = tex;
     }
 }
@@ -3282,7 +3282,7 @@ void savepng(const char *filename, ImageData &image, bool flip)
     for(int i = 0; i < int(image.h); i++)
     {
         uchar filter = 0;
-        loopj(2)
+        for(int j = 0; j < int(2); j++)
         {
             z.next_in = j ? (Bytef *)image.data + (flip ? image.h-i-1 : i)*image.pitch : (Bytef *)&filter;
             z.avail_in = j ? image.w*image.bpp : 1;
@@ -3403,7 +3403,7 @@ void savetga(const char *filename, ImageData &image, bool flip)
             }
             else raw = min(remaining, 128);
             uchar *dst = buf;
-            loopj(raw)
+            for(int j = 0; j < int(raw); j++)
             {
                 dst[0] = src[2];
                 dst[1] = src[1];

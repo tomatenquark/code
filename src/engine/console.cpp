@@ -578,7 +578,7 @@ void writebinds(stream *f)
     vector<keym *> binds;
     enumerate(keyms, keym, km, binds.add(&km));
     binds.sortname();
-    loopj(3)
+    for(int j = 0; j < int(3); j++)
     {
         loopv(binds)
         {

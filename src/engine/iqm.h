@@ -192,7 +192,7 @@ struct iqm : skelloader<iqm>
                       *mtan = vtan ? vtan + 4*fv : NULL,
                       *mtc = vtc ? vtc + 2*fv : NULL;
                 uchar *mindex = vindex ? vindex + 4*fv : NULL, *mweight = vweight ? vweight + 4*fv : NULL;
-                loopj(im.num_vertexes)
+                for(int j = 0; j < int(im.num_vertexes); j++)
                 {
                     vert &v = m->verts[j];
                     v.pos = vec(mpos[0], -mpos[1], mpos[2]);
@@ -229,7 +229,7 @@ struct iqm : skelloader<iqm>
                 m->numtris = im.num_triangles;
                 if(m->numtris) m->tris = new tri[m->numtris]; 
                 iqmtriangle *mtris = tris + im.first_triangle;
-                loopj(im.num_triangles)
+                for(int j = 0; j < int(im.num_triangles); j++)
                 {
                     tri &t = m->tris[j];
                     t.vert[0] = mtris->vertex[0] - fv;
@@ -282,7 +282,7 @@ struct iqm : skelloader<iqm>
                 animbones += skel->numframes*skel->numbones;
                 skel->numframes += a.num_frames;
                 ushort *animdata = &frames[a.first_frame*hdr.num_framechannels];
-                loopj(a.num_frames)
+                for(int j = 0; j < int(a.num_frames); j++)
                 {
                     dualquat *frame = &animbones[j*skel->numbones];
                     loopk(skel->numbones)

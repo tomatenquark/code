@@ -120,7 +120,7 @@ namespace game
             else preloadmodel(mdl->ffa);
             if(mdl->vwep) preloadmodel(mdl->vwep);
             if(mdl->quad) preloadmodel(mdl->quad);
-            loopj(3) if(mdl->armour[j]) preloadmodel(mdl->armour[j]);
+            for(int j = 0; j < int(3); j++) if(mdl->armour[j]) preloadmodel(mdl->armour[j]);
         }
     }
     

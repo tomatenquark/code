@@ -176,7 +176,7 @@ bool isvalidcube(const cube &c)
     for(int i = 0; i < int(8); i++) // test that cube is convex
     {
         vec v = p.v[i];
-        loopj(p.size) if(p.p[j].dist(v)>1e-3f) return false;
+        for(int j = 0; j < int(p.size); j++) if(p.p[j].dist(v)>1e-3f) return false;
     }
     return true;
 }
@@ -201,7 +201,7 @@ void validatec(cube *c, int size)
         }
         else
         {
-            loopj(3)
+            for(int j = 0; j < int(3); j++)
             {
                 uint f = c[i].faces[j], e0 = f&0x0F0F0F0FU, e1 = (f>>4)&0x0F0F0F0FU;
                 if(e0 == e1 || ((e1+0x07070707U)|(e1-e0))&0xF0F0F0F0U)
@@ -317,7 +317,7 @@ void forcemip(cube &c, bool fixtex)
     cube *ch = c.children;
     emptyfaces(c);
 
-    for(int i = 0; i < int(8); i++) loopj(8)
+    for(int i = 0; i < int(8); i++) for(int j = 0; j < int(8); j++)
     {
         int n = i^(j==3 ? 4 : (j==4 ? 3 : j));
         if(!isempty(ch[n])) // breadth first search for cube near vert
@@ -330,7 +330,7 @@ void forcemip(cube &c, bool fixtex)
         }
     }
 
-    if(fixtex) loopj(6)
+    if(fixtex) for(int j = 0; j < int(6); j++)
         c.texture[j] = getmippedtexture(c, j);
 }
 
@@ -384,7 +384,7 @@ bool subdividecube(cube &c, bool fullcheck, bool brighten)
         v[i].mul(2);
     }
 
-    loopj(6)
+    for(int j = 0; j < int(6); j++)
     {
         int d = dimension(j), z = dimcoord(j);
         const ivec &v00 = v[octaindex(d, 0, 0, z)],
@@ -446,7 +446,7 @@ int visibleorient(const cube &c, int orient)
     {
         int a = faceedgesidx[orient][i*2 + 0];
         int b = faceedgesidx[orient][i*2 + 1];
-        loopj(2)
+        for(int j = 0; j < int(2); j++)
         {
             if(crushededge(c.edges[a],j) &&
                crushededge(c.edges[b],j) &&
@@ -479,7 +479,7 @@ bool remip(cube &c, const ivec &co, int size)
     }
 
     solidfaces(c); // so texmip is more consistent
-    loopj(6)
+    for(int j = 0; j < int(6); j++)
         c.texture[j] = getmippedtexture(c, j); // parents get child texs regardless
 
     if(!perfect) return false;
@@ -934,7 +934,7 @@ static inline bool insideface(const ivec2 *p, int nump, const ivec2 *o, int numo
         const ivec2 &cur = o[i];
         ivec2 dir(cur.x-prev.x, cur.y-prev.y);
         int offset = dir.x*prev.y - dir.y*prev.x;
-        loopj(nump) if(dir.x*p[j].y - dir.y*p[j].x > offset) return false;
+        for(int j = 0; j < int(nump); j++) if(dir.x*p[j].y - dir.y*p[j].x > offset) return false;
         bounds++;
         prev = cur;
     }
@@ -1639,7 +1639,7 @@ bool mergepolys(int orient, hashset<plink> &links, vector<plink *> &queue, int o
     memcpy(p.verts, verts, numverts*sizeof(pvert));
 
     int prev = p.numverts-1;
-    loopj(p.numverts)
+    for(int j = 0; j < int(p.numverts); j++)
     {
         pedge e(p.verts[prev], p.verts[j]);
         int order = e.from.x > e.to.x || (e.from.x == e.to.x && e.from.y > e.to.y) ? 1 : 0;
@@ -1684,7 +1684,7 @@ void addmerge(cube &cu, int orient, const ivec &co, const ivec &n, int offset, p
         {
             ivec v0 = verts[0].getxyz();
             const vertinfo *oldverts = cu.ext->verts() + oldsurf.verts;
-            loopj(numverts) if(v0 == oldverts[j].getxyz()) 
+            for(int j = 0; j < int(numverts); j++) if(v0 == oldverts[j].getxyz())
             { 
                 for(int k = 1; k < numverts; k++)
                 {
@@ -1727,7 +1727,7 @@ void mergepolys(int orient, const ivec &co, const ivec &n, int offset, vector<po
     {
         poly &p = polys[i];
         int prev = p.numverts-1;
-        loopj(p.numverts)
+        for(int j = 0; j < int(p.numverts); j++)
         {
             pedge e(p.verts[prev], p.verts[j]);
             int order = e.from.x > e.to.x || (e.from.x == e.to.x && e.from.y > e.to.y) ? 1 : 0;
@@ -1771,7 +1771,7 @@ void genmerges(cube *c = worldroot, const ivec &o = ivec(0, 0, 0), int size = wo
         ivec co(i, o, size);
         int vis;
         if(c[i].children) genmerges(c[i].children, co, size>>1);
-        else if(!isempty(c[i])) loopj(6) if((vis = visibletris(c[i], j, co, size)))
+        else if(!isempty(c[i])) for(int j = 0; j < int(6); j++) if((vis = visibletris(c[i], j, co, size)))
         {
             cfkey k;
             poly p;

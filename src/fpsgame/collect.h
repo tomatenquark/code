@@ -542,7 +542,7 @@ struct collectclientmode : clientmode
             entitylight light;
             lightreaching(pos, light.color, light.dir, true);
             int dteam = collectteambase(d->team);
-            loopj(d->tokens)
+            for(int j = 0; j < int(d->tokens); j++)
             {
                 rendermodel(&light, dteam != team ? "skull/blue" : "skull/red", ANIM_MAPMODEL|ANIM_LOOP, pos, d->yaw+90, 0, MDL_SHADOW | MDL_CULL_VFC | MDL_CULL_DIST | MDL_CULL_OCCLUDED);
                 pos.z += TOKENHEIGHT + 1;

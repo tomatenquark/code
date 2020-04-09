@@ -451,7 +451,7 @@ static struct soundtype
         loopv(configs)
         {
             soundconfig &s = configs[i];
-            loopj(s.numslots)
+            for(int j = 0; j < int(s.numslots); j++)
             {
                 soundslot &c = slots[s.slots+j];
                 if(!strcmp(c.sample->name, name) && (!vol || c.volume==vol)) return i;

@@ -12,7 +12,7 @@ struct ragdollskel
 
         bool shareverts(const tri &t) const
         {
-            for(int i = 0; i < int(3); i++) loopj(3) if(vert[i] == t.vert[j]) return true;
+            for(int i = 0; i < int(3); i++) for(int j = 0; j < int(3); j++) if(vert[i] == t.vert[j]) return true;
             return false;
         }
     };

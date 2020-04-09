@@ -134,7 +134,7 @@ struct cubeloader
                     if(t.type==C_FHF || t.type==C_CHF)
                     {
                         int bottom = (neighbours(t)&(~3))+4;
-                        loopj(4) if(o[j]->vdelta>bottom) { o[j]->vdelta = bottom; changed = true; }
+                        for(int j = 0; j < int(4); j++) if(o[j]->vdelta>bottom) { o[j]->vdelta = bottom; changed = true; }
                     }
                 }
             }
@@ -182,7 +182,7 @@ struct cubeloader
     void hf(int x, int y, int z, int side, int dir, int cap)
     {
         cube &c = getcube(x, y, z);
-        for(int i = 0; i < int(2); i++) loopj(2) edgeset(cubeedge(c, 2, i, j), side, dir*(o[(j<<1)+i]->vdelta-cap)*2+side*8);
+        for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++) edgeset(cubeedge(c, 2, i, j), side, dir*(o[(j<<1)+i]->vdelta-cap)*2+side*8);
     }
 
     bool cornersolid(int z, c_sqr *s) { return s->type==C_SOLID || z<s->floor || z>=s->ceil; }

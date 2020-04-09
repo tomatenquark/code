@@ -525,7 +525,7 @@ void checkpings()
         si->numplayers = getint(p);
         int numattr = getint(p);
         si->attr.setsize(0);
-        loopj(numattr) { int attr = getint(p); if(p.overread()) break; si->attr.add(attr); }
+        for(int j = 0; j < int(numattr); j++) { int attr = getint(p); if(p.overread()) break; si->attr.add(attr); }
         getstring(text, p);
         filtertext(si->map, text, false);
         getstring(text, p);

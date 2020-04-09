@@ -266,7 +266,7 @@ struct vacollect : verthash
                 }
             }
         }
-        loopj(2)
+        for(int j = 0; j < int(2); j++)
         {
             int offset = 2*j;
             if(firstlmid[offset]==LMID_AMBIENT && firstlmid[offset+1]==LMID_AMBIENT) continue;
@@ -281,7 +281,7 @@ struct vacollect : verthash
                 indices[k].unlit = firstlmid[type];
             }
         }  
-        loopj(2)
+        for(int j = 0; j < int(2); j++)
         {
             int offset = 4 + 2*j;
             if(firstlmid[offset]==LMID_AMBIENT && firstlmid[offset+1]==LMID_AMBIENT) continue;
@@ -934,7 +934,7 @@ void gencubeedges(cube &c, const ivec &co, int size)
         {
             vertinfo *verts = c.ext->verts() + c.ext->surfaces[i].verts;
             ivec vo = ivec(co).mask(~0xFFF).shl(3);
-            loopj(numverts)
+            for(int j = 0; j < int(numverts); j++)
             {
                 vertinfo &v = verts[j];
                 pos[j] = ivec(v.x, v.y, v.z).add(vo);
@@ -952,7 +952,7 @@ void gencubeedges(cube &c, const ivec &co, int size)
             pos[numverts++] = v[order+2].mul(size).add(vo);
             if(vis&2) pos[numverts++] = v[(order+3)&3].mul(size).add(vo);
         }
-        loopj(numverts)
+        for(int j = 0; j < int(numverts); j++)
         {
             int e1 = j, e2 = j+1 < numverts ? j+1 : 0;
             ivec d = pos[e2];
@@ -1056,7 +1056,7 @@ void gencubeverts(cube &c, const ivec &co, int size, int csi)
         {
             verts = c.ext->verts() + c.ext->surfaces[i].verts;
             vec vo(ivec(co).mask(~0xFFF));
-            loopj(numverts) pos[j] = vec(verts[j].getxyz()).mul(1.0f/8).add(vo);
+            for(int j = 0; j < int(numverts); j++) pos[j] = vec(verts[j].getxyz()).mul(1.0f/8).add(vo);
             if(!flataxisface(c, i)) convex = faceconvexity(verts, numverts, size);
         }
         else
@@ -1756,7 +1756,7 @@ void precachetextures()
     loopv(valist)
     {
         vtxarray *va = valist[i];
-        loopj(va->texs + va->blends) if(texs.find(va->eslist[j].texture) < 0) texs.add(va->eslist[j].texture);
+        for(int j = 0; j < int(va->texs + va->blends); j++) if(texs.find(va->eslist[j].texture) < 0) texs.add(va->eslist[j].texture);
     }
     loopv(texs)
     {

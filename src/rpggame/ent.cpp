@@ -20,7 +20,7 @@ namespace game
 
         vec p(0, 0, 0), closep;
         float closedist = 1e10f;
-        loopj(ATTACKSAMPLES)
+        for(int j = 0; j < int(ATTACKSAMPLES); j++)
         {
             p.x = e.xradius * cosf(2*M_PI*j/ATTACKSAMPLES);
             p.y = e.yradius * sinf(2*M_PI*j/ATTACKSAMPLES);

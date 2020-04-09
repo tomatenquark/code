@@ -74,7 +74,7 @@ struct md5 : skelloader<md5>
 
                 blendcombo c;
                 int sorted = 0;
-                loopj(v.count)
+                for(int j = 0; j < int(v.count); j++)
                 {
                     md5weight &w = weightinfo[v.start+j];
                     sorted = c.addweight(sorted, w.bias, w.joint); 

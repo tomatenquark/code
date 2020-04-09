@@ -231,7 +231,7 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
         bgquad(0, 0, w, h, 0, 0, du, dv);
         settexture("data/background_decal.png", 3);
         gle::begin(GL_QUADS);
-        loopj(numdecals)
+        for(int j = 0; j < int(numdecals); j++)
         {
             float hsz = decals[j].size, hx = clamp(decals[j].x, hsz, w-hsz), hy = clamp(decals[j].y, hsz, h-hsz), side = decals[j].side;
             gle::attribf(hx-hsz, hy-hsz); gle::attribf(side,   0);
@@ -666,7 +666,7 @@ void setupscreen()
     #else
         static const int glversions[] = { 33, 32, 31, 30, 20 };
     #endif
-        loopj(sizeof(glversions)/sizeof(glversions[0]))
+        for(int j = 0; j < int(sizeof(glversions)/sizeof(glversions[0])); j++)
         {
             glcompat = glversions[j] <= 30 ? 1 : 0;
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glversions[j] / 10);

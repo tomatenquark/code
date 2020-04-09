@@ -371,7 +371,7 @@ struct ctfclientmode : clientmode
     {
         if(holdspawns.empty()) return;
         int spawnindex = flags[i].spawnindex;
-        loopj(4)
+        for(int j = 0; j < int(4); j++)
         {
             spawnindex = rnd(holdspawns.length());
             if(spawnindex != flags[i].spawnindex) break;

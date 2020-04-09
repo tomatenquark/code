@@ -1362,7 +1362,7 @@ void renderpostfx()
         p.shader->set();
         LOCALPARAM(params, p.params);
         int tw = w, th = h, tmu = 0;
-        loopj(NUMPOSTFXBINDS) if(p.inputs&(1<<j) && binds[j] >= 0)
+        for(int j = 0; j < int(NUMPOSTFXBINDS); j++) if(p.inputs&(1<<j) && binds[j] >= 0)
         {
             if(!tmu)
             {
@@ -1377,7 +1377,7 @@ void renderpostfx()
         LOCALPARAMF(postfxscale, 1.0f/tw, 1.0f/th);
         screenquad(1, 1);
 
-        loopj(NUMPOSTFXBINDS) if(p.freeinputs&(1<<j) && binds[j] >= 0)
+        for(int j = 0; j < int(NUMPOSTFXBINDS); j++) if(p.freeinputs&(1<<j) && binds[j] >= 0)
         {
             postfxtexs[binds[j]].used = -1;
             binds[j] = -1;

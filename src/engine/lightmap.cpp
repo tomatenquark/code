@@ -1000,7 +1000,7 @@ static void clearsurfaces(cube *c)
     {
         if(c[i].ext)
         {
-            loopj(6) 
+            for(int j = 0; j < int(6); j++)
             {
                 surfaceinfo &surf = c[i].ext->surfaces[j];
                 if(!surf.used()) continue;
@@ -1343,7 +1343,7 @@ static int setupsurface(lightmapworker *w, plane planes[2], int numplanes, const
         px.mul(1/sqrtf(len));
         vec2 py(-px.y, px.x), pmin(0, 0), pmax(0, 0);
         if(numplanes >= 2 && (i == 0 || i >= 3)) px.neg();
-        loopj(numverts)
+        for(int j = 0; j < int(numverts); j++)
         {
             vec2 rj = vec2(c[j]).sub(c[i]), pj(rj.dot(px), rj.dot(py));
             pmin.x = min(pmin.x, pj.x);
@@ -1480,7 +1480,7 @@ static lightmapinfo *setupsurfaces(lightmapworker *w, lightmaptask &task)
         if(numverts)
         {
             vertinfo *verts = c.ext->verts() + c.ext->surfaces[i].verts;
-            loopj(numverts) curlitverts[j].set(verts[j].getxyz());
+            for(int j = 0; j < int(numverts); j++) curlitverts[j].set(verts[j].getxyz());
             if(c.merged&(1<<i))
             {
                 msz = 1<<calcmergedsize(i, mo, size, verts, numverts);
@@ -1509,7 +1509,7 @@ static lightmapinfo *setupsurfaces(lightmapworker *w, lightmaptask &task)
         }
 
         vec pos[MAXFACEVERTS], n[MAXFACEVERTS], po(ivec(co).mask(~0xFFF));
-        loopj(numverts) pos[j] = vec(curlitverts[j].getxyz()).mul(1.0f/8).add(po);
+        for(int j = 0; j < int(numverts); j++) pos[j] = vec(curlitverts[j].getxyz()).mul(1.0f/8).add(po);
 
         plane planes[2];
         int numplanes = 0;
@@ -1749,7 +1749,7 @@ static void generatelightmaps(cube *c, const ivec &co, int size)
         {
             if(c[i].ext)
             {
-                loopj(6) 
+                for(int j = 0; j < int(6); j++)
                 {
                     surfaceinfo &surf = c[i].ext->surfaces[j];
                     if(surf.lmid[0] >= LMID_RESERVED || surf.lmid[1] >= LMID_RESERVED) goto nextcube;
@@ -1757,7 +1757,7 @@ static void generatelightmaps(cube *c, const ivec &co, int size)
                 }
             }
             int usefacemask = 0;
-            loopj(6) if(c[i].texture[j] != DEFAULT_SKY && (!(c[i].merged&(1<<j)) || (c[i].ext && c[i].ext->surfaces[j].numverts&MAXFACEVERTS)))
+            for(int j = 0; j < int(6); j++) if(c[i].texture[j] != DEFAULT_SKY && (!(c[i].merged&(1<<j)) || (c[i].ext && c[i].ext->surfaces[j].numverts&MAXFACEVERTS)))
             {   
                 usefacemask |= visibletris(c[i], j, o, size)<<(4*j);
             }
@@ -1842,7 +1842,7 @@ static bool previewblends(lightmapworker *w, cube &c, const ivec &co, int size)
         if(usefaces&2) curlitverts[numverts++].set(v[(order+3)&3].mul(size).add(vo));
 
         vec pos[4], n[4], po(ivec(co).mask(~0xFFF));
-        loopj(numverts) pos[j] = vec(curlitverts[j].getxyz()).mul(1.0f/8).add(po);
+        for(int j = 0; j < int(numverts); j++) pos[j] = vec(curlitverts[j].getxyz()).mul(1.0f/8).add(po);
 
         plane planes[2];
         int numplanes = 0;
@@ -2264,7 +2264,7 @@ static void rotatenormals(LightMap &lmlv, int x, int y, int w, int h, bool flipx
     int stride = 3*(LM_PACKW-w);
     for(int i = 0; i < int(h); i++)
     {
-        loopj(w)
+        for(int j = 0; j < int(w); j++)
         {
             if(flipx) lv[0] = 255 - lv[0];
             if(flipy) lv[1] = 255 - lv[1];
@@ -2286,7 +2286,7 @@ static void rotatenormals(cube *c)
             continue;
         }
         else if(!ch.ext) continue;
-        loopj(6) if(lightmaps.inrange(ch.ext->surfaces[j].lmid[0]+1-LMID_RESERVED))
+        for(int j = 0; j < int(6); j++) if(lightmaps.inrange(ch.ext->surfaces[j].lmid[0]+1-LMID_RESERVED))
         {
             VSlot &vslot = lookupvslot(ch.texture[j], false);
             if(!vslot.rotation) continue;

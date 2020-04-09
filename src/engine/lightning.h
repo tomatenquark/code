@@ -47,7 +47,7 @@ static void renderlightning(Texture *tex, const vec &o, const vec &d, float sz)
           blend = pow(clamp(float(lastmillis - lastlnjitter)/lnjittermillis, 0.0f, 1.0f), lnblendpower),
           jitter0 = (1-blend)*lnjitterscale*sz/lnjitterradius, jitter1 = blend*lnjitterscale*sz/lnjitterradius; 
     gle::begin(GL_TRIANGLE_STRIP);
-    loopj(numsteps)
+    for(int j = 0; j < int(numsteps); j++)
     {
         vec next(cur);
         next.add(step);

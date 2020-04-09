@@ -184,7 +184,7 @@ struct md2 : vertloader<md2>
                 lilswap(frame.scale, 6);
 
                 file->read(tmpverts, header.numvertices*sizeof(md2_vertex));
-                loopj(m.numverts)
+                for(int j = 0; j < int(m.numverts); j++)
                 {
                     const md2_vertex &v = tmpverts[vgen[j]];
                     curvert->pos = vec(v.vertex[0]*frame.scale[0]+frame.translate[0],
