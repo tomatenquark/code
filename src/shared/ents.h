@@ -30,7 +30,8 @@ enum
     EF_OCTA      = 1<<4,
     EF_RENDER    = 1<<5,
     EF_SOUND     = 1<<6,
-    EF_SPAWNED   = 1<<7
+    EF_SPAWNED   = 1<<7,
+    EF_NOPICKUP  = 1<<8
 };
 
 struct extentity : entity                       // part of the entity that doesn't get saved to disk
@@ -45,6 +46,11 @@ struct extentity : entity                       // part of the entity that doesn
     void setspawned(bool val) { if(val) flags |= EF_SPAWNED; else flags &= ~EF_SPAWNED; }
     void setspawned() { flags |= EF_SPAWNED; }
     void clearspawned() { flags &= ~EF_SPAWNED; }
+
+    bool nopickup() const { return (flags&EF_NOPICKUP) != 0; }
+    void setnopickup(bool val) { if(val) flags |= EF_NOPICKUP; else flags &= ~EF_NOPICKUP; }
+    void setnopickup() { flags |= EF_NOPICKUP; }
+    void clearnopickup() { flags &= ~EF_NOPICKUP; }
 };
 
 #define MAXENTS 10000

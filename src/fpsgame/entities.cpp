@@ -168,9 +168,11 @@ namespace entities
     void pickupeffects(int n, fpsent *d)
     {
         if(!ents.inrange(n)) return;
-        int type = ents[n]->type;
+        extentity *e = ents[n];
+        int type = e->type;
         if(type<I_SHELLS || type>I_QUAD) return;
-        ents[n]->clearspawned();
+        e->clearspawned();
+        e->clearnopickup();
         if(!d) return;
         itemstat &is = itemstats[type-I_SHELLS];
         fpsent *h = followingplayer(player1);
@@ -280,25 +282,26 @@ namespace entities
 
     void trypickup(int n, fpsent *d)
     {
-        switch(ents[n]->type)
+        extentity *e = ents[n];
+        switch(e->type)
         {
             default:
-                if(d->canpickup(ents[n]->type))
+                if(d->canpickup(e->type))
                 {
                     addmsg(N_ITEMPICKUP, "rci", d, n);
-                    ents[n]->clearspawned(); // even if someone else gets it first
+                    e->setnopickup(); // even if someone else gets it first
                 }
                 break;
 
             case TELEPORT:
             {
-                if(d->lastpickup==ents[n]->type && lastmillis-d->lastpickupmillis<500) break;
-                if(ents[n]->attr3 > 0)
+                if(d->lastpickup==e->type && lastmillis-d->lastpickupmillis<500) break;
+                if(e->attr3 > 0)
                 {
-                    defformatstring(hookname, "can_teleport_%d", ents[n]->attr3);
+                    defformatstring(hookname, "can_teleport_%d", e->attr3);
                     if(identexists(hookname) && !execute(hookname)) break;
                 }
-                d->lastpickup = ents[n]->type;
+                d->lastpickup = e->type;
                 d->lastpickupmillis = lastmillis;
                 teleport(n, d);
                 break;
@@ -313,11 +316,11 @@ namespace entities
 
             case JUMPPAD:
             {
-                if(d->lastpickup==ents[n]->type && lastmillis-d->lastpickupmillis<300) break;
-                d->lastpickup = ents[n]->type;
+                if(d->lastpickup==e->type && lastmillis-d->lastpickupmillis<300) break;
+                d->lastpickup = e->type;
                 d->lastpickupmillis = lastmillis;
                 jumppadeffects(d, n, true);
-                vec v((int)(char)ents[n]->attr3*10.0f, (int)(char)ents[n]->attr2*10.0f, ents[n]->attr1*12.5f);
+                vec v((int)(char)e->attr3*10.0f, (int)(char)e->attr2*10.0f, e->attr1*12.5f);
                 if(d->ai) d->ai->becareful = true;
 				d->falling = vec(0, 0, 0);
 				d->physstate = PHYS_FALL;
@@ -336,7 +339,7 @@ namespace entities
         {
             extentity &e = *ents[i];
             if(e.type==NOTUSED) continue;
-            if(!e.spawned() && e.type!=TELEPORT && e.type!=JUMPPAD && e.type!=RESPAWNPOINT) continue;
+            if((!e.spawned() || e.nopickup()) && e.type!=TELEPORT && e.type!=JUMPPAD && e.type!=RESPAWNPOINT) continue;
             float dist = e.o.dist(o);
             if(dist<(e.type==TELEPORT ? 16 : 12)) trypickup(i, d);
         }
@@ -364,18 +367,23 @@ namespace entities
         putint(p, -1);
     }
 
-    void resetspawns() { loopv(ents) ents[i]->clearspawned(); }
+    void resetspawns() { loopv(ents) { extentity *e = ents[i]; e->clearspawned(); e->clearnopickup(); } }
 
     void spawnitems(bool force)
     {
         if(m_noitems) return;
-        loopv(ents) if(ents[i]->type>=I_SHELLS && ents[i]->type<=I_QUAD && (!m_noammo || ents[i]->type<I_SHELLS || ents[i]->type>I_CARTRIDGES))
+        loopv(ents)
         {
-            ents[i]->setspawned(force || m_sp || !server::delayspawn(ents[i]->type));
+            extentity *e = ents[i];
+            if(e->type>=I_SHELLS && e->type<=I_QUAD && (!m_noammo || e->type<I_SHELLS || e->type>I_CARTRIDGES))
+            {
+                e->setspawned(force || m_sp || !server::delayspawn(e->type));
+                e->clearnopickup();
+            }
         }
     }
 
-    void setspawn(int i, bool on) { if(ents.inrange(i)) ents[i]->setspawned(on); }
+    void setspawn(int i, bool on) { if(ents.inrange(i)) { extentity *e = ents[i]; e->setspawned(on); e->clearnopickup(); } }
 
     extentity *newentity() { return new fpsentity(); }
     void deleteentity(extentity *e) { delete (fpsentity *)e; }
