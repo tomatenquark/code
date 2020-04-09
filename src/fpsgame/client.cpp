@@ -1660,8 +1660,16 @@ namespace game
             case N_ITEMACC:            // server acknowledges that I picked up this item
             {
                 int i = getint(p), cn = getint(p);
-                fpsent *d = getclient(cn);
-                entities::pickupeffects(i, d);
+                if(cn >= 0)
+                {
+                    fpsent *d = getclient(cn);
+                    entities::pickupeffects(i, d);
+                }
+                else if(entities::ents.inrange(i))
+                {
+                    entities::setspawn(i, true);
+                    ai::itemspawned(i);
+                }
                 break;
             }
 

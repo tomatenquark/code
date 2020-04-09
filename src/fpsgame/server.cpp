@@ -896,7 +896,12 @@ namespace server
     {
         if((m_timed && gamemillis>=gamelimit) || !sents.inrange(i) || !sents[i].spawned) return false;
         clientinfo *ci = getinfo(sender);
-        if(!ci || (!ci->local && !ci->state.canpickup(sents[i].type))) return false;
+        if(!ci) return false;
+        if(!ci->local && !ci->state.canpickup(sents[i].type))
+        {
+            sendf(sender, 1, "ri3", N_ITEMACC, i, -1);
+            return false;
+        }
         sents[i].spawned = false;
         sents[i].spawntime = spawntime(sents[i].type);
         sendf(-1, 1, "ri3", N_ITEMACC, i, sender);
