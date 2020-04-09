@@ -198,7 +198,7 @@ int ipmask::print(char *buf) const
     for(int i = 0; i < int(4); i++) if(maskconv.b[i])
     {
         if(lastdigit >= 0) *buf++ = '.';
-        loopj(i - lastdigit - 1) { *buf++ = '*'; *buf++ = '.'; }
+        for(int j = 0; j < int(i - lastdigit - 1); j++) { *buf++ = '*'; *buf++ = '.'; }
         buf += sprintf(buf, "%d", ipconv.b[i]);
         lastdigit = i;
     }

@@ -1135,7 +1135,7 @@ int findentity(int type, int index, int attr1, int attr2)
         if(e.type==type && (attr1<0 || e.attr1==attr1) && (attr2<0 || e.attr2==attr2))
             return i;
     }
-    loopj(index)
+    for(int j = 0; j < int(index); j++)
     {
         extentity &e = *ents[j];
         if(e.type==type && (attr1<0 || e.attr1==attr1) && (attr2<0 || e.attr2==attr2))

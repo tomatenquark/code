@@ -112,7 +112,7 @@ namespace game
             if(o->state==CS_SPECTATOR) { spectators.add(o); continue; }
             const char *team = m_teammode && o->team[0] ? o->team : NULL;
             bool found = false;
-            loopj(numgroups)
+            for(int j = 0; j < int(numgroups); j++)
             {
                 scoregroup &g = *groups[j];
                 if(team!=g.team && (!team || !g.team || strcmp(team, g.team))) continue;

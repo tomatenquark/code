@@ -688,7 +688,7 @@ static inline int undosize(undoblock *u)
         block3 *b = u->block();
         cube *q = b->c();
         int size = b->size(), total = size;
-        loopj(size) total += familysize(*q++)*sizeof(cube);
+        for(int j = 0; j < int(size); j++) total += familysize(*q++)*sizeof(cube);
         return total;
     }
 }
@@ -1370,8 +1370,8 @@ static void genprefabmesh(prefabmesh &r, cube &c, const ivec &co, int size)
             if(vis&2) pos[numverts++] = vec(v[(order+3)&3]).mul(size/8.0f).add(vo);
             guessnormals(pos, numverts, norm);
             int index[4];
-            loopj(numverts) index[j] = r.addvert(pos[j], bvec(norm[j]));
-            loopj(numverts-2) if(index[0]!=index[j+1] && index[j+1]!=index[j+2] && index[j+2]!=index[0])
+            for(int j = 0; j < int(numverts); j++) index[j] = r.addvert(pos[j], bvec(norm[j]));
+            for(int j = 0; j < int(numverts-2); j++) if(index[0]!=index[j+1] && index[j+1]!=index[j+2] && index[j+2]!=index[0])
             {
                 r.tris.add(index[0]);
                 r.tris.add(index[j+1]);
@@ -1737,7 +1737,7 @@ namespace hmap
 
         bool changed = false;
         int *o[4], best, par, q = 0;
-        for(int i = 0; i < int(2); i++) loopj(2) o[i+j*2] = &map[x+i][y+j];
+        for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++) o[i+j*2] = &map[x+i][y+j];
         #define pullhmap(I, LT, GT, M, N, A) do { \
             best = I; \
             for(int i = 0; i < int(4); i++) if(*o[i] LT best) best = *o[q = i] - M; \
@@ -1751,7 +1751,7 @@ namespace hmap
                 } \
             /* single layer */ \
             } else { \
-                loopj(4) if(*o[j] GT par) { \
+                for(int j = 0; j < int(4); j++) if(*o[j] GT par) { \
                     *o[j] = par; \
                     changed = true; \
                 } \
@@ -1768,7 +1768,7 @@ namespace hmap
         int notempty = 0;
 
         loopk(4) if(c[k]) {
-            for(int i = 0; i < int(2); i++) loopj(2) {
+            for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++) {
                 e[i][j] = min(8, map[x+i][y+j] - (mapz[x][y]+3-k)*8);
                 notempty |= e[i][j] > 0;
             }
@@ -1776,7 +1776,7 @@ namespace hmap
             {
                 c[k]->texture[sel.orient] = c[1]->texture[sel.orient];
                 solidfaces(*c[k]);
-                for(int i = 0; i < int(2); i++) loopj(2)
+                for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++)
                 {
                     int f = e[i][j];
                     if(f<0 || (f==0 && e[1-i][j]==0 && e[i][1-j]==0))
@@ -1826,7 +1826,7 @@ namespace hmap
         {
             sum = 0;
             div = 9;
-            for(int i = 0; i < int(3); i++) loopj(3)
+            for(int i = 0; i < int(3); i++) for(int j = 0; j < int(3); j++)
                 if(flags[x+i][y+j] & MAPPED)
                     sum += map[x+i][y+j];
                 else div--;
@@ -1928,7 +1928,7 @@ void linkedpush(cube &c, int d, int x, int y, int dc, int dir)
     ivec v, p;
     getcubevector(c, d, x, y, dc, v);
 
-    for(int i = 0; i < int(2); i++) loopj(2)
+    for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++)
     {
         getcubevector(c, d, i, j, dc, p);
         if(v==p)
@@ -2917,7 +2917,7 @@ void rendertexturepanel(int w, int h)
                 }
                 loopk(4) { tc[k].x = tc[k].x/sx - xoff/tex->xs; tc[k].y = tc[k].y/sy - yoff/tex->ys; }
                 glBindTexture(GL_TEXTURE_2D, tex->id);
-                loopj(glowtex ? 3 : 2)
+                for(int j = 0; j < int(glowtex ? 3 : 2); j++)
                 {
                     if(j < 2) gle::color(vec(vslot.colorscale).mul(j), texpaneltimer/1000.0f);
                     else

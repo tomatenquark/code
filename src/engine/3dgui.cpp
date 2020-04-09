@@ -826,7 +826,7 @@ struct gui : g3d_gui
         int gapx1 = INT_MAX, gapy1 = INT_MAX, gapx2 = INT_MAX, gapy2 = INT_MAX;
         float wscale = 1.0f/(SKIN_W*SKIN_SCALE), hscale = 1.0f/(SKIN_H*SKIN_SCALE);
         
-        loopj(passes)
+        for(int j = 0; j < int(passes); j++)
         {	
             bool quads = false;
             if(passes>1) glDepthFunc(j ? GL_LEQUAL : GL_GREATER);
@@ -1207,7 +1207,7 @@ bool g3d_key(int code, bool isdown)
                     if(windowhit->gui2d)
                     {
                         vec origin = *guis2d[0].savedorigin;
-                        loopj(guis2d.length()-1) *guis2d[j].savedorigin = *guis2d[j + 1].savedorigin;
+                        for(int j = 0; j < int(guis2d.length()-1); j++) *guis2d[j].savedorigin = *guis2d[j + 1].savedorigin;
                         *guis2d.last().savedorigin = origin;
                         if(guis2d.length() > 1)
                         {

@@ -534,7 +534,7 @@ namespace game
             {
                 vec halfdv = vec(dv).mul(0.5f), bo = vec(p.o).add(halfdv);
                 float br = max(fabs(halfdv.x), fabs(halfdv.y)) + 1;
-                loopj(numdynents())
+                for(int j = 0; j < int(numdynents()); j++)
                 {
                     dynent *o = iterdynents(j);
                     if(p.owner==o || o->o.reject(bo, o->radius + br)) continue;

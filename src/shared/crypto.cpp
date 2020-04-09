@@ -83,8 +83,8 @@ namespace tiger
         chunk state[3] = { 0x0123456789ABCDEFULL, 0xFEDCBA9876543210ULL, 0xF096A5B4C3B2E187ULL };
         uchar temp[64];
 
-        if(!*(const uchar *)&islittleendian) loopj(64) temp[j^7] = str[j];
-        else loopj(64) temp[j] = str[j];
+        if(!*(const uchar *)&islittleendian) for(int j = 0; j < int(64); j++) temp[j^7] = str[j];
+        else for(int j = 0; j < int(64); j++) temp[j] = str[j];
         for(int i = 0; i < int(1024); i++) loop(col, 8) ((uchar *)&sboxes[i])[col] = i&0xFF;
 
         int abc = 2;
@@ -117,7 +117,7 @@ namespace tiger
         {
             if(!*(const uchar *)&islittleendian)
             {
-                loopj(64) temp[j^7] = str[j];
+                for(int j = 0; j < int(64); j++) temp[j^7] = str[j];
                 compress((chunk *)temp, val.chunks);
             }
             else compress((chunk *)str, val.chunks);
@@ -213,7 +213,7 @@ template<int BI_DIGITS> struct bigint
         for(int i = 0; i < int(len); i++)
         {
             digit d = digits[len-i-1];
-            loopj(BI_DIGIT_BITS/4)
+            for(int j = 0; j < int(BI_DIGIT_BITS/4); j++)
             {
                 uint shift = BI_DIGIT_BITS - (j+1)*4;
                 int val = (d >> shift) & 0xF;
@@ -307,7 +307,7 @@ template<int BI_DIGITS> struct bigint
         for(int i = 0; i < int(x.len); i++)
         {
             dbldigit carry = 0;
-            loopj(y.len)
+            for(int j = 0; j < int(y.len); j++)
             {
                 carry += (dbldigit)x.digits[i] * (dbldigit)y.digits[j] + (dbldigit)digits[i+j];
                 digits[i+j] = (digit)carry;

@@ -302,7 +302,7 @@ static void invertblendmap(uchar &type, BlendMapNode &node, int size, int x1, in
         uchar *dst = &node.image->data[y1*BM_IMAGE_SIZE + x1];
         for(int i = 0; i < int(y2-y1); i++)
         {
-            loopj(x2-x1) dst[j] = 255-dst[j];
+            for(int j = 0; j < int(x2-x1); j++) dst[j] = 255-dst[j];
             dst += BM_IMAGE_SIZE;
         }
     }
@@ -518,7 +518,7 @@ struct BlendBrush
         uchar *dst = buf, *src = data;
         for(int i = 0; i < int(h); i++)
         {
-            loopj(w) *dst++ = 255 - *src++;
+            for(int j = 0; j < int(w); j++) *dst++ = 255 - *src++;
         }
         createtexture(tex, w, h, buf, 3, 1, hasTRG ? GL_R8 : GL_LUMINANCE8);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -539,7 +539,7 @@ struct BlendBrush
         for(int i = 0; i < int(h); i++)
         {
             uchar *curdst = dst;
-            loopj(w) 
+            for(int j = 0; j < int(w); j++)
             {
                 *curdst = *src++;
                 curdst += stridex;

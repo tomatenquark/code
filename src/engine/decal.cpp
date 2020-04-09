@@ -413,7 +413,7 @@ struct decalrenderer
         {
             vertinfo *verts = cu.ext->verts() + cu.ext->surfaces[orient].verts;
             ivec vo = ivec(o).mask(~0xFFF).shl(3);
-            loopj(numverts) pos[j] = vec(verts[j].getxyz().add(vo)).mul(1/8.0f);
+            for(int j = 0; j < int(numverts); j++) pos[j] = vec(verts[j].getxyz().add(vo)).mul(1/8.0f);
             planes[0].cross(pos[0], pos[1], pos[2]).normalize();
             if(numverts >= 4 && !(cu.merged&(1<<orient)) && !flataxisface(cu, orient) && faceconvexity(verts, numverts, size))
             {
@@ -542,7 +542,7 @@ struct decalrenderer
                 else
                 {
                     int vismask = cu[i].merged;
-                    if(vismask) loopj(6) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
+                    if(vismask) for(int j = 0; j < int(6); j++) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
                 }
             } 
         }
@@ -564,8 +564,8 @@ struct decalrenderer
                     int vismask = cu[i].visible;
                     if(vismask&0xC0)
                     {
-                        if(vismask&0x80) loopj(6) gentris(cu[i], j, co, size, NULL, vismask);
-                        else loopj(6) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
+                        if(vismask&0x80) for(int j = 0; j < int(6); j++) gentris(cu[i], j, co, size, NULL, vismask);
+                        else for(int j = 0; j < int(6); j++) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
                     }
                 }
             }
@@ -576,7 +576,7 @@ struct decalrenderer
                 else
                 {
                     int vismask = cu[i].merged;
-                    if(vismask) loopj(6) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
+                    if(vismask) for(int j = 0; j < int(6); j++) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
                 }
             } 
         }

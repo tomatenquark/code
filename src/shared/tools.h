@@ -100,7 +100,6 @@ static inline int bitscan(uint mask)
 #define detrnd(s, x) ((int)(((((uint)(s))*1103515245+12345)>>16)%(x)))
 
 #define loop(v,m) for(int v = 0; v < int(m); ++v)
-#define loopj(m) loop(j,m)
 #define loopk(m) loop(k,m)
 #define loopl(m) loop(l,m)
 #define looprev(v,m) for(int v = int(m); --v >= 0;)
@@ -789,9 +788,9 @@ template <class T> struct vector
     T *insert(int i, const T *e, int n)
     {
         if(alen-ulen < n) growbuf(ulen+n);
-        loopj(n) add(T());
+        for(int j = 0; j < int(n); j++) add(T());
         for(int p = ulen-1; p>=i+n; p--) buf[p] = buf[p-n];
-        loopj(n) buf[i+j] = e[j];
+        for(int j = 0; j < int(n); j++) buf[i+j] = e[j];
         return &buf[i];
     }
 

@@ -161,7 +161,7 @@ void addnormals(cube &c, const ivec &o, int size)
         {
             vertinfo *verts = c.ext->verts() + c.ext->surfaces[i].verts;
             vec vo(ivec(o).mask(~0xFFF));
-            loopj(numverts)
+            for(int j = 0; j < int(numverts); j++)
             {
                 vertinfo &v = verts[j];
                 pos[j] = vec(v.x, v.y, v.z).mul(1.0f/8).add(vo);
@@ -247,7 +247,7 @@ void clearnormals()
 void calclerpverts(const vec2 *c, const vec *n, lerpvert *lv, int &numv)
 {
     int i = 0;
-    loopj(numv)
+    for(int j = 0; j < int(numv); j++)
     {
         if(j)
         {

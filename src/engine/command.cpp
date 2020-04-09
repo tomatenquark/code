@@ -797,7 +797,7 @@ overflow:
         offset += prefixlen;
         if(space && i) buf[offset++] = ' ';
     }
-    loopj(i)
+    for(int j = 0; j < int(i); j++)
     {
         if(v[j].type == VAL_INT || v[j].type == VAL_FLOAT)
         {
@@ -2040,9 +2040,9 @@ static const uint *runcode(const uint *code, tagval &result)
                     {
                         identstack locals[MAXARGS];
                         freearg(args[0]);
-                        loopj(numargs-1) pushalias(*forceident(args[j+1]), locals[j]);
+                        for(int j = 0; j < int(numargs-1); j++) pushalias(*forceident(args[j+1]), locals[j]);
                         code = runcode(code, result);
-                        loopj(numargs-1) popalias(*args[j+1].id);
+                        for(int j = 0; j < int(numargs-1); j++) popalias(*args[j+1].id);
                         goto exit;  
                     }
                     case ID_VAR:
@@ -2848,7 +2848,7 @@ ICOMMAND(loopfiles, "rsse", (ident *id, char *dir, char *ext, uint *body),
     {
         char *file = files[i];
         bool redundant = false;
-        loopj(i) if(!strcmp(files[j], file)) { redundant = true; break; }
+        for(int j = 0; j < int(i); j++) if(!strcmp(files[j], file)) { redundant = true; break; }
         if(redundant) delete[] files.removeunordered(i);
     } 
     loopv(files)

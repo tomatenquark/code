@@ -859,7 +859,7 @@ static bool calcscissorbox(Reflection &ref, int size, vec &clipmin, vec &clipmax
     {
         const vec4 &p = v[i];
         if(p.z >= -p.w) continue;    
-        loopj(3)
+        for(int j = 0; j < int(3); j++)
         { 
             const vec4 &o = v[i^(1<<j)];
             if(o.z <= -o.w) continue;

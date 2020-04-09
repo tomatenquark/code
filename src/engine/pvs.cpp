@@ -576,7 +576,7 @@ struct pvsworker
                         dval = ddir>0 ? USHRT_MAX-1 : 0,
                         dlimit = maxpvsblocker,
                         numsides = 0;
-                    loopj(4)
+                    for(int j = 0; j < int(4); j++)
                     {
                         ivec dmax;
                         int odim = j < 2 ? c : r;
@@ -693,7 +693,7 @@ struct pvsworker
             outbuf[storage] = uchar(offset);
         }
         outbuf.add(0);
-        loopj(8) outbuf.add(leafvalues&(1<<j) ? 0xFF : 0);
+        for(int j = 0; j < int(8); j++) outbuf.add(leafvalues&(1<<j) ? 0xFF : 0);
         uchar leafmask = (1<<i)-1;
         for(; i < 8; i++)
         {
@@ -1033,7 +1033,7 @@ static void findwaterplanes()
     loopv(valist)
     {
         vtxarray *va = valist[i];
-        loopj(va->matsurfs)
+        for(int j = 0; j < int(va->matsurfs); j++)
         {
             materialsurface &m = va->matbuf[j];
             if((m.material&MATF_VOLUME)!=MAT_WATER || m.orient==O_BOTTOM) { j += m.skip; continue; }

@@ -79,12 +79,12 @@ struct skelmodel : animmodel
         
         void finalize(int sorted)
         {
-            loopj(4-sorted) { weights[sorted+j] = 0; bones[sorted+j] = 0; }
+            for(int j = 0; j < int(4-sorted); j++) { weights[sorted+j] = 0; bones[sorted+j] = 0; }
             if(sorted <= 0) return;
             float total = 0;
-            loopj(sorted) total += weights[j];
+            for(int j = 0; j < int(sorted); j++) total += weights[j];
             total = 1.0f/total;
-            loopj(sorted) weights[j] *= total;
+            for(int j = 0; j < int(sorted); j++) weights[j] *= total;
         }
 
         void serialize(vvertw &v)
@@ -212,7 +212,7 @@ struct skelmodel : animmodel
 
         void calcbb(vec &bbmin, vec &bbmax, const matrix4x3 &m)
         {
-            loopj(numverts)
+            for(int j = 0; j < int(numverts); j++)
             {
                 vec v = m.transform(verts[j].pos);
                 for(int i = 0; i < int(3); i++)
@@ -273,7 +273,7 @@ struct skelmodel : animmodel
                 vert &v = verts[i];
                 assignvert(vverts.add(), i, v, ((skelmeshgroup *)group)->blendcombos[v.blend]);
             }
-            for(int i = 0; i < int(numtris); i++) loopj(3) idxs.add(voffset + tris[i].vert[j]);
+            for(int i = 0; i < int(numtris); i++) for(int j = 0; j < int(3); j++) idxs.add(voffset + tris[i].vert[j]);
             elen = idxs.length()-eoffset;
             minvert = voffset;
             maxvert = voffset + numverts-1;
@@ -289,7 +289,7 @@ struct skelmodel : animmodel
             for(int i = 0; i < int(numtris); i++)
             {
                 tri &t = tris[i];
-                loopj(3)
+                for(int j = 0; j < int(3); j++)
                 {
                     int index = t.vert[j];
                     vert &v = verts[index];
@@ -319,7 +319,7 @@ struct skelmodel : animmodel
             for(int i = 0; i < int(numtris); i++)
             {
                 tri &t = tris[i];
-                loopj(3) idxs.add(voffset+t.vert[j]);
+                for(int j = 0; j < int(3); j++) idxs.add(voffset+t.vert[j]);
             }
             minvert = voffset;
             maxvert = voffset + numverts-1;
@@ -572,7 +572,7 @@ struct skelmodel : animmodel
             {
                 int bone = schedule[i];
                 const boneinfo &info = bones[bone];
-                loopj(numbones) if(abs(bones[j].group) == bone && bones[j].scheduled < 0)
+                for(int j = 0; j < int(numbones); j++) if(abs(bones[j].group) == bone && bones[j].scheduled < 0)
                 {
                     antipodes.add(antipode(info.interpindex, bones[j].interpindex));
                     bones[j].scheduled = schedule.length();
@@ -581,7 +581,7 @@ struct skelmodel : animmodel
                 if(i + 1 == schedule.length())
                 {
                     int conflict = INT_MAX;
-                    loopj(numbones) if(bones[j].group < numbones && bones[j].scheduled < 0) conflict = min(conflict, abs(bones[j].group));
+                    for(int j = 0; j < int(numbones); j++) if(bones[j].group < numbones && bones[j].scheduled < 0) conflict = min(conflict, abs(bones[j].group));
                     if(conflict < numbones)
                     {
                         bones[conflict].scheduled = schedule.length();
@@ -1003,7 +1003,7 @@ struct skelmodel : animmodel
             loopv(skelcache)
             {
                 skelcacheentry &sc = skelcache[i];
-                loopj(MAXANIMPARTS) sc.as[j].cur.fr1 = -1;
+                for(int j = 0; j < int(MAXANIMPARTS); j++) sc.as[j].cur.fr1 = -1;
                 DELETEA(sc.bdata);
             }
             skelcache.setsize(0);
@@ -1036,7 +1036,7 @@ struct skelmodel : animmodel
             loopv(skelcache)
             {
                 skelcacheentry &c = skelcache[i];
-                loopj(numanimparts) if(c.as[j]!=as[j]) goto mismatch;
+                for(int j = 0; j < int(numanimparts); j++) if(c.as[j]!=as[j]) goto mismatch;
                 if(c.pitch != pitch || c.partmask != partmask || c.ragdoll != rdata || (rdata && c.millis < rdata->lastmove)) goto mismatch;
                 match = true;
                 sc = &c;
@@ -1330,7 +1330,7 @@ struct skelmodel : animmodel
             loopv(meshes)
             {
                 skelmesh *m = (skelmesh *)meshes[i];
-                loopj(m->numverts)
+                for(int j = 0; j < int(m->numverts); j++)
                 {
                     vert &v = m->verts[j];
                     v.blend = remap[v.blend];

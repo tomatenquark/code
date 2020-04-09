@@ -237,7 +237,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                 if(!nolms)
                 {
                     if(c[i].merged) oflags |= 0x80;
-                    if(c[i].ext) loopj(6) 
+                    if(c[i].ext) for(int j = 0; j < int(6); j++)
                     {
                         const surfaceinfo &surf = c[i].ext->surfaces[j];
                         if(!surf.used()) continue;
@@ -255,7 +255,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                 }
             }
     
-            loopj(6) f->putlil<ushort>(c[i].texture[j]);
+            for(int j = 0; j < int(6); j++) f->putlil<ushort>(c[i].texture[j]);
 
             if(oflags&0x40) f->putlil<ushort>(c[i].material);
             if(oflags&0x80) f->putchar(c[i].merged);
@@ -263,7 +263,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
             {
                 f->putchar(surfmask);
                 f->putchar(totalverts);
-                loopj(6) if(surfmask&(1<<j))
+                for(int j = 0; j < int(6); j++) if(surfmask&(1<<j))
                 {
                     surfaceinfo surf = c[i].ext->surfaces[j];
                     vertinfo *verts = c[i].ext->verts() + surf.verts;
@@ -1316,7 +1316,7 @@ void writeobj(char *name)
         vertex *vdata = NULL;
         if(!readva(&va, edata, vdata)) continue;
         ushort *idx = edata;
-        loopj(va.texs)
+        for(int j = 0; j < int(va.texs); j++)
         {
             elementset &es = va.eslist[j];
             if(usedmtl.find(es.texture) < 0) usedmtl.add(es.texture);

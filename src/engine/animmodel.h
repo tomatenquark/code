@@ -444,7 +444,7 @@ struct animmodel : model
                     v.normalize();
                 }
 
-                loopj(3)
+                for(int j = 0; j < int(3); j++)
                 {
                     tangent[t.vert[j]].sub(u);
                     bitangent[t.vert[j]].add(v);

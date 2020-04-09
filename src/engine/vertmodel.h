@@ -60,7 +60,7 @@ struct vertmodel : animmodel
 
         void calcbb(vec &bbmin, vec &bbmax, const matrix4x3 &m)
         {
-            loopj(numverts)
+            for(int j = 0; j < int(numverts); j++)
             {
                 vec v = m.transform(verts[j].pos);
                 for(int i = 0; i < int(3); i++)
@@ -104,7 +104,7 @@ struct vertmodel : animmodel
             for(int i = 0; i < int(numtris); i++)
             {
                 tri &t = tris[i];
-                loopj(3) 
+                for(int j = 0; j < int(3); j++)
                 {
                     int index = t.vert[j];
                     tcvert &tc = tcverts[index];
@@ -133,7 +133,7 @@ struct vertmodel : animmodel
             for(int i = 0; i < int(numtris); i++)
             {
                 tri &t = tris[i];
-                loopj(3) idxs.add(voffset+t.vert[j]);
+                for(int j = 0; j < int(3); j++) idxs.add(voffset+t.vert[j]);
             }
             minvert = voffset;
             maxvert = voffset + numverts-1;

@@ -18,7 +18,7 @@ namespace sphere
         for(int i = 0; i < int(stacks+1); i++)
         {
             float rho = M_PI*(1-t), s = 0.0f, sinrho = i && i < stacks ? sin(rho) : 0, cosrho = !i ? 1 : (i < stacks ? cos(rho) : -1);
-            loopj(slices+1)
+            for(int j = 0; j < int(slices+1); j++)
             {
                 float theta = j==slices ? 0 : 2*M_PI*s;
                 vert &v = verts[i*(slices+1) + j];

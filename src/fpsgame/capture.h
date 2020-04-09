@@ -197,7 +197,7 @@ struct captureclientmode : clientmode
             memset(uses, 0, sizeof(uses));
             for(int i = 0; i < int(bases.length()-1); i++) if(bases[i].ammogroup)
             {
-                loopj(i) if(bases[j].ammogroup == bases[i].ammogroup) goto nextbase;
+                for(int j = 0; j < int(i); j++) if(bases[j].ammogroup == bases[i].ammogroup) goto nextbase;
                 uses[bases[i].ammotype-1]++;
                 nextbase:;
             }
@@ -355,7 +355,7 @@ struct captureclientmode : clientmode
                 ammopos.z -= height.z/2 + sinf(lastmillis/100.0f)/20;
                 rendermodel(&b.light, ammoname, ANIM_MAPMODEL|ANIM_LOOP, ammopos, lastmillis/10.0f, 0, MDL_SHADOW | MDL_CULL_VFC | MDL_CULL_OCCLUDED);
             }
-            else loopj(b.ammo)
+            else for(int j = 0; j < int(b.ammo); j++)
             {
                 float angle = 2*M_PI*(lastmillis/4000.0f + j/float(MAXAMMO));
                 vec ammopos(b.o);

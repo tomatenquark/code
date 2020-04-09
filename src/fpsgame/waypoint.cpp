@@ -745,9 +745,9 @@ namespace ai
             f->putlil<float>(w.o.y);
             f->putlil<float>(w.o.z);
             int numlinks = 0;
-            loopj(MAXWAYPOINTLINKS) { if(!w.links[j]) break; numlinks++; }
+            for(int j = 0; j < int(MAXWAYPOINTLINKS); j++) { if(!w.links[j]) break; numlinks++; }
             f->putchar(numlinks);
-            loopj(numlinks) f->putlil<ushort>(w.links[j]);
+            for(int j = 0; j < int(numlinks); j++) f->putlil<ushort>(w.links[j]);
         }
 
         delete f;

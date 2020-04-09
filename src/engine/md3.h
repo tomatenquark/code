@@ -90,7 +90,7 @@ struct md3 : vertloader<md3>
                 m.numtris = mheader.numtriangles; 
                 m.tris = new tri[m.numtris];
                 f->seek(mesh_offset + mheader.ofs_triangles, SEEK_SET);
-                loopj(m.numtris)
+                for(int j = 0; j < int(m.numtris); j++)
                 {
                     md3triangle tri;
                     f->read(&tri, sizeof(md3triangle)); // read the triangles
@@ -106,7 +106,7 @@ struct md3 : vertloader<md3>
                 
                 m.verts = new vert[numframes*m.numverts];
                 f->seek(mesh_offset + mheader.ofs_vertices, SEEK_SET); 
-                loopj(numframes*m.numverts)
+                for(int j = 0; j < int(numframes*m.numverts); j++)
                 {
                     md3vertex v;
                     f->read(&v, sizeof(md3vertex)); // read the vertices
@@ -137,9 +137,9 @@ struct md3 : vertloader<md3>
                     matrix4x3 &m = tags[i].transform;
                     tag.translation[1] *= -1;
                     // undo the -y
-                    loopj(3) tag.rotation[1][j] *= -1;
+                    for(int j = 0; j < int(3); j++) tag.rotation[1][j] *= -1;
                     // then restore it
-                    loopj(3) tag.rotation[j][1] *= -1;
+                    for(int j = 0; j < int(3); j++) tag.rotation[j][1] *= -1;
                     m.a = vec(tag.rotation[0]);
                     m.b = vec(tag.rotation[1]);
                     m.c = vec(tag.rotation[2]);
