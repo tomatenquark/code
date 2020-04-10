@@ -437,7 +437,7 @@ struct decalrenderer
         } 
         else return;
 
-        loopl(numplanes)
+        for(int l = 0; l < int(numplanes); l++)
         {
             const vec &n = planes[l];
             float facing = n.dot(decalnormal);

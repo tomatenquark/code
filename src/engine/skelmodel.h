@@ -613,7 +613,7 @@ struct skelmodel : animmodel
                         if(info.interpindex < 0) info.interpindex = numgpubones++;
                         c.interpbones[k] = info.interpindex;
                         if(info.group < 0) continue;
-                        loopl(4)
+                        for(int l = 0; l < int(4); l++)
                         {
                             if(!c.weights[l]) break;
                             if(l == k) continue;

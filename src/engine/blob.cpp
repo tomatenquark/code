@@ -362,7 +362,7 @@ struct blobrenderer
             return;
 
         vec v1[MAXFACEVERTS+6+4], v2[MAXFACEVERTS+6+4];
-        loopl(numplanes)
+        for(int l = 0; l < int(numplanes); l++)
         {
             vec *v = pos;
             int numv = numverts;

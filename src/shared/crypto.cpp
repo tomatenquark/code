@@ -151,7 +151,7 @@ namespace tiger
             loopk(3) 
             {
                 uchar *c = &val.bytes[k*sizeof(chunk)];
-                loopl(sizeof(chunk)/2) swap(c[l], c[sizeof(chunk)-1-l]);
+                for(int l = 0; l < int(sizeof(chunk)/2); l++) swap(c[l], c[sizeof(chunk)-1-l]);
             }
         }
     }
