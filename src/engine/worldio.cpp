@@ -278,7 +278,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                             if(layerverts == 4)
                             {
                                 ivec v[4] = { verts[0].getxyz(), verts[1].getxyz(), verts[2].getxyz(), verts[3].getxyz() };
-                                loopk(4) 
+                                for(int k = 0; k < int(4); k++)
                                 {
                                     const ivec &v0 = v[k], &v1 = v[(k+1)&3], &v2 = v[(k+2)&3], &v3 = v[(k+3)&3];
                                     if(v1[vc] == v0[vc] && v1[vr] == v2[vr] && v3[vc] == v2[vc] && v3[vr] == v0[vr])
@@ -297,7 +297,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                             if(layerverts < 4 && vis&2) vertmask |= 0x02; 
                         }
                         bool matchnorm = true;
-                        loopk(numverts) 
+                        for(int k = 0; k < int(numverts); k++)
                         { 
                             const vertinfo &v = verts[k]; 
                             if(v.u || v.v) vertmask |= 0x40; 
@@ -306,7 +306,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                         if(matchnorm) vertmask |= 0x08;
                         if(vertmask&0x40 && layerverts == 4)
                         {
-                            loopk(4)
+                            for(int k = 0; k < int(4); k++)
                             {
                                 const vertinfo &v0 = verts[k], &v1 = verts[(k+1)&3], &v2 = verts[(k+2)&3], &v3 = verts[(k+3)&3];
                                 if(v1.u == v0.u && v1.v == v2.v && v3.u == v2.u && v3.v == v0.v)
@@ -351,7 +351,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                         }
                     } 
                     if(hasnorm && vertmask&0x08) { f->putlil<ushort>(verts[0].norm); hasnorm = false; }
-                    if(hasxyz || hasuv || hasnorm) loopk(layerverts)
+                    if(hasxyz || hasuv || hasnorm) for(int k = 0; k < int(layerverts); k++)
                     {
                         const vertinfo &v = verts[(k+vertorder)%layerverts];
                         if(hasxyz) 
@@ -362,7 +362,7 @@ void savec(cube *c, const ivec &o, int size, stream *f, bool nolms)
                         if(hasuv) { f->putlil<ushort>(v.u); f->putlil<ushort>(v.v); }
                         if(hasnorm) f->putlil<ushort>(v.norm); 
                     }
-                    if(surf.numverts&LAYER_DUP) loopk(layerverts)
+                    if(surf.numverts&LAYER_DUP) for(int k = 0; k < int(layerverts); k++)
                     {
                         const vertinfo &v = verts[layerverts + (k+vertorder)%layerverts];
                         if(hasuv) { f->putlil<ushort>(v.u); f->putlil<ushort>(v.v); }
@@ -434,7 +434,7 @@ void convertoldsurfaces(cube &c, const ivec &co, int size, surfacecompat *srcsur
                 const mergecompat &m = merges[i];
                 int offset = -n.dot(v[0].mul(size).add(vo)),
                     dim = dimension(i), vc = C[dim], vr = R[dim];
-                loopk(4)
+                for(int k = 0; k < int(4); k++)
                 {
                     const ivec &coords = facecoords[i][k];
                     int cc = coords[vc] ? m.u2 : m.u1,
@@ -461,7 +461,7 @@ void convertoldsurfaces(cube &c, const ivec &co, int size, surfacecompat *srcsur
                 pos[3] = vis&2 ? v[(order+3)&3].mul(size).add(vo) : pos[0];
             }
             curverts = verts + totalverts;
-            loopk(4)
+            for(int k = 0; k < int(4); k++)
             {
                 if(k > 0 && (pos[k] == pos[0] || pos[k] == pos[k-1])) continue;
                 vertinfo &dv = curverts[numverts++];
@@ -479,7 +479,7 @@ void convertoldsurfaces(cube &c, const ivec &co, int size, surfacecompat *srcsur
             dst.verts = totalverts;
             dst.numverts |= numverts;
             totalverts += numverts;
-            if(dst.numverts&LAYER_DUP) loopk(4)
+            if(dst.numverts&LAYER_DUP) for(int k = 0; k < int(4); k++)
             {
                 if(k > 0 && (pos[k] == pos[0] || pos[k] == pos[k-1])) continue;
                 vertinfo &bv = verts[totalverts++];
@@ -695,10 +695,10 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
                 if(hasnorm && vertmask&0x08)
                 {
                     ushort norm = f->getlil<ushort>();
-                    loopk(layerverts) verts[k].norm = norm;
+                    for(int k = 0; k < int(layerverts); k++) verts[k].norm = norm;
                     hasnorm = false;
                 }
-                if(hasxyz || hasuv || hasnorm) loopk(layerverts)
+                if(hasxyz || hasuv || hasnorm) for(int k = 0; k < int(layerverts); k++)
                 {
                     vertinfo &v = verts[k];
                     if(hasxyz)
@@ -711,7 +711,7 @@ void loadc(stream *f, cube &c, const ivec &co, int size, bool &failed)
                     if(hasuv) { v.u = f->getlil<ushort>(); v.v = f->getlil<ushort>(); }    
                     if(hasnorm) v.norm = f->getlil<ushort>();
                 }
-                if(surf.numverts&LAYER_DUP) loopk(layerverts)
+                if(surf.numverts&LAYER_DUP) for(int k = 0; k < int(layerverts); k++)
                 {
                     vertinfo &v = verts[k+layerverts], &t = verts[k];
                     v.setxyz(t.x, t.y, t.z);
@@ -750,7 +750,7 @@ void savevslot(stream *f, VSlot &vs, int prev)
             SlotShaderParam &p = vs.params[i];
             f->putlil<ushort>(strlen(p.name));
             f->write(p.name, strlen(p.name));
-            loopk(4) f->putlil<float>(p.val[k]);
+            for(int k = 0; k < int(4); k++) f->putlil<float>(p.val[k]);
         }
     }
     if(vs.changed & (1<<VSLOT_SCALE)) f->putlil<float>(vs.scale);
@@ -773,7 +773,7 @@ void savevslot(stream *f, VSlot &vs, int prev)
     }
     if(vs.changed & (1<<VSLOT_COLOR)) 
     {
-        loopk(3) f->putlil<float>(vs.colorscale[k]);
+        for(int k = 0; k < int(3); k++) f->putlil<float>(vs.colorscale[k]);
     }
 }
 
@@ -823,7 +823,7 @@ void loadvslot(stream *f, VSlot &vs, int changed)
             if(nlen >= MAXSTRLEN) f->seek(nlen - (MAXSTRLEN-1), SEEK_CUR);
             p.name = getshaderparamname(name);
             p.loc = -1;
-            loopk(4) p.val[k] = f->getlil<float>();
+            for(int k = 0; k < int(4); k++) p.val[k] = f->getlil<float>();
         }
     }
     if(vs.changed & (1<<VSLOT_SCALE)) vs.scale = f->getlil<float>();
@@ -846,7 +846,7 @@ void loadvslot(stream *f, VSlot &vs, int changed)
     }
     if(vs.changed & (1<<VSLOT_COLOR)) 
     {
-        loopk(3) vs.colorscale[k] = f->getlil<float>();
+        for(int k = 0; k < int(3); k++) vs.colorscale[k] = f->getlil<float>();
     }
 }
 
@@ -1321,7 +1321,7 @@ void writeobj(char *name)
             elementset &es = va.eslist[j];
             if(usedmtl.find(es.texture) < 0) usedmtl.add(es.texture);
             vector<ivec2> &keys = mtls[es.texture];
-            loopk(es.length[1])
+            for(int k = 0; int(es.length[1]); k++)
             {
                 int n = idx[k] - va.voffset;
                 const vertex &v = vdata[n];
@@ -1373,7 +1373,7 @@ void writeobj(char *name)
         for(int i = 0; i < keys.length(); i += 3)
         {
             f->printf("f");
-            loopk(3) f->printf(" %d/%d", keys[i+2-k].x+1, keys[i+2-k].y+1);
+            for(int k = 0; k < int(3); k++) f->printf(" %d/%d", keys[i+2-k].x+1, keys[i+2-k].y+1);
             f->printf("\n");
         }
         f->printf("\n");

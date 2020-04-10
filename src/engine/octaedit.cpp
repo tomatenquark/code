@@ -1680,7 +1680,7 @@ namespace hmap
         makeundo(hundo);
 
         cube **c = cmap[x][y];
-        loopk(4) c[k] = NULL;
+        for(int k = 0; k < int(4); k++) c[k] = NULL;
         c[1] = getcube(t, 0);
         if(!c[1] || !isempty(*c[1]))
         {   // try up
@@ -1767,7 +1767,7 @@ namespace hmap
         int e[2][2];
         int notempty = 0;
 
-        loopk(4) if(c[k]) {
+        for(int k = 0; k < int(4); k++) if(c[k]) {
             for(int i = 0; i < int(2); i++) for(int j = 0; j < int(2); j++) {
                 e[i][j] = min(8, map[x+i][y+j] - (mapz[x][y]+3-k)*8);
                 notempty |= e[i][j] > 0;
@@ -2013,7 +2013,7 @@ void mpeditface(int dir, int mode, selinfo &sel, bool local)
                 uint newbak = c.faces[d];
                 uchar *m = (uchar *)&bak;
                 uchar *n = (uchar *)&newbak;
-                loopk(4) if(n[k] != m[k]) // tries to find partial edit that is valid
+                for(int k = 0; k < int(4); k++) if(n[k] != m[k]) // tries to find partial edit that is valid
                 {
                     c.faces[d] = bak;
                     c.edges[d*4+k] = n[k];
@@ -2911,11 +2911,11 @@ void rendertexturepanel(int w, int h)
                 if(vslot.rotation)
                 {
                     const texrotation &r = texrotations[vslot.rotation];
-                    if(r.swapxy) { swap(xoff, yoff); loopk(4) swap(tc[k].x, tc[k].y); }
-                    if(r.flipx) { xoff *= -1; loopk(4) tc[k].x *= -1; }
-                    if(r.flipy) { yoff *= -1; loopk(4) tc[k].y *= -1; }
+                    if(r.swapxy) { swap(xoff, yoff); for(int k = 0; k < int(4); k++) swap(tc[k].x, tc[k].y); }
+                    if(r.flipx) { xoff *= -1; for(int k = 0; k < int(4); k++) tc[k].x *= -1; }
+                    if(r.flipy) { yoff *= -1; for(int k = 0; k < int(4); k++) tc[k].y *= -1; }
                 }
-                loopk(4) { tc[k].x = tc[k].x/sx - xoff/tex->xs; tc[k].y = tc[k].y/sy - yoff/tex->ys; }
+                for(int k = 0; k < int(4); k++) { tc[k].x = tc[k].x/sx - xoff/tex->xs; tc[k].y = tc[k].y/sy - yoff/tex->ys; }
                 glBindTexture(GL_TEXTURE_2D, tex->id);
                 for(int j = 0; j < int(glowtex ? 3 : 2); j++)
                 {

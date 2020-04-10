@@ -814,7 +814,7 @@ int faceorder(const cube &c, int orient) // gets above 'fv' so that each face is
 
 static inline void faceedges(const cube &c, int orient, uchar edges[4])
 {
-    loopk(4) edges[k] = c.edges[faceedgesidx[orient][k]];
+    for(int k = 0; k < int(4); k++) edges[k] = c.edges[faceedgesidx[orient][k]];
 }
 
 uint faceedges(const cube &c, int orient)
@@ -1512,7 +1512,7 @@ bool genpoly(cube &cu, int orient, const ivec &o, int size, int vis, ivec &n, in
     }
 
     ivec po = ivec(o).mask(0xFFF).shl(3);
-    loopk(4) v[k].mul(size).add(po);
+    for(int k = 0; k < int(4); k++) v[k].mul(size).add(po);
     offset = -n.dot(v[3]);
     
     int r = R[dim], c = C[dim], order = vis&4 ? 1 : 0;
@@ -1666,7 +1666,7 @@ void addmerge(cube &cu, int orient, const ivec &co, const ivec &n, int offset, p
     vertinfo verts[MAXFACEVERTS];
     surf.numverts |= p.numverts;
     int dim = dimension(orient), coord = dimcoord(orient), c = C[dim], r = R[dim];
-    loopk(p.numverts)
+    for(int k = 0; k < int(p.numverts); k++)
     {
         pvert &src = p.verts[coord ? k : p.numverts-1-k];
         vertinfo &dst = verts[k];

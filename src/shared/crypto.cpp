@@ -148,7 +148,7 @@ namespace tiger
         compress((chunk *)temp, val.chunks);
         if(!*(const uchar *)&islittleendian)
         {
-            loopk(3) 
+            for(int k = 0; k < int(3); k++)
             {
                 uchar *c = &val.bytes[k*sizeof(chunk)];
                 for(int l = 0; l < int(sizeof(chunk)/2); l++) swap(c[l], c[sizeof(chunk)-1-l]);

@@ -45,7 +45,7 @@ struct dynlight
         }
         curcolor.mul(intensity);
         // KLUGE: this prevents nvidia drivers from trying to recompile dynlight fragment programs
-        loopk(3) if(fmod(curcolor[k], 1.0f/256) < 0.001f) curcolor[k] += 0.001f;
+        for(int k = 0; k < int(3); k++) if(fmod(curcolor[k], 1.0f/256) < 0.001f) curcolor[k] += 0.001f;
     }
 };
 

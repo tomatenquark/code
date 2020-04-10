@@ -565,7 +565,7 @@ void renderentring(const extentity &e, float radius, int axis)
 void renderentsphere(const extentity &e, float radius)
 {
     if(radius <= 0) return;
-    loopk(3) renderentring(e, radius, k);
+    for(int k = 0; k < int(3); k++) renderentring(e, radius, k);
 }
 
 void renderentattachment(const extentity &e)

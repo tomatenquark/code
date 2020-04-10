@@ -68,7 +68,7 @@ struct ragdollskel
             joint &j = joints[i];
             j.weight = 0;
             vec pos(0, 0, 0);
-            loopk(3) if(j.vert[k]>=0)
+            for(int k = 0; k < int(3); k++) if(j.vert[k]>=0)
             {
                 pos.add(verts[j.vert[k]].pos);
                 j.weight++;
@@ -170,7 +170,7 @@ struct ragdolldata
         if(!animjoints) return;
         ragdollskel::joint &j = skel->joints[i];
         vec pos(0, 0, 0);
-        loopk(3) if(j.vert[k]>=0) pos.add(verts[j.vert[k]].pos);
+        for(int k = 0; k < int(3); k++) if(j.vert[k]>=0) pos.add(verts[j.vert[k]].pos);
         pos.mul(j.weight);
 
         ragdollskel::tri &t = skel->tris[j.tri];
