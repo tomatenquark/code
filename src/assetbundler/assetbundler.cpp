@@ -148,7 +148,7 @@ namespace config {
     using namespace std;
 
     /// Whitelist contains all valid ICOMMAND instructions in map configs
-    array<const string, 79> command_whitelist = {
+    array<const string, 82> command_whitelist = {
         "ambient",
         "autograss",
         "base_1",
@@ -171,7 +171,7 @@ namespace config {
         "cloudcolour",
         "cloudfade",
         "cloudheight",
-        //"cloudlayer",
+        "cloudlayer",
         "cloudscale",
         "cloudscrollx",
         "cloudscrolly",
@@ -188,7 +188,7 @@ namespace config {
         "grassalpha",
         "lightprecision",
         "lmshadows",
-        //"loadsky",
+        "loadsky",
         "mapmodel",
         "mapmodelreset",
         "mapmsg",
@@ -203,7 +203,7 @@ namespace config {
         "setshaderparam",
         "shadowmapambient",
         "shadowmapangle",
-        //"skybox",
+        "skybox",
         "skyboxcolour",
         "skylight",
         "skytexture",
@@ -233,14 +233,22 @@ namespace config {
         "yawsky"
     };
 
+    /// Which commands are sky-related, also see https://tomatenquark.org/game/EDITREF.html#skybox
+    std::array<const string, 3> sky_commands = {
+        "cloudlayer",
+        "loadsky",
+        "skybox"
+    };
+
     /// Maps the relation between ICOMMAND and the parameters it takes (file path)
     map<const string, int> command_mapping = {
         {"texture", 2},
         {"mmodelfile", 1},
         {"mapsound", 1},
         {"skybox", 1},
+        {"loadsky", 1},
         {"exec", 1},
-        //{"cloudlayer", 1}
+        {"cloudlayer", 1}
     };
 
     /// Check for any characters before processing the line
@@ -293,6 +301,24 @@ namespace config {
 };
 
 namespace resources {
+    /// Processes skybox / loadsky / cloudlayer instructions
+    void process_sky_commands(std::vector<config::Resource>* resources) {
+        std::array<std::string, 6> directions = { "up", "dn", "lf", "rt", "ft", "bk" };
+        std::vector<config::Resource> sky_resources;
+        std::copy_if(resources->begin(), resources->end(), std::back_inserter(sky_resources), [](const config::Resource& resource) {
+            return std::find(config::sky_commands.begin(), config::sky_commands.end(), resource.command); });
+        std::remove_if(resources->begin(), resources->end(), [](const config::Resource& resource) {
+            return std::find(config::sky_commands.begin(), config::sky_commands.end(), resource.command); });
+        for (const config::Resource& resource: sky_resources) {
+            for (const std::string& direction: directions) {
+                resources->push_back(config::Resource{
+                    resource.command,
+                    (resource.path + "_" + direction + ".jpg")
+                });
+            }
+        }
+    }
+
     /// Downloads and filters a config file and inserts it's resources to the specified resources vector
     void download_and_filter_config(std::string config_url, fs::path destination, std::vector<config::Resource>* resources) {
         fs::create_directories(destination.parent_path());
@@ -378,7 +404,11 @@ namespace resources {
     /// Download all the resources to their specified paths
     void download(std::string url, std::string map, fs::path server_directory, std::vector<config::Resource> resources, int* status, int* current, int* total) {
         resources::collect_configs(url, map, &resources, server_directory);
+        // properly load sky commands
+        process_sky_commands(&resources);
+        // set total number of files to download
         *total = resources.size();
+
         
         std::vector<std::string> sources;
         std::vector<fs::path> destinations;
