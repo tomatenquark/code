@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2020-10-04
+## Fixed
+- properly start the game from Steam on Linux
+- properly load sky commands via the asset bundler
+
+## Added
+- added proper download progress
+- added back Mr. Fixit model
+
+## Changed
+- always load maps even if there is missing config
+
 ## [0.1.1] - 2020-04-04
 ## Changed
 - added progress bar to downloads
@@ -932,7 +944,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/tomatenquark/code/compare/v0.1.0...0.1.1
 [0.1.1]: https://github.com/tomatenquark/code/compare/v0.1.0...0.1.1
 [0.1.0]: https://github.com/tomatenquark/code/compare/v0.0.23...0.1.0
 [0.0.23]: https://github.com/tomatenquark/code/compare/v0.0.22...v0.0.23
