@@ -1009,7 +1009,7 @@ ICOMMAND(insidebases, "", (),
         {
             int ammotype = getint(p);
             vec o;
-            loopk(3) o[k] = max(getint(p)/DMF, 0.0f);
+            for(int k = 0; k < int(3); k++) o[k] = max(getint(p)/DMF, 0.0f);
             if(p.overread()) break;
             if(commit && notgotbases) addbase(ammotype>=GUN_SG && ammotype<=GUN_PISTOL ? ammotype : min(ammotype, 0), o);
         }

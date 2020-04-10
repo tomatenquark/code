@@ -188,7 +188,7 @@ namespace game
         g.separator();
 
         int numgroups = groupplayers();
-        loopk(numgroups)
+        for(int k = 0; k < int(numgroups); k++)
         {
             if((k%2)==0) g.pushlist(); // horizontal
 

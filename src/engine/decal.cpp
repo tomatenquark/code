@@ -490,7 +490,7 @@ struct decalrenderer
                 if(!freedecal()) return;
             }
             availverts -= totalverts;
-            loopk(numv-2)
+            for(int k = 0; k < int(numv-2); k++)
             {
                 verts[endvert++] = dv1;
                 verts[endvert++] = dv2;

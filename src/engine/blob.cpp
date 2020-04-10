@@ -283,7 +283,7 @@ struct blobrenderer
             while(availindexes < limit*3) if(!freeblob()) return;
 
             int i1 = addvert(v[0]), i2 = addvert(cur[-1]);
-            loopk(limit)
+            for(int k = 0; k < int(limit); k++)
             {
                 indexes[endindex++] = i1;
                 indexes[endindex++] = i2;

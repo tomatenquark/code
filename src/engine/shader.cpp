@@ -810,7 +810,7 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
         defformatstring(color, "uniform vec3 dynlightcolor[%d];\n", i+1);
         psdl.put(color, strlen(color));
 
-        loopk(min(i+1, numlights))
+        for(int k = 0; k < int(min(i+1, numlights)); k++)
         {
             defformatstring(dir, "%sdynlight%ddir%s", !k ? "varying vec3 " : " ", k, k==i || k+1==numlights ? ";\n" : ",");
             vsdl.put(dir, strlen(dir));
@@ -820,7 +820,7 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
         vsdl.put(vsmain, vspragma-vsmain);
         psdl.put(psmain, pspragma-psmain);
 
-        loopk(i+1)
+        for(int k = 0; k < int(i+1); k++)
         {
             defformatstring(tc, 
                 k<numlights ? 
@@ -1514,7 +1514,7 @@ void setblurshader(int pass, int size, int radius, float *weights, float *offset
     s->set();
     LOCALPARAMV(weights, weights, 8);
     float scaledoffsets[8];
-    loopk(8) scaledoffsets[k] = offsets[k]/size;
+    for(int k = 0; k < int(8); k++) scaledoffsets[k] = offsets[k]/size;
     LOCALPARAMV(offsets, scaledoffsets, 8);
 }
 

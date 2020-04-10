@@ -306,7 +306,7 @@ struct cubeloader
         ssize = 1<<hdr.sfactor;
         world = new c_sqr[ssize*ssize];
         c_sqr *t = NULL;
-        loopk(ssize*ssize)
+        for(int k = 0; k < int(ssize*ssize); k++)
         {
             c_sqr *s = &world[k];
             int type = f->getchar();

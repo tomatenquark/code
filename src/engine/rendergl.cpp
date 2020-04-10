@@ -1683,8 +1683,8 @@ void clipminimap(ivec &bbmin, ivec &bbmax, cube *c = worldroot, const ivec &co =
         if(c[i].children) clipminimap(bbmin, bbmax, c[i].children, o, size>>1);
         else if(!isentirelysolid(c[i]) && (c[i].material&MATF_CLIP)!=MAT_CLIP)
         {
-            loopk(3) bbmin[k] = min(bbmin[k], o[k]);
-            loopk(3) bbmax[k] = max(bbmax[k], o[k] + size);
+            for(int k = 0; k < int(3); k++) bbmin[k] = min(bbmin[k], o[k]);
+            for(int k = 0; k < int(3); k++) bbmax[k] = max(bbmax[k], o[k] + size);
         }
     }
 }
@@ -1703,7 +1703,7 @@ void drawminimap()
     loopv(valist)
     {
         vtxarray *va = valist[i];
-        loopk(3)
+        for(int k = 0; k < int(3); k++)
         {
             if(va->geommin[k]>va->geommax[k]) continue;
             bbmin[k] = min(bbmin[k], va->geommin[k]);
@@ -1714,8 +1714,8 @@ void drawminimap()
     {
         ivec clipmin(worldsize, worldsize, worldsize), clipmax(0, 0, 0);
         clipminimap(clipmin, clipmax);
-        loopk(2) bbmin[k] = max(bbmin[k], clipmin[k]);
-        loopk(2) bbmax[k] = min(bbmax[k], clipmax[k]); 
+        for(int k = 0; k < int(2); k++) bbmin[k] = max(bbmin[k], clipmin[k]);
+        for(int k = 0; k < int(2); k++) bbmax[k] = min(bbmax[k], clipmax[k]);
     }
  
     minimapradius = vec(bbmax).sub(vec(bbmin)).mul(0.5f); 

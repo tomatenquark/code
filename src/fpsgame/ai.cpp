@@ -118,11 +118,11 @@ namespace ai
             {
                 const int aiskew[NUMGUNS] = { 1, 10, 50, 5, 20, 1, 100, 10, 10, 10, 1, 1 };
                 #define rndaioffset(r) ((rnd(int(r*aiskew[d->gunselect]*2)+1)-(r*aiskew[d->gunselect]))*(1.f/float(max(d->skill, 1))))
-                loopk(3) d->ai->aimrnd[k] = rndaioffset(e->radius);
+                for(int k = 0; k < int(3); k++) d->ai->aimrnd[k] = rndaioffset(e->radius);
                 int dur = (d->skill+10)*10;
                 d->ai->lastaimrnd = lastmillis+dur+rnd(dur);
             }
-            loopk(3) o[k] += d->ai->aimrnd[k];
+            for(int k = 0; k < int(3); k++) o[k] += d->ai->aimrnd[k];
         }
         return o;
     }
@@ -770,7 +770,7 @@ namespace ai
 
     int wpspot(fpsent *d, int n, bool check = false)
     {
-        if(iswaypoint(n)) loopk(2)
+        if(iswaypoint(n)) for(int k = 0; k < int(2); k++)
         {
             vec epos = waypoints[n].o;
             int entid = obstacles.remap(d, n, epos, k!=0);
@@ -803,7 +803,7 @@ namespace ai
 
     bool anynode(fpsent *d, aistate &b, int len = NUMPREVNODES)
     {
-        if(iswaypoint(d->lastnode)) loopk(2)
+        if(iswaypoint(d->lastnode)) for(int k = 0; k < int(2); k++)
         {
             d->ai->clear(k ? true : false);
             int n = randomlink(d, d->lastnode);

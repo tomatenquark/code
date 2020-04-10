@@ -150,7 +150,7 @@ void calcvfcD()
     {
         plane &p = vfcP[i];
         vfcDnear[i] = vfcDfar[i] = 0;
-        loopk(3) if(p[k] > 0) vfcDfar[i] += p[k];
+        for(int k = 0; k < int(3); k++) if(p[k] > 0) vfcDfar[i] += p[k];
         else vfcDnear[i] += p[k];
     }
 } 
@@ -850,7 +850,7 @@ struct renderstate
 
     renderstate() : colormask(true), depthmask(true), blending(false), alphaing(0), vbuf(0), vattribs(false), vquery(false), colorscale(1, 1, 1), alphascale(0), slot(NULL), texgenslot(NULL), vslot(NULL), texgenvslot(NULL), texgenscroll(0, 0), texgendim(-1), visibledynlights(0), dynlightmask(0)
     {
-        loopk(8) textures[k] = 0;
+        for(int k = 0; k < int(8); k++) textures[k] = 0;
     }
 };
 

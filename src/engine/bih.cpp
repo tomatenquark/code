@@ -145,12 +145,12 @@ inline bool BIH::traverse(const vec &o, const vec &ray, float maxdist, float &di
 void BIH::build(mesh &m, ushort *indices, int numindices, const ivec &vmin, const ivec &vmax)
 {
     int axis = 2;
-    loopk(2) if(vmax[k] - vmin[k] > vmax[axis] - vmin[axis]) axis = k;
+    for(int k = 0; k < int(2); k++) if(vmax[k] - vmin[k] > vmax[axis] - vmin[axis]) axis = k;
 
     ivec leftmin, leftmax, rightmin, rightmax;
     int splitleft, splitright;
     int left, right;
-    loopk(3)
+    for(int k = 0; k < int(3); k++)
     {
         leftmin = rightmin = ivec(INT_MAX, INT_MAX, INT_MAX);
         leftmax = rightmax = ivec(INT_MIN, INT_MIN, INT_MIN);
@@ -267,7 +267,7 @@ BIH::BIH(vector<mesh> &buildmeshes)
             ++srctri;
             ++dsttri;
         }
-        loopk(3) if(fabs(mmax[k] - mmin[k]) < 0.125f)
+        for(int k = 0; k < int(3); k++) if(fabs(mmax[k] - mmin[k]) < 0.125f)
         {
             float mid = (mmin[k] + mmax[k]) / 2;
             mmin[k] = mid - 0.0625f;

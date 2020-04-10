@@ -631,11 +631,11 @@ struct animmodel : model
 
         part(animmodel *model, int index = 0) : model(model), index(index), meshes(NULL), numanimparts(1), pitchscale(1), pitchoffset(0), pitchmin(0), pitchmax(0), translate(0, 0, 0)
         {
-            loopk(MAXANIMPARTS) anims[k] = NULL;
+            for(int k = 0; k < int(MAXANIMPARTS); k++) anims[k] = NULL;
         }
         virtual ~part()
         {
-            loopk(MAXANIMPARTS) DELETEA(anims[k]);
+            for(int k = 0; k < int(MAXANIMPARTS); k++) DELETEA(anims[k]);
         }
 
         virtual void cleanup()

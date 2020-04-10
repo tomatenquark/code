@@ -77,7 +77,7 @@ struct collectclientmode : clientmode
     {
         bases.shrink(0);
         tokens.shrink(0);
-        loopk(2) scores[k] = 0;
+        for(int k = 0; k < int(2); k++) scores[k] = 0;
         tokens.shrink(0);
 #ifdef SERVMODE
         nexttoken = 0;
@@ -163,7 +163,7 @@ struct collectclientmode : clientmode
 
     void getteamscores(vector<teamscore> &tscores)
     {
-        loopk(2) if(scores[k]) tscores.add(teamscore(collectbaseteam(k+1), scores[k]));
+        for(int k = 0; k < int(2); k++) if(scores[k]) tscores.add(teamscore(collectbaseteam(k+1), scores[k]));
     }
 
     bool insidebase(const base &b, const vec &o)
@@ -364,7 +364,7 @@ struct collectclientmode : clientmode
     void initclient(clientinfo *ci, packetbuf &p, bool connecting)
     {
         putint(p, N_INITTOKENS);
-        loopk(2) putint(p, scores[k]);
+        for(int k = 0; k < int(2); k++) putint(p, scores[k]);
         putint(p, tokens.length());
         loopv(tokens)
         {
@@ -391,7 +391,7 @@ struct collectclientmode : clientmode
         {
             int team = getint(p);
             vec o;
-            loopk(3) o[k] = max(getint(p)/DMF, 0.0f);
+            for(int k = 0; k < int(3); k++) o[k] = max(getint(p)/DMF, 0.0f);
             if(p.overread()) break;
             if(commit && notgotbases)
             {
@@ -577,7 +577,7 @@ struct collectclientmode : clientmode
         {
             base &b = bases[i];
             putint(p, b.team);
-            loopk(3) putint(p, int(b.o[k]*DMF));
+            for(int k = 0; k < int(3); k++) putint(p, int(b.o[k]*DMF));
         }
     }
 
@@ -603,7 +603,7 @@ struct collectclientmode : clientmode
         
     void parsetokens(ucharbuf &p, bool commit)
     {
-        loopk(2)
+        for(int k = 0; k < int(2); k++)
         {
             int score = getint(p);
             if(commit) scores[k] = score;
@@ -613,7 +613,7 @@ struct collectclientmode : clientmode
         {
             int id = getint(p), team = getint(p), yaw = getint(p);
             vec o;
-            loopk(3) o[k] = getint(p)/DMF;
+            for(int k = 0; k < int(3); k++) o[k] = getint(p)/DMF;
             if(p.overread()) break;
             o = movetoken(o, yaw);
             if(o.z >= 0) droptoken(id, o, team, lastmillis);
@@ -894,7 +894,7 @@ case N_DROPTOKENS:
     int ocn = getint(p);
     fpsent *o = ocn==player1->clientnum ? player1 : newclient(ocn);
     vec droploc;
-    loopk(3) droploc[k] = getint(p)/DMF;
+    for(int k = 0; k < int(3); k++) droploc[k] = getint(p)/DMF;
     for(int n = 0;; n++)
     {
         int id = getint(p);
@@ -911,7 +911,7 @@ case N_STEALTOKENS:
     int ocn = getint(p), team = getint(p), basenum = getint(p), enemyteam = getint(p), score = getint(p);
     fpsent *o = ocn==player1->clientnum ? player1 : newclient(ocn);
     vec droploc;
-    loopk(3) droploc[k] = getint(p)/DMF;
+    for(int k = 0; k < int(3); k++) droploc[k] = getint(p)/DMF;
     for(int n = 0;; n++)
     {
         int id = getint(p);

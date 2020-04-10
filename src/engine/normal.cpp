@@ -188,8 +188,8 @@ void addnormals(cube &c, const ivec &o, int size)
             if(convex) planes[numplanes++].cross(pos[0], pos[2], pos[3]).normalize();
         }
 
-        if(!numplanes) loopk(numverts) norms[k] = addnormal(pos[k], i);
-        else if(numplanes==1) loopk(numverts) norms[k] = addnormal(pos[k], planes[0]);
+        if(!numplanes) for(int k = 0; k < int(numverts); k++) norms[k] = addnormal(pos[k], i);
+        else if(numplanes==1) for(int k = 0; k < int(numverts); k++) norms[k] = addnormal(pos[k], planes[0]);
         else 
         { 
             vec avg = vec(planes[0]).add(planes[1]).normalize();

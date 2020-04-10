@@ -530,14 +530,14 @@ namespace server
             {
                 case '*':
                     modemask |= 1<<NUMGAMEMODES;
-                    loopk(NUMGAMEMODES) if(m_checknot(k+STARTGAMEMODE, M_DEMO|M_EDIT|M_LOCAL)) modemask |= 1<<k;
+                    for(int k = 0; k < int(NUMGAMEMODES); k++) if(m_checknot(k+STARTGAMEMODE, M_DEMO|M_EDIT|M_LOCAL)) modemask |= 1<<k;
                     continue;
                 case '!':
                     mode++;
                     if(mode[0] != '?') break;
                 case '?':
                     mode++;
-                    loopk(NUMGAMEMODES) if(searchmodename(gamemodes[k].name, mode))
+                    for(int k = 0; k < int(NUMGAMEMODES); k++) if(searchmodename(gamemodes[k].name, mode))
                     {
                         if(op == '!') modemask &= ~(1<<k);
                         else modemask |= 1<<k;
@@ -546,7 +546,7 @@ namespace server
             }
             int modenum = INT_MAX;
             if(isdigit(mode[0])) modenum = atoi(mode);
-            else loopk(NUMGAMEMODES) if(searchmodename(gamemodes[k].name, mode)) { modenum = k+STARTGAMEMODE; break; }
+            else for(int k = 0; k < int(NUMGAMEMODES); k++) if(searchmodename(gamemodes[k].name, mode)) { modenum = k+STARTGAMEMODE; break; }
             if(!m_valid(modenum)) continue;
             switch(op)
             {
@@ -559,7 +559,7 @@ namespace server
          
     bool addmaprotation(int modemask, const char *map)
     {
-        if(!map[0]) loopk(NUMGAMEMODES) if(modemask&(1<<k) && !m_check(k+STARTGAMEMODE, M_EDIT)) modemask &= ~(1<<k);
+        if(!map[0]) for(int k = 0; k < int(NUMGAMEMODES); k++) if(modemask&(1<<k) && !m_check(k+STARTGAMEMODE, M_EDIT)) modemask &= ~(1<<k);
         if(!modemask) return false;
         if(!(modemask&(1<<NUMGAMEMODES))) maprotation::exclude |= modemask;
         maprotation &rot = maprotations.add();
@@ -2926,19 +2926,19 @@ namespace server
                 clientinfo *cp = getinfo(pcn);
                 if(cp && pcn != sender && cp->ownernum != sender) cp = NULL;
                 vec pos;
-                loopk(3)
+                for(int k = 0; k < int(3); k++)
                 {
                     int n = p.get(); n |= p.get()<<8; if(flags&(1<<k)) { n |= p.get()<<16; if(n&0x800000) n |= ~0U<<24; }
                     pos[k] = n/DMF;
                 }
-                loopk(3) p.get();
+                for(int k = 0; k < int(3); k++) p.get();
                 int mag = p.get(); if(flags&(1<<3)) mag |= p.get()<<8;
                 int dir = p.get(); dir |= p.get()<<8;
                 vec vel = vec((dir%360)*RAD, (clamp(dir/360, 0, 180)-90)*RAD).mul(mag/DVELF);
                 if(flags&(1<<4))
                 {
                     p.get(); if(flags&(1<<5)) p.get();
-                    if(flags&(1<<6)) loopk(2) p.get();
+                    if(flags&(1<<6)) for(int k = 0; k < int(2); k++) p.get();
                 }
                 if(cp)
                 {
@@ -3101,10 +3101,10 @@ namespace server
                 shot->id = getint(p);
                 shot->millis = cq ? cq->geteventmillis(gamemillis, shot->id) : 0;
                 shot->gun = getint(p);
-                loopk(3) shot->from[k] = getint(p)/DMF;
-                loopk(3) shot->to[k] = getint(p)/DMF;
+                for(int k = 0; k < int(3); k++) shot->from[k] = getint(p)/DMF;
+                for(int k = 0; k < int(3); k++) shot->to[k] = getint(p)/DMF;
                 int hits = getint(p);
-                loopk(hits)
+                for(int k = 0; k < int(hits); k++)
                 {
                     if(p.overread()) break;
                     hitinfo &hit = shot->hits.add();
@@ -3112,7 +3112,7 @@ namespace server
                     hit.lifesequence = getint(p);
                     hit.dist = getint(p)/DMF;
                     hit.rays = getint(p);
-                    loopk(3) hit.dir[k] = getint(p)/DNF;
+                    for(int k = 0; k < int(3); k++) hit.dir[k] = getint(p)/DNF;
                 }
                 if(cq) 
                 {
@@ -3131,7 +3131,7 @@ namespace server
                 exp->gun = getint(p);
                 exp->id = getint(p);
                 int hits = getint(p);
-                loopk(hits)
+                for(int k = 0; k < int(hits); k++)
                 {
                     if(p.overread()) break;
                     hitinfo &hit = exp->hits.add();
@@ -3139,7 +3139,7 @@ namespace server
                     hit.lifesequence = getint(p);
                     hit.dist = getint(p)/DMF;
                     hit.rays = getint(p);
-                    loopk(3) hit.dir[k] = getint(p)/DNF;
+                    for(int k = 0; k < int(3); k++) hit.dir[k] = getint(p)/DNF;
                 }
                 if(cq) cq->addevent(exp);
                 else delete exp;
@@ -3245,9 +3245,9 @@ namespace server
             case N_EDITENT:
             {
                 int i = getint(p);
-                loopk(3) getint(p);
+                for(int k = 0; k < int(3); k++) getint(p);
                 int type = getint(p);
-                loopk(5) getint(p);
+                for(int k = 0; k < int(5); k++) getint(p);
                 if(!ci || ci->state.state==CS_SPECTATOR) break;
                 QUEUE_MSG;
                 bool canspawn = canspawnitem(type);

@@ -59,7 +59,7 @@ struct md5 : skelloader<md5>
             {
                 md5vert &v = vertinfo[i];
                 vec pos(0, 0, 0);
-                loopk(v.count)
+                for(int k = 0; k < int(v.count); k++)
                 {
                     md5weight &w = weightinfo[v.start+k];
                     md5joint &j = joints[w.joint];

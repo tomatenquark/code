@@ -1661,7 +1661,7 @@ static inline void callcommand(ident *id, tagval *args, int numargs, bool lookup
     ++i;
     CALLCOM(i)
 cleanup:
-    loopk(i) freearg(args[k]);
+    for(int k = 0; k < int(i); k++) freearg(args[k]);
     for(; i < numargs; i++) freearg(args[i]);
 }
 
