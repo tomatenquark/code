@@ -126,9 +126,9 @@ struct cubeloader
         for(;;)
         {
             bool changed = false;
-            loop(x, ssize)
+            for(int x = 0; x < int(ssize); x++)
             {
-                loop(y, ssize)
+                for(int y = 0; y < int(ssize); y++)
                 {
                     c_sqr &t = world[x+y*ssize];
                     if(t.type==C_FHF || t.type==C_CHF)
@@ -162,7 +162,7 @@ struct cubeloader
         x1 = y1 = 0;
         z0 = 128;
         z1 = -128;
-        loop(x, ssize) loop(y, ssize)
+        for(int x = 0; x < int(ssize); x++) for(int y = 0; y < int(ssize); y++)
         {
             c_sqr &t = world[x+y*ssize];
             if(t.type!=C_SOLID)

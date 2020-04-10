@@ -19,7 +19,7 @@ static bool mergepvsnodes(pvsnode &p, pvsnode *children)
 {
     for(int i = 0; i < int(7); i++) if(children[i].flags!=children[7].flags) return false;
     bvec bbs[4];
-    loop(x, 2) loop(y, 2)
+    for(int x = 0; x < int(2); x++) for(int y = 0; y < int(2); y++)
     {
         const bvec &lo = children[octaindex(2, x, y, 0)].edges,
                    &hi = children[octaindex(2, x, y, 1)].edges;
@@ -55,7 +55,7 @@ static bool mergepvsnodes(pvsnode &p, pvsnode *children)
         res.x = lo.x;
         res.y = lo.y;
     }
-    loop(x, 2)
+    for(int x = 0; x < int(2); x++)
     {
         bvec &lo = bbs[x], &hi = bbs[x+2];
         MERGEBBS(lo, y, x, z);

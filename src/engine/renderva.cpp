@@ -1736,7 +1736,7 @@ void renderalphageom(bool fogpass)
     renderstate cur;
     cur.alphaing = 1;
 
-    loop(front, 2) if(front || hasback)
+    for(int front = 0; front < int(2); front++) if(front || hasback)
     {
         cur.alphaing = front+1;
         if(!front) glCullFace(GL_FRONT);

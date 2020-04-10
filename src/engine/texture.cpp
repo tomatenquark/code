@@ -2915,7 +2915,7 @@ static void name(ImageData &s) \
         { \
             int maxy = min(d.h - by, s.align), maxx = min(d.w - bx, s.align); \
             initblock; \
-            loop(y, maxy) \
+            for(int y = 0; y < int(maxy); y++) \
             { \
                 int x; \
                 for(x = 0; x < maxx; ++x) \
