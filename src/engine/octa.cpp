@@ -59,7 +59,7 @@ cube *newcubes(uint face, int mat)
         c->visible = 0;
         c->merged = 0;
         setfaces(*c, face);
-        loopl(6) c->texture[l] = DEFAULT_GEOM;
+        for(int l = 0; l < int(6); l++) c->texture[l] = DEFAULT_GEOM;
         c->material = mat;
         c++;
     }
@@ -370,7 +370,7 @@ bool subdividecube(cube &c, bool fullcheck, bool brighten)
 		c.children = newcubes(isempty(c) ? F_EMPTY : F_SOLID, c.material);
         for(int i = 0; i < int(8); i++)
         {
-            loopl(6) c.children[i].texture[l] = c.texture[l];
+            for(int l = 0; l < int(6); l++) c.children[i].texture[l] = c.texture[l];
             if(brighten && !isempty(c)) brightencube(c.children[i]);
         }
         return true;

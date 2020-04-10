@@ -304,7 +304,7 @@ struct vacollect : verthash
             LightMapTexture &lm = lightmaptexs[t.unlit];
             svec2 lmtc(short(ceil((lm.unlitx + 0.5f) * SHRT_MAX/lm.w)), 
                        short(ceil((lm.unlity + 0.5f) * SHRT_MAX/lm.h)));
-            loopl(2) loopvj(t.tris[l])
+            for(int l = 0; l < int(2); l++) loopvj(t.tris[l])
             {
                 vertex &vtx = verts[t.tris[l][j]];
                 if(vtx.lm.iszero()) vtx.lm = lmtc;
@@ -316,7 +316,7 @@ struct vacollect : verthash
                 }
             }
             sortval *dst = indices.access(sortkey(k.tex, t.unlit, k.dim, k.layer, k.envmap, k.alpha));
-            if(dst) loopl(2) loopvj(t.tris[l]) dst->tris[l].add(t.tris[l][j]);
+            if(dst) for(int l = 0; l < int(2); l++) loopvj(t.tris[l]) dst->tris[l].add(t.tris[l][j]);
         }
     }
                     
@@ -324,7 +324,7 @@ struct vacollect : verthash
     {
         vector<sortkey> remap;
         enumeratekt(indices, sortkey, k, sortval, t,
-            loopl(2) if(t.tris[l].length() && t.unlit<=0)
+            for(int l = 0; l < int(2); l++) if(t.tris[l].length() && t.unlit<=0)
             {
                 if(k.lmid>=LMID_RESERVED && lightmaptexs[k.lmid].unlitx>=0)
                 {
@@ -464,7 +464,7 @@ struct vacollect : verthash
                 e.layer = k.layer;
                 e.envmap = k.envmap;
                 ushort *startbuf = curbuf;
-                loopl(2) 
+                for(int l = 0; l < int(2); l++)
                 {
                     e.minvert[l] = USHRT_MAX;
                     e.maxvert[l] = 0;

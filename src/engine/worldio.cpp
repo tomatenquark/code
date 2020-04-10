@@ -1332,7 +1332,7 @@ void writeobj(char *name)
                 if(key.x == verts.length()) 
                 {
                     verts.add(pos);
-                    loopl(3)
+                    for(int l = 0; l < int(3); l++)
                     {
                         bbmin[l] = min(bbmin[l], pos[l]);
                         bbmax[l] = max(bbmax[l], pos[l]);
