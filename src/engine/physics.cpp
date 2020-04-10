@@ -62,7 +62,7 @@ void resetclipplanes()
     }
 
 #define INTERSECTBOX(setentry, exit) \
-    loop(i, 3) \
+    for(int i = 0; i < int(3); i++) \
     { \
         if(ray[i]) \
         { \

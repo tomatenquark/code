@@ -2414,7 +2414,7 @@ static void findunlit(int i)
     }
     else if((lm.type&LM_TYPE)!=LM_DIFFUSE) return;
     uchar *data = lm.data;
-    loop(y, 2) loop(x, LM_PACKW)
+    for(int y = 0; y < int(2); y++) for(int x = 0; x < int(LM_PACKW); x++)
     {
         if(!data[0] && !data[1] && !data[2])
         {

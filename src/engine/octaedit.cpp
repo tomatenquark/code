@@ -71,7 +71,7 @@ void boxsgrid(int orient, vec o, vec s, int g)
 
     gle::defvertex();
     gle::begin(GL_LINES);
-    loop(x, xs)
+    for(int x = 0; x < int(xs); x++)
     {
         o[R[d]] += g;
         gle::attrib(o);
@@ -79,7 +79,7 @@ void boxsgrid(int orient, vec o, vec s, int g)
         gle::attrib(o);
         o[C[d]] = oy;
     }
-    loop(y, ys)
+    for(int y = 0; y < int(ys); y++)
     {
         o[C[d]] += g;
         o[R[d]] = ox;
@@ -1995,7 +1995,7 @@ void mpeditface(int dir, int mode, selinfo &sel, bool local)
                 linkedpush(c, d, sel.corner&1, sel.corner>>1, dc, seldir); // corner command
             else
             {
-                loop(mx,2) loop(my,2)                                       // pull/push edges command
+                for(int mx = 0; mx < int(2); mx++) for(int my = 0; my < int(2); my++)                                       // pull/push edges command
                 {
                     if(x==0 && mx==0 && sel.cx) continue;
                     if(y==0 && my==0 && sel.cy) continue;
@@ -2639,7 +2639,7 @@ void mpflip(selinfo &sel, bool local)
     int zs = sel.s[dimension(sel.orient)];
     loopxy(sel)
     {
-        loop(z,zs) flipcube(selcube(x, y, z), dimension(sel.orient));
+        for(int z = 0; z < int(zs); z++) flipcube(selcube(x, y, z), dimension(sel.orient));
         loop(z,zs/2)
         {
             cube &a = selcube(x, y, z);
@@ -2797,10 +2797,10 @@ struct texturegui : g3d_callback
         {
             g.tab(!i ? "Textures" : NULL, 0xAAFFAA);
             if(i+1 != origtab) continue; //don't load textures on non-visible tabs!
-            loop(h, texguiheight)
+            for(int h = 0; h < int(texguiheight); h++)
             {
                 g.pushlist();
-                loop(w, texguiwidth)
+                for(int w = 0; w < int(texguiwidth); w++)
                 {
                     extern VSlot dummyvslot;
                     int ti = (i*texguiheight+h)*texguiwidth+w;

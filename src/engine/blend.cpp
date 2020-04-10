@@ -191,7 +191,7 @@ uchar lookupblendmap(BlendMapCache *cache, const vec &pos)
     float bx = pos.x/(1<<BM_SCALE) - 0.5f, by = pos.y/(1<<BM_SCALE) - 0.5f;
     int ix = (int)floor(bx), iy = (int)floor(by),
         rx = ix-cache->origin.x, ry = iy-cache->origin.y;
-    loop(vy, 2) loop(vx, 2)
+    for(int vy = 0; vy < int(2); vy++) for(int vx = 0; vx < int(2); vx++)
     {
         int cx = clamp(rx+vx, 0, (1<<cache->scale)-1), cy = clamp(ry+vy, 0, (1<<cache->scale)-1);
         if(cache->node.type==BM_IMAGE)

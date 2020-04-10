@@ -1296,7 +1296,7 @@ void updatevabb(vtxarray *va, bool force)
     if(va->skyfaces)
     {
         va->skyfaces |= 0x80;
-        if(va->sky) loop(dim, 3) if(va->skyfaces&(3<<(2*dim)))
+        if(va->sky) for(int dim = 0; dim < int(3); dim++) if(va->skyfaces&(3<<(2*dim)))
         {
             int r = R[dim], c = C[dim];
             if((va->skyfaces&(1<<(2*dim)) && va->o[dim] < va->bbmin[dim]) ||

@@ -38,7 +38,7 @@ namespace tiger
         bb = b;
         cc = c;
 
-        loop(pass_no, TIGER_PASSES)
+        for(int pass_no = 0; pass_no < int(TIGER_PASSES); pass_no++)
         {
             if(pass_no)
             {
@@ -85,14 +85,14 @@ namespace tiger
 
         if(!*(const uchar *)&islittleendian) for(int j = 0; j < int(64); j++) temp[j^7] = str[j];
         else for(int j = 0; j < int(64); j++) temp[j] = str[j];
-        for(int i = 0; i < int(1024); i++) loop(col, 8) ((uchar *)&sboxes[i])[col] = i&0xFF;
+        for(int i = 0; i < int(1024); i++) for(int col = 0; col < int(8); col++) ((uchar *)&sboxes[i])[col] = i&0xFF;
 
         int abc = 2;
-        loop(pass, 5) for(int i = 0; i < int(256); i++) for(int sb = 0; sb < 1024; sb += 256)
+        for(int pass = 0; pass < int(5); pass++) for(int i = 0; i < int(256); i++) for(int sb = 0; sb < 1024; sb += 256)
         {
             abc++;
             if(abc >= 3) { abc = 0; compress((chunk *)temp, state); }
-            loop(col, 8)
+            for(int col = 0; col < int(8); col++)
             {
                 uchar val = ((uchar *)&sboxes[sb+i])[col];
                 ((uchar *)&sboxes[sb+i])[col] = ((uchar *)&sboxes[sb + ((uchar *)&state[abc])[col]])[col];

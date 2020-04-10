@@ -295,7 +295,7 @@ int getmippedtexture(const cube &p, int orient)
 {
     cube *c = p.children;
     int d = dimension(orient), dc = dimcoord(orient), texs[4] = { -1, -1, -1, -1 }, numtexs = 0;
-    loop(x, 2) loop(y, 2)
+    for(int x = 0; x < int(2); x++) for(int y = 0; y < int(2); y++)
     {
         int n = octaindex(d, x, y, dc);
         if(isempty(c[n]))
@@ -525,17 +525,17 @@ bool remip(cube &c, const ivec &co, int size)
         if(isempty(ch[i]) && isempty(nh[i])) continue;
 
         ivec o(i, co, size);
-        loop(orient, 6)
+        for(int orient = 0; orient < int(6); orient++)
             if(visibleface(ch[i], orient, o, size, MAT_AIR, (mat&MAT_ALPHA)^MAT_ALPHA, MAT_ALPHA))
             {
                 if(ch[i].texture[orient] != n.texture[orient]) { freeocta(nh); return false; }
                 vis[orient] |= 1<<i;
             }
     }
-    if(mipvis) loop(orient, 6)
+    if(mipvis) for(int orient = 0; orient < int(6); orient++)
     {
         int mask = 0;
-        loop(x, 2) loop(y, 2) mask |= 1<<octaindex(dimension(orient), x, y, dimcoord(orient));
+        for(int x = 0; x < int(2); x++) for(int y = 0; y < int(2); y++) mask |= 1<<octaindex(dimension(orient), x, y, dimcoord(orient));
         if(vis[orient]&mask && (vis[orient]&mask)!=mask) { freeocta(nh); return false; }
     }
 
@@ -634,7 +634,7 @@ void edgespan2vectorcube(cube &c)
 {
     if(isentirelysolid(c) || isempty(c)) return;
     cube o = c;
-    loop(x, 2) loop(y, 2) loop(z, 2)
+    for(int x = 0; x < int(2); x++) for(int y = 0; y < int(2); y++) for(int z = 0; z < int(2); z++)
     {
         ivec p(8*x, 8*y, 8*z);
         vec v;
