@@ -233,13 +233,6 @@ namespace config {
         "yawsky"
     };
 
-    /// Which commands are sky-related, also see https://tomatenquark.org/game/EDITREF.html#skybox
-    std::array<const string, 3> sky_commands = {
-        "cloudlayer",
-        "loadsky",
-        "skybox"
-    };
-
     /// Maps the relation between ICOMMAND and the parameters it takes (file path)
     map<const string, int> command_mapping = {
         {"texture", 2},
@@ -301,14 +294,22 @@ namespace config {
 };
 
 namespace resources {
+    /// Which commands are sky-related, also see https://tomatenquark.org/game/EDITREF.html#skybox
+    std::string sky_commands[3] = {
+        "cloudlayer",
+        "loadsky",
+        "skybox"
+    };
+
     /// Processes skybox / loadsky / cloudlayer instructions
     void process_sky_commands(std::vector<config::Resource>* resources) {
         std::array<std::string, 6> directions = { "up", "dn", "lf", "rt", "ft", "bk" };
         std::vector<config::Resource> sky_resources;
         std::copy_if(resources->begin(), resources->end(), std::back_inserter(sky_resources), [](const config::Resource& resource) {
-            return std::find(config::sky_commands.begin(), config::sky_commands.end(), resource.command); });
+            return std::find(std::begin(sky_commands), std::end(sky_commands), resource.command); 
+        });
         std::remove_if(resources->begin(), resources->end(), [](const config::Resource& resource) {
-            return std::find(config::sky_commands.begin(), config::sky_commands.end(), resource.command); });
+            return std::find(std::begin(sky_commands), std::end(sky_commands), resource.command); });
         for (const config::Resource& resource: sky_resources) {
             for (const std::string& direction: directions) {
                 resources->push_back(config::Resource{
