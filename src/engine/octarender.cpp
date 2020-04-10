@@ -525,7 +525,7 @@ int calcshadowmask(vec *pos, int numpos)
     extern vec shadowdir;
     int mask = 0, used = 1;
     vec pe = vec(pos[1]).sub(pos[0]);
-    loopk(numpos-2)
+    for(int k = 0; k < int(numpos-2); k++)
     {
         vec e = vec(pos[k+2]).sub(pos[0]);
         if(vec().cross(pe, e).dot(shadowdir)>0)
@@ -536,7 +536,7 @@ int calcshadowmask(vec *pos, int numpos)
         pe = e;
     }
     if(!mask) return 0;
-    loopk(numpos) if(used&(1<<k))
+    for(int k = 0; k < int(numpos); k++) if(used&(1<<k))
     {
         const vec &v = pos[k];
         shadowmapmin.min(v);
@@ -595,7 +595,7 @@ void addtris(const sortkey &key, int orient, vertex *verts, int *index, int numv
     {
         vector<ushort> &idxs = key.tex==DEFAULT_SKY ? vc.explicitskyindices : vc.indices[key].tris[(shadowmask>>i)&1];
         int left = index[0], mid = index[i+1], right = index[i+2], start = left, i0 = left, i1 = -1;
-        loopk(4)
+        for(int k = 0; k < int(4); k++)
         {
             int i2 = -1, ctj = -1, cedge = -1;
             switch(k)
@@ -694,10 +694,10 @@ void addgrasstri(int face, vertex *verts, int numv, ushort texture, ushort lmid)
     g.maxz = max(max(g.v[0].z, g.v[1].z), max(g.v[2].z, g.v[3].z));
 
     g.center = vec(0, 0, 0);
-    loopk(numv) g.center.add(g.v[k]);
+    for(int k = 0; k < int(numv); k++) g.center.add(g.v[k]);
     g.center.div(numv);
     g.radius = 0;
-    loopk(numv) g.radius = max(g.radius, g.v[k].dist(g.center));
+    for(int k = 0; k < int(numv); k++) g.radius = max(g.radius, g.v[k].dist(g.center));
 
     vec area, bx, by;
     area.cross(vec(g.v[1]).sub(g.v[0]), vec(g.v[2]).sub(g.v[0]));
@@ -787,20 +787,20 @@ void guessnormals(const vec *pos, int numverts, vec *normals)
     if(numverts != 4)
     {
         n1.normalize();
-        loopk(numverts) normals[k] = n1;
+        for(int k = 0; k < int(numverts); k++) normals[k] = n1;
         return;
     }
     n2.cross(pos[0], pos[2], pos[3]);
     if(n1.iszero())
     {
         n2.normalize();
-        loopk(4) normals[k] = n2;
+        for(int k = 0; k < int(4); k++) normals[k] = n2;
         return;
     }
     else n1.normalize();
     if(n2.iszero())
     {
-        loopk(4) normals[k] = n1;
+        for(int k = 0; k < int(4); k++) normals[k] = n1;
         return;
     }
     else n2.normalize();
@@ -833,7 +833,7 @@ void addcubeverts(VSlot &vslot, int orient, int size, vec *pos, int convex, usho
     calctexgen(vslot, dim, sgen, tgen);
     vertex verts[MAXFACEVERTS];
     int index[MAXFACEVERTS];
-    loopk(numverts)
+    for(int k = 0; k < int(numverts); k++)
     {
         vertex &v = verts[k];
         v.pos = pos[k];
@@ -862,7 +862,7 @@ void addcubeverts(VSlot &vslot, int orient, int size, vec *pos, int convex, usho
 
     if(texture == DEFAULT_SKY)
     {
-        loopk(numverts) vc.skyclip = min(vc.skyclip, int(pos[k].z*8)>>3);
+        for(int k = 0; k < int(numverts); k++) vc.skyclip = min(vc.skyclip, int(pos[k].z*8)>>3);
         vc.skymask |= 0x3F&~(1<<orient);
     }
 
@@ -1169,7 +1169,7 @@ void addskyverts(const ivec &o, int size)
         {
             facebounds &m = sf[j];
             int index[4];
-            loopk(4)
+            for(int k = 0; k < int(4); k++)
             {
                 const ivec &coords = facecoords[opposite(i)][k];
                 vec v;

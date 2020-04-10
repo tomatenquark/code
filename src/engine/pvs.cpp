@@ -76,7 +76,7 @@ static void genpvsnodes(cube *c, int parent = 0, const ivec &co = ivec(0, 0, 0),
         n.flags = 0;
         n.children = 0;
         if(c[i].children || isempty(c[i]) || c[i].material&MAT_ALPHA) memset(n.edges.v, 0xFF, 3);
-        else loopk(3)
+        else for(int k = 0; k < int(3); k++)
         {
             uint face = c[i].faces[k];
             if(face==F_SOLID) n.edges[k] = 0x80;
@@ -738,7 +738,7 @@ struct pvsworker
 
     void calcpvs(const ivec &co, int size)
     {
-        loopk(3)
+        for(int k = 0; k < int(3); k++)
         {
             viewcellbb.min[k] = co[k];
             viewcellbb.max[k] = co[k]+size;
@@ -861,12 +861,12 @@ static shaftbb pvsbounds;
 
 static void calcpvsbounds()
 {
-    loopk(3) pvsbounds.min[k] = USHRT_MAX;
-    loopk(3) pvsbounds.max[k] = 0;
+    for(int k = 0; k < int(3); k++) pvsbounds.min[k] = USHRT_MAX;
+    for(int k = 0; k < int(3); k++) pvsbounds.max[k] = 0;
     loopv(valist)
     {
         vtxarray *va = valist[i];
-        loopk(3)
+        for(int k = 0; k < int(3); k++)
         {
             if(va->geommin[k]>va->geommax[k]) continue;
             pvsbounds.min[k] = min(pvsbounds.min[k], (ushort)va->geommin[k]);
@@ -1042,7 +1042,7 @@ static void findwaterplanes()
                 waterfalls.add(&m);
                 continue;
             }
-            loopk(numwaterplanes) if(waterplanes[k].height == m.o.z)
+            for(int k = 0; k < int(numwaterplanes); k++) if(waterplanes[k].height == m.o.z)
             {
                 waterplanes[k].matsurfs.add(&m);
                 goto nextmatsurf;

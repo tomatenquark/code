@@ -112,7 +112,7 @@ struct vertmodel : animmodel
                     T vv;
                     assignvert(vv, index, tc, v);
                     int htidx = hthash(v.pos)&(htlen-1);
-                    loopk(htlen)
+                    for(int k = 0; k < int(htlen); k++)
                     {
                         int &vidx = htdata[(htidx+k)&(htlen-1)];
                         if(vidx < 0) { vidx = idxs.add(ushort(vverts.length())); vverts.add(vv); break; }

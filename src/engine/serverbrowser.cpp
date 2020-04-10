@@ -240,14 +240,14 @@ struct pingattempts
     int addattempt(int millis)
     {
         int val = encodeping(millis);
-        loopk(MAXATTEMPTS-1) attempts[k+1] = attempts[k];
+        for(int k = 0; k < int(MAXATTEMPTS-1); k++) attempts[k+1] = attempts[k];
         attempts[0] = val;
         return val;
     }
 
     bool checkattempt(int val, bool del = true)
     {
-        if(val) loopk(MAXATTEMPTS) if(attempts[k] == val)
+        if(val) for(int k = 0; k < int(MAXATTEMPTS); k++) if(attempts[k] == val)
         {
             if(del) attempts[k] = 0;
             return true;
@@ -292,7 +292,7 @@ struct serverinfo : pingattempts
     void clearpings()
     {
         ping = WAITING;
-        loopk(MAXPINGS) pings[k] = WAITING;
+        for(int k = 0; k < int(MAXPINGS); k++) pings[k] = WAITING;
         nextping = 0;
         lastping = -1;
         clearattempts();
@@ -320,7 +320,7 @@ struct serverinfo : pingattempts
     void calcping()
     {
         int numpings = 0, totalpings = 0;
-        loopk(MAXPINGS) if(pings[k] != WAITING) { totalpings += pings[k]; numpings++; }
+        for(int k = 0; k < int(MAXPINGS); k++) if(pings[k] != WAITING) { totalpings += pings[k]; numpings++; }
         ping = numpings ? totalpings/numpings : WAITING;
     }
 

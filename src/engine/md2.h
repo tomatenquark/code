@@ -120,7 +120,7 @@ struct md2 : vertloader<md2>
                         t.vert[1] = idxs[i+1];
                         t.vert[2] = idxs[i+2];
                     }
-                    else loopk(3) t.vert[k] = idxs[i&1 && k ? i+(1-(k-1))+1 : i+k];
+                    else for(int k = 0; k < int(3); k++) t.vert[k] = idxs[i&1 && k ? i+(1-(k-1))+1 : i+k];
                 }
             }
         }

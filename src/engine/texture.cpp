@@ -161,7 +161,7 @@ static inline void reorienttexture(uchar * RESTRICT src, int sw, int sh, int str
     {
         for(uchar *curdst = dst, *src = srcrow, *end = &srcrow[sw*BPP]; src < end;)
         {
-            loopk(BPP) curdst[k] = *src++;
+            for(int k = 0; k < int(BPP); k++) curdst[k] = *src++;
             curdst += stridex;
         }
         srcrow += stride;
@@ -484,7 +484,7 @@ void texmad(ImageData &s, const vec &mul, const vec &add)
         swizzleimage(s);
     int maxk = min(int(s.bpp), 3);
     writetex(s,
-        loopk(maxk) dst[k] = uchar(clamp(dst[k]*mul[k] + 255*add[k], 0.0f, 255.0f));
+        for(int k = 0; k < int(maxk); k++) dst[k] = uchar(clamp(dst[k]*mul[k] + 255*add[k], 0.0f, 255.0f));
     );
 }
 
@@ -494,7 +494,7 @@ void texcolorify(ImageData &s, const vec &color, vec weights)
     if(weights.iszero()) weights = vec(0.21f, 0.72f, 0.07f);
     writetex(s,
         float lum = dst[0]*weights.x + dst[1]*weights.y + dst[2]*weights.z;
-        loopk(3) dst[k] = uchar(clamp(lum*color[k], 0.0f, 255.0f));
+        for(int k = 0; k < int(3); k++) dst[k] = uchar(clamp(lum*color[k], 0.0f, 255.0f));
     );
 }
 
@@ -505,7 +505,7 @@ void texcolormask(ImageData &s, const vec &color1, const vec &color2)
     readwritetex(d, s,
         vec color;
         color.lerp(color2, color1, src[3]/255.0f);
-        loopk(3) dst[k] = uchar(clamp(color[k]*src[k], 0.0f, 255.0f));
+        for(int k = 0; k < int(3); k++) dst[k] = uchar(clamp(color[k]*src[k], 0.0f, 255.0f));
     );
     s.replace(d);
 }
@@ -2159,13 +2159,13 @@ static void addglow(ImageData &c, ImageData &g, const vec &glowcolor)
     if(g.bpp < 3)
     {
         readwritergbtex(c, g,
-            loopk(3) dst[k] = clamp(int(dst[k]) + int(src[0]*glowcolor[k]), 0, 255);
+            for(int k = 0; k < int(3); k++) dst[k] = clamp(int(dst[k]) + int(src[0]*glowcolor[k]), 0, 255);
         );
     }
     else
     {
         readwritergbtex(c, g,
-            loopk(3) dst[k] = clamp(int(dst[k]) + int(src[k]*glowcolor[k]), 0, 255);
+            for(int k = 0; k < int(3); k++) dst[k] = clamp(int(dst[k]) + int(src[k]*glowcolor[k]), 0, 255);
         );
     }
 }
@@ -2397,7 +2397,7 @@ Texture *loadthumbnail(Slot &slot)
                 loop(y, l.h) 
                 {
                     for(uchar *dst = dstrow, *src = srcrow, *end = &srcrow[l.w*l.bpp]; src < end; dst += s.bpp, src += l.bpp)
-                        loopk(3) dst[k] = src[k]; 
+                        for(int k = 0; k < int(3); k++) dst[k] = src[k];
                     dstrow += s.pitch;
                     srcrow += l.pitch;
                 }

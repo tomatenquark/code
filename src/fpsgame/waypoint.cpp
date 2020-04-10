@@ -89,7 +89,7 @@ namespace ai
         void build(int *indices, int numindices, const vec &vmin, const vec &vmax)
         {
             int axis = 2;
-            loopk(2) if(vmax[k] - vmin[k] > vmax[axis] - vmin[axis]) axis = k;
+            for(int k = 0; k < int(2); k++) if(vmax[k] - vmin[k] > vmax[axis] - vmin[axis]) axis = k;
 
             vec leftmin(1e16f, 1e16f, 1e16f), leftmax(-1e16f, -1e16f, -1e16f), rightmin(1e16f, 1e16f, 1e16f), rightmax(-1e16f, -1e16f, -1e16f);
             float split = 0.5f*(vmax[axis] + vmin[axis]), splitleft = -1e16f, splitright = 1e16f;

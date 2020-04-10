@@ -700,11 +700,11 @@ struct gui : g3d_gui
         if(vslot.rotation)
         {
             const texrotation &r = texrotations[vslot.rotation];
-            if(r.swapxy) { swap(xoff, yoff); loopk(4) swap(tc[k].x, tc[k].y); }
-            if(r.flipx) { xoff *= -1; loopk(4) tc[k].x *= -1; }
-            if(r.flipy) { yoff *= -1; loopk(4) tc[k].y *= -1; }
+            if(r.swapxy) { swap(xoff, yoff); for(int k = 0; k < int(4); k++) swap(tc[k].x, tc[k].y); }
+            if(r.flipx) { xoff *= -1; for(int k = 0; k < int(4); k++) tc[k].x *= -1; }
+            if(r.flipy) { yoff *= -1; for(int k = 0; k < int(4); k++) tc[k].y *= -1; }
         }
-        loopk(4) { tc[k].x = tc[k].x/xt - xoff/t->xs; tc[k].y = tc[k].y/yt - yoff/t->ys; } 
+        for(int k = 0; k < int(4); k++) { tc[k].x = tc[k].x/xt - xoff/t->xs; tc[k].y = tc[k].y/yt - yoff/t->ys; }
         if(slot.loaded) gle::color(vec(color).mul(vslot.colorscale));
         else gle::color(color);
         glBindTexture(GL_TEXTURE_2D, t->id);

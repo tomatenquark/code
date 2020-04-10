@@ -35,7 +35,7 @@ namespace sphere
         GLushort *curindex = indices;
         for(int i = 0; i < int(stacks); i++)
         {
-            loopk(slices)
+            for(int k = 0; k < int(slices); k++)
             {
                 int j = i%2 ? slices-k-1 : k;
                 if(i)
@@ -163,7 +163,7 @@ struct fireballrenderer : listrenderer
             dir.mul(psize/dist).add(p->o);
             float depth = depthfxtex.eyedepth(dir);
 
-            loopk(3)
+            for(int k = 0; k < int(3); k++)
             {
                 bbmin[k] = min(bbmin[k], p->o[k] - psize);
                 bbmax[k] = max(bbmax[k], p->o[k] + psize);
