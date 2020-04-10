@@ -30,7 +30,6 @@ namespace download {
         CURL *eh = curl_easy_init();
         curl_easy_setopt(eh, CURLOPT_URL, url);
         curl_easy_setopt(eh, CURLOPT_PRIVATE, url);
-        curl_easy_setopt(eh, CURLOPT_VERBOSE, 1L);
         if (fp) {
             curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, write_data);
             curl_easy_setopt(eh, CURLOPT_WRITEDATA, fp);
@@ -115,9 +114,6 @@ namespace download {
 
         /* set URL to get here */
         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
-
-        /* Switch on full protocol/debug output while testing */
-        curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
 
         /* send all data to this function  */
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
