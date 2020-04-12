@@ -1,6 +1,6 @@
-# Cube 2: Tomatenquark
+# Tomatenquark
 
-First of all, welcome to Cube 2: Tomatenquark! To start off, if you are looking for help with the game itself, refer to the [Documentation](https://tomatenquark.org). Here are some places of interest on the internet, which are related to Cube / Cube 2: Tomatenquark.
+First of all, welcome to Tomatenquark! To start off, if you are looking for help with the game itself, refer to the [Documentation](https://tomatenquark.org). Here are some places of interest on the internet, which are related to Cube 2 / Tomatenquark.
 
 ## Links
 
