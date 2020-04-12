@@ -285,7 +285,7 @@ template<int BI_DIGITS> struct bigint
     }
     template<int Y_DIGITS> bigint &sub(const bigint<Y_DIGITS> &y) { return sub(*this, y); }
 
-    void shrink() { while(len && !digits[len-1]) len--; }
+    void shrink() { while(len > 0 && !digits[len-1]) len--; }
     void shrinkdigits(int n) { len = n; shrink(); }
     void shrinkbits(int n) { shrinkdigits(n/BI_DIGIT_BITS); }
 
