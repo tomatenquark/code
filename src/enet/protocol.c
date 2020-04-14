@@ -890,7 +890,7 @@ enet_protocol_handle_acknowledge (ENetHost * host, ENetEvent * event, ENetPeer *
     else
     {
        peer -> roundTripTime = roundTripTime;
-       peer -> roundTripTimeVariance = roundTripTime / 2;
+       peer -> roundTripTimeVariance = (roundTripTime + 1) / 2;
     }
 
     if (peer -> roundTripTime < peer -> lowestRoundTripTime)
