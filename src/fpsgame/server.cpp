@@ -1090,7 +1090,7 @@ namespace server
 
     void setupdemorecord()
     {
-        if(!m_mp(gamemode) || m_edit) return;
+        if(!m_mp(gamemode)) return;
 
         demotmp = opentempfile("demorecord", "w+b");
         if(!demotmp) return;
@@ -1098,7 +1098,7 @@ namespace server
         stream *f = opengzfile(NULL, "wb", demotmp);
         if(!f) { DELETEP(demotmp); return; }
 
-        sendservmsg("recording demo");
+        sendservmsg(m_edit ? "recording coopedit demo" : "recording demo");
 
         demorecord = f;
 
