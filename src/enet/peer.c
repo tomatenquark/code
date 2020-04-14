@@ -4,6 +4,7 @@
 */
 #include <string.h>
 #define ENET_BUILDING_LIB 1
+#include "enet/utility.h"
 #include "enet/enet.h"
 
 /** @defgroup peer ENet peer functions 
@@ -61,7 +62,7 @@ enet_peer_throttle_configure (ENetPeer * peer, enet_uint32 interval, enet_uint32
 int
 enet_peer_throttle (ENetPeer * peer, enet_uint32 rtt)
 {
-    if (peer -> lastRoundTripTime <= peer -> lastRoundTripTimeVariance)
+    if (peer -> lastRoundTripTime <= ENET_MAX (peer -> lastRoundTripTimeVariance, 1))
     {
         peer -> packetThrottle = peer -> packetThrottleLimit;
     }
@@ -76,7 +77,7 @@ enet_peer_throttle (ENetPeer * peer, enet_uint32 rtt)
         return 1;
     }
     else
-    if (rtt > peer -> lastRoundTripTime + 2 * peer -> lastRoundTripTimeVariance)
+    if (rtt >= peer -> lastRoundTripTime + 2 * ENET_MAX (peer -> lastRoundTripTimeVariance, 2))
     {
         if (peer -> packetThrottle > peer -> packetThrottleDeceleration)
           peer -> packetThrottle -= peer -> packetThrottleDeceleration;
