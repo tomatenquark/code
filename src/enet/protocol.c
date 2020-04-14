@@ -870,16 +870,8 @@ enet_protocol_handle_acknowledge (ENetHost * host, ENetEvent * event, ENetPeer *
        else
        {
           enet_uint32 diff = accumRoundTripTime - roundTripTime;
-          if (diff <= accumRoundTripTimeVariance)
-          {
-             accumRoundTripTimeVariance -= accumRoundTripTimeVariance / 4;
-             accumRoundTripTimeVariance += diff / 4;
-          }
-          else
-          {
-             accumRoundTripTimeVariance -= accumRoundTripTimeVariance / 32;
-             accumRoundTripTimeVariance += diff / 32;
-          }
+          accumRoundTripTimeVariance -= accumRoundTripTimeVariance / 4;
+          accumRoundTripTimeVariance += diff / 4;
           accumRoundTripTime -= diff / 8;
        }
        peer -> roundTripTime = accumRoundTripTime >> 8;
