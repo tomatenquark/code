@@ -1013,6 +1013,8 @@ namespace game
 
     void drawammobar(int w, int h, fpsent *p)
     {
+        if (m_insta) return;
+        
         int NUMPLAYERGUNS = GUN_PISTOL - GUN_SG + 1;
         int numvisibleguns = NUMPLAYERGUNS;
         if(ammobarhideempty) for(int i = 0; i < int(NUMPLAYERGUNS); i++) if(!ammobargunvisible(p, GUN_SG + i)) numvisibleguns--;
