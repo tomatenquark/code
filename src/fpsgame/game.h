@@ -519,7 +519,7 @@ struct fpsstate
     // just subtract damage here, can set death, etc. later in code calling this
     int dodamage(int damage)
     {
-        int ad = damage*(armourtype+1)*25/100; // let armour absorb when possible
+        int ad = (damage*(armourtype+1)*25)/100; // let armour absorb when possible
         if(ad>armour) ad = armour;
         armour -= ad;
         damage -= ad;
