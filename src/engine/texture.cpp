@@ -2290,6 +2290,7 @@ static Slot &loadslot(Slot &s, bool forceload)
 
 MSlot &lookupmaterialslot(int index, bool load)
 {
+    if(materialslots[index].sts.empty() && index&MATF_INDEX) index &= ~MATF_INDEX;
     MSlot &s = materialslots[index];
     if(load && !s.linked)
     {
