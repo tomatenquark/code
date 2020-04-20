@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2020-20-04
+## Added
+- added support for demos in coop edit mode
+
+## Changed
+- added some experimental enet fixes
+- changed window handle from Cube2: Tomatenquark to Tomatenquark
+- don't draw ammobar in insta
+
 ## [0.1.2] - 2020-10-04
 ## Fixed
 - properly start the game from Steam on Linux
@@ -944,7 +953,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/tomatenquark/code/compare/v0.1.2...0.1.3
 [0.1.2]: https://github.com/tomatenquark/code/compare/v0.1.0...0.1.1
 [0.1.1]: https://github.com/tomatenquark/code/compare/v0.1.0...0.1.1
 [0.1.0]: https://github.com/tomatenquark/code/compare/v0.0.23...0.1.0
