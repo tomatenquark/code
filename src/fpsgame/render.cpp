@@ -191,9 +191,10 @@ namespace game
 
     VARP(teamskins, 0, 0, 1);
 
-    // temporary stuff for testing spawns
+#if 0
+    // for testing spawns
 
-    float hsv2rgbhelper(float h, float s, float v, int n)
+    float hsv2rgb(float h, float s, float v, int n)
     {
         float k = fmod(n + h / 60.0f, 6.0f);
         return v - v * s * max(min(min(k, 4.0f - k), 1.0f), 0.0f);
@@ -201,7 +202,7 @@ namespace game
 
     vec hsv2rgb(float h, float s, float v)
     {
-        return vec(hsv2rgbhelper(h, s, v, 5), hsv2rgbhelper(h, s, v, 3), hsv2rgbhelper(h, s, v, 1));
+        return vec(hsv2rgb(h, s, v, 5), hsv2rgb(h, s, v, 3), hsv2rgb(h, s, v, 1));
     }
 
     void renderspawn(const vec &o, int rating, float probability)
@@ -222,6 +223,7 @@ namespace game
     }
 
     VAR(dbgspawns, 0, 0, 1);
+#endif
 
     void rendergame(bool mainpass)
     {
@@ -267,7 +269,9 @@ namespace game
         renderprojectiles();
         if(cmode) cmode->rendergame();
 
+#if 0
         if(dbgspawns) renderspawns();
+#endif
 
         endmodelbatches();
     }
