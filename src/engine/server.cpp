@@ -85,22 +85,6 @@ void conoutfv(int type, const char *fmt, va_list args)
 {
     logoutfv(fmt, args);
 }
-
-void conoutf(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    conoutfv(CON_INFO, fmt, args);
-    va_end(args);
-}
-
-void conoutf(int type, const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    conoutfv(type, fmt, args);
-    va_end(args);
-}
 #endif
 
 #define DEFAULTCLIENTS 8

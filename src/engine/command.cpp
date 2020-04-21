@@ -1523,7 +1523,7 @@ void freecode(uint *code)
 
 void printvar(ident *id, int i)
 {
-    if(i < 0) conoutf("%s = %d", id->name, i);
+    if(i < 0) conoutf(CON_INFO, id->index, "%s = %d", id->name, i);
     else if(id->flags&IDF_HEX && id->maxval==0xFFFFFF)
         conoutf(CON_INFO, id->index, "%s = 0x%.6X (%d, %d, %d)", id->name, i, (i>>16)&0xFF, (i>>8)&0xFF, i&0xFF);
     else

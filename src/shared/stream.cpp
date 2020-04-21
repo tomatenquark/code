@@ -1,5 +1,31 @@
 #include "cube.h"
 
+///////////////////////////// console ////////////////////////
+
+void conoutf(const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    conoutfv(CON_INFO, fmt, args);
+    va_end(args);
+}
+
+void conoutf(int type, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    conoutfv(type, fmt, args);
+    va_end(args);
+}
+
+void conoutf(int type, int tag, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    conoutfv(type | ((tag << CON_TAG_SHIFT) & CON_TAG_MASK), fmt, args);
+    va_end(args);
+}
+
 ///////////////////////// character conversion ///////////////
 
 #define CUBECTYPE(s, p, d, a, A, u, U) \
