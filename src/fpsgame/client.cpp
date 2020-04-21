@@ -235,9 +235,9 @@ namespace game
     void getpubkey(const char *desc)
     {
         authkey *k = findauthkey(desc);
-        if(!k) { if(desc[0]) conoutf("no authkey found: %s", desc); else conoutf("no global authkey found"); return; }
+        if(!k) { if(desc[0]) conoutf(CON_ERROR, "no authkey found: %s", desc); else conoutf(CON_ERROR, "no global authkey found"); return; }
         vector<char> pubkey;
-        if(!calcpubkey(k->key, pubkey)) { conoutf("failed calculating pubkey"); return; }
+        if(!calcpubkey(k->key, pubkey)) { conoutf(CON_ERROR, "failed calculating pubkey"); return; }
         result(pubkey.getbuf());
     }
     COMMAND(getpubkey, "s");
