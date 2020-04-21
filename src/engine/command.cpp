@@ -1525,19 +1525,19 @@ void printvar(ident *id, int i)
 {
     if(i < 0) conoutf("%s = %d", id->name, i);
     else if(id->flags&IDF_HEX && id->maxval==0xFFFFFF)
-        conoutf("%s = 0x%.6X (%d, %d, %d)", id->name, i, (i>>16)&0xFF, (i>>8)&0xFF, i&0xFF);
+        conoutf(CON_INFO, id->index, "%s = 0x%.6X (%d, %d, %d)", id->name, i, (i>>16)&0xFF, (i>>8)&0xFF, i&0xFF);
     else
-        conoutf(id->flags&IDF_HEX ? "%s = 0x%X" : "%s = %d", id->name, i);
+        conoutf(CON_INFO, id->index, id->flags&IDF_HEX ? "%s = 0x%X" : "%s = %d", id->name, i);
 }
 
 void printfvar(ident *id, float f)
 {
-    conoutf("%s = %s", id->name, floatstr(f));
+    conoutf(CON_INFO, id->index, "%s = %s", id->name, floatstr(f));
 }
 
 void printsvar(ident *id, const char *s)
 {
-    conoutf(strchr(s, '"') ? "%s = [%s]" : "%s = \"%s\"", id->name, s);
+    conoutf(CON_INFO, id->index, strchr(s, '"') ? "%s = [%s]" : "%s = \"%s\"", id->name, s);
 }
 
 void printvar(ident *id)
