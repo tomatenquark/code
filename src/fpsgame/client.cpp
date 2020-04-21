@@ -742,14 +742,14 @@ namespace game
                     formatstring(str, "0x%.6X (%d, %d, %d)", val, (val>>16)&0xFF, (val>>8)&0xFF, val&0xFF);
                 else
                     formatstring(str, id->flags&IDF_HEX ? "0x%X" : "%d", val);
-                conoutf("%s set map var \"%s\" to %s", colorname(d), id->name, str);
+                conoutf(CON_INFO, id->index, "%s set map var \"%s\" to %s", colorname(d), id->name, str);
                 break;
             }
             case ID_FVAR:
-                conoutf("%s set map var \"%s\" to %s", colorname(d), id->name, floatstr(*id->storage.f));
+                conoutf(CON_INFO, id->index, "%s set map var \"%s\" to %s", colorname(d), id->name, floatstr(*id->storage.f));
                 break;
             case ID_SVAR:
-                conoutf("%s set map var \"%s\" to \"%s\"", colorname(d), id->name, *id->storage.s);
+                conoutf(CON_INFO, id->index, "%s set map var \"%s\" to \"%s\"", colorname(d), id->name, *id->storage.s);
                 break;
         }
     }
