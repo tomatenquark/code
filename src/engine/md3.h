@@ -65,7 +65,7 @@ struct md3 : vertloader<md3>
             if(strncmp(header.id, "IDP3", 4) != 0 || header.version != 15) // header check
             { 
                 delete f;
-                conoutf("md3: corrupted header"); 
+                conoutf(CON_ERROR, "md3: corrupted header"); 
                 return false; 
             }
 
@@ -174,7 +174,7 @@ struct md3 : vertloader<md3>
         Texture *tex, *masks;
         loadskin(name, pname, tex, masks);
         mdl.initskins(tex, masks);
-        if(tex==notexture) conoutf("could not load model skin for %s", name1);
+        if(tex==notexture) conoutf(CON_ERROR, "could not load model skin for %s", name1);
         return true;
     }
 };
