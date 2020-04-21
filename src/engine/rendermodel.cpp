@@ -472,7 +472,7 @@ void cleanupmodels()
 void clearmodel(char *name)
 {
     model **m = models.access(name);
-    if(!m) { conoutf("model %s is not loaded", name); return; }
+    if(!m) { conoutf(CON_WARN, "model %s is not loaded", name); return; }
     loopv(mapmodels) if(mapmodels[i].m==*m) mapmodels[i].m = NULL;
     models.remove(name);
     (*m)->cleanup();
