@@ -1179,14 +1179,36 @@ namespace server
         loopv(clients) sendwelcome(clients[i]);
     }
 
+    SVARP(demodir, "demo");
+
+    const char *getdemofile(const char *file, bool init)
+    {
+        if(!demodir[0]) return NULL;
+        static string buf;
+        copystring(buf, demodir);
+        int dirlen = strlen(buf);
+        if(buf[dirlen] != '/' && buf[dirlen] != '\\' && dirlen+1 < (int)sizeof(buf)) { buf[dirlen++] = '/'; buf[dirlen] = '\0'; }
+        if(init)
+        {
+            const char *dir = findfile(buf, "w");
+            if(!fileexists(dir, "w")) createdir(dir);
+        }
+        concatstring(buf, file);
+        return buf;
+    }
+
     void setupdemoplayback()
     {
         if(demoplayback) return;
         demoheader hdr;
         string msg;
         msg[0] = '\0';
-        defformatstring(file, "%s.dmo", smapname);
-        demoplayback = opengzfile(file, "rb");
+        string file;
+        copystring(file, smapname);
+        int len = strlen(file);
+        if(len < 4 || strcasecmp(&file[len-4], ".dmo")) concatstring(file, ".dmo");
+        if(const char *buf = getdemofile(file, false)) demoplayback = opengzfile(buf, "rb");
+        if(!demoplayback) demoplayback = opengzfile(file, "rb");
         if(!demoplayback) formatstring(msg, "could not read demo \"%s\"", file);
         else if(demoplayback->read(&hdr, sizeof(demoheader))!=sizeof(demoheader) || memcmp(hdr.magic, DEMO_MAGIC, sizeof(hdr.magic)))
             formatstring(msg, "\"%s\" is not a demo file", file);

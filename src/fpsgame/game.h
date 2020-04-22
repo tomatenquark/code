@@ -850,6 +850,7 @@ namespace server
     extern const char *mastermodename(int n, const char *unknown = "unknown");
     extern void startintermission();
     extern void stopdemo();
+    extern const char *getdemofile(const char *file, bool init);
     extern void forcemap(const char *map, int mode);
     extern void forcepaused(bool paused);
     extern void forcegamespeed(int speed);

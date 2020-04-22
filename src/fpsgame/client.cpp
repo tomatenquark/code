@@ -2017,7 +2017,8 @@ namespace game
         string name;
     };
     vector<demoreq> demoreqs;
-    enum { MAXDEMOREQS = 5 };
+    enum { MAXDEMOREQS = 7 };
+    static int lastdemoreq = 0;
 
     void receivefile(packetbuf &p)
     {
@@ -2027,17 +2028,26 @@ namespace game
             case N_DEMOPACKET: return;
             case N_SENDDEMO:
             {
-                defformatstring(fname, "%d.dmo", lastmillis);
+                string fname;
+                fname[0] = '\0';
                 int tag = getint(p);
                 loopv(demoreqs) if(demoreqs[i].tag == tag)
                 {
                     copystring(fname, demoreqs[i].name);
-                    int len = strlen(fname);
-                    if(len < 4 || strcasecmp(&fname[len-4], ".dmo")) concatstring(fname, ".dmo");
                     demoreqs.remove(i);
                     break;
                 }
-                stream *demo = openrawfile(fname, "wb");
+                if(!fname[0])
+                {
+                    time_t t = time(NULL);
+                    size_t len = strftime(fname, sizeof(fname), "%Y-%m-%d_%H.%M.%S", localtime(&t));
+                    fname[min(len, sizeof(fname)-1)] = '\0';
+                }
+                int len = strlen(fname);
+                if(len < 4 || strcasecmp(&fname[len-4], ".dmo")) concatstring(fname, ".dmo");
+                stream *demo = NULL;
+                if(const char *buf = server::getdemofile(fname, true)) demo = openrawfile(buf, "wb");
+                if(!demo) demo = openrawfile(fname, "wb");
                 if(!demo) return;
                 conoutf("received demo \"%s\"", fname);
                 ucharbuf b = p.subbuf(p.remaining());
@@ -2126,7 +2136,6 @@ namespace game
         else name = val;
         if(i<=0) conoutf("getting demo...");
         else conoutf("getting demo %d...", i);
-        static int lastdemoreq = 0;
         ++lastdemoreq;
         if(name[0])
         {
