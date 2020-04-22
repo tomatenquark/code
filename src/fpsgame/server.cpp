@@ -1157,13 +1157,13 @@ namespace server
         }
     }
 
-    void senddemo(clientinfo *ci, int num)
+    void senddemo(clientinfo *ci, int num, int tag)
     {
         if(ci->getdemo) return;
         if(!num) num = demos.length();
         if(!demos.inrange(num-1)) return;
         demofile &d = demos[num-1];
-        if((ci->getdemo = sendf(ci->clientnum, 2, "rim", N_SENDDEMO, d.len, d.data)))
+        if((ci->getdemo = sendf(ci->clientnum, 2, "riim", N_SENDDEMO, tag, d.len, d.data)))
             ci->getdemo->freeCallback = freegetdemo;
     }
 
@@ -3411,9 +3411,9 @@ namespace server
 
             case N_GETDEMO:
             {
-                int n = getint(p);
+                int n = getint(p), tag = getint(p);
                 if(!ci->privilege && !ci->local && ci->state.state==CS_SPECTATOR) break;
-                senddemo(ci, n);
+                senddemo(ci, n, tag);
                 break;
             }
 

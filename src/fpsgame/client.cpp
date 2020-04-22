@@ -2011,6 +2011,14 @@ namespace game
         }
     }
 
+    struct demoreq
+    {
+        int tag;
+        string name;
+    };
+    vector<demoreq> demoreqs;
+    enum { MAXDEMOREQS = 5 };
+
     void receivefile(packetbuf &p)
     {
         int type;
@@ -2020,6 +2028,15 @@ namespace game
             case N_SENDDEMO:
             {
                 defformatstring(fname, "%d.dmo", lastmillis);
+                int tag = getint(p);
+                loopv(demoreqs) if(demoreqs[i].tag == tag)
+                {
+                    copystring(fname, demoreqs[i].name);
+                    int len = strlen(fname);
+                    if(len < 4 || strcasecmp(&fname[len-4], ".dmo")) concatstring(fname, ".dmo");
+                    demoreqs.remove(i);
+                    break;
+                }
                 stream *demo = openrawfile(fname, "wb");
                 if(!demo) return;
                 conoutf("received demo \"%s\"", fname);
@@ -2102,13 +2119,25 @@ namespace game
     }
     ICOMMAND(cleardemos, "i", (int *val), cleardemos(*val));
 
-    void getdemo(int i)
+    void getdemo(char *val, char *name)
     {
+        int i = 0;
+        if(isdigit(val[0]) || name[0]) i = parseint(val);
+        else name = val;
         if(i<=0) conoutf("getting demo...");
         else conoutf("getting demo %d...", i);
-        addmsg(N_GETDEMO, "ri", i);
+        static int lastdemoreq = 0;
+        ++lastdemoreq;
+        if(name[0])
+        {
+            if(demoreqs.length() >= MAXDEMOREQS) demoreqs.remove(0);
+            demoreq &r = demoreqs.add();
+            r.tag = lastdemoreq;
+            copystring(r.name, name);
+        }
+        addmsg(N_GETDEMO, "rii", i, lastdemoreq);
     }
-    ICOMMAND(getdemo, "i", (int *val), getdemo(*val));
+    ICOMMAND(getdemo, "ss", (char *val, char *name), getdemo(val, name));
 
     void listdemos()
     {
