@@ -1101,7 +1101,11 @@ void renderclient(dynent *d, const char *mdlname, modelattach *attachments, int 
         else if(game::allowmove(d) && (d->move || d->strafe)) 
         {
             if(d->move>0) anim |= (ANIM_FORWARD|ANIM_LOOP)<<ANIM_SECONDARY;
-            else if(d->strafe) anim |= ((d->strafe>0 ? ANIM_LEFT : ANIM_RIGHT)|ANIM_LOOP)<<ANIM_SECONDARY;
+            else if(d->strafe)
+            {
+                if(d->move<0) anim |= ((d->strafe>0 ? ANIM_RIGHT : ANIM_LEFT)|ANIM_REVERSE|ANIM_LOOP)<<ANIM_SECONDARY;
+                else anim |= ((d->strafe>0 ? ANIM_LEFT : ANIM_RIGHT)|ANIM_LOOP)<<ANIM_SECONDARY;
+            }
             else if(d->move<0) anim |= (ANIM_BACKWARD|ANIM_LOOP)<<ANIM_SECONDARY;
         }
         
