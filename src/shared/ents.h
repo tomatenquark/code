@@ -202,10 +202,10 @@ struct dynent : physent                         // animated characters, or chara
     animinterpinfo animinterp[MAXANIMPARTS];
     ragdolldata *ragdoll;
     occludequery *query;
-    uchar occluded;
     int lastrendered;
+    uchar occluded;
 
-    dynent() : ragdoll(NULL), query(NULL), occluded(0), lastrendered(0)
+    dynent() : ragdoll(NULL), query(NULL), lastrendered(0), occluded(0)
     { 
         reset(); 
     }
