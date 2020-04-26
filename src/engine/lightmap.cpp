@@ -126,6 +126,7 @@ void setupsunlight()
 }
 
 VARR(skytexturelight, 0, 1, 1);
+extern int useskytexture;
 
 static const surfaceinfo brightsurfaces[6] =
 {
@@ -570,7 +571,7 @@ static uint generatelumel(lightmapworker *w, const float tolerance, uint lightma
         float angle = sunlightdir.dot(normal);
         if(angle > 0 &&
            (!lmshadows ||
-            shadowray(w->shadowraycache, vec(sunlightdir).mul(tolerance).add(target), sunlightdir, 1e16f, RAY_SHADOW | (lmshadows > 1 ? RAY_ALPHAPOLY : 0) | (skytexturelight ? RAY_SKIPSKY : 0)) > 1e15f))
+            shadowray(w->shadowraycache, vec(sunlightdir).mul(tolerance).add(target), sunlightdir, 1e16f, RAY_SHADOW | (lmshadows > 1 ? RAY_ALPHAPOLY : 0) | (skytexturelight ? RAY_SKIPSKY | (useskytexture ? RAY_SKYTEX : 0) : 0)) > 1e15f))
         {
             float intensity;
             switch(w->type&LM_TYPE)
@@ -2576,7 +2577,7 @@ void initlights()
 static inline void fastskylight(const vec &o, float tolerance, uchar *skylight, int flags = RAY_ALPHAPOLY, extentity *t = NULL, bool fast = false)
 {
     flags |= RAY_SHADOW;
-    if(skytexturelight) flags |= RAY_SKIPSKY;
+    if(skytexturelight) flags |= RAY_SKIPSKY | (useskytexture ? RAY_SKYTEX : 0);
     if(fast)
     {
         static const vec ray(0, 0, 1);
@@ -2652,7 +2653,7 @@ void lightreaching(const vec &target, vec &color, vec &dir, bool fast, extentity
         color.add(vec(lightcol).mul(intensity));
         dir.add(vec(ray).mul(-intensity*lightcol.x*lightcol.y*lightcol.z));
     }
-    if(sunlight && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY | (skytexturelight ? RAY_SKIPSKY : 0), t) > 1e15f) 
+    if(sunlight && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY | (skytexturelight ? RAY_SKIPSKY | (useskytexture ? RAY_SKYTEX : 0) : 0), t) > 1e15f) 
     {
         vec lightcol = vec(sunlightcolor.x, sunlightcolor.y, sunlightcolor.z).mul(sunlightscale/255);
         color.add(lightcol);
@@ -2672,7 +2673,7 @@ void lightreaching(const vec &target, vec &color, vec &dir, bool fast, extentity
 
 entity *brightestlight(const vec &target, const vec &dir)
 {
-    if(sunlight && sunlightdir.dot(dir) > 0 && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY | (skytexturelight ? RAY_SKIPSKY : 0)) > 1e15f)    
+    if(sunlight && sunlightdir.dot(dir) > 0 && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY | (skytexturelight ? RAY_SKIPSKY | (useskytexture ? RAY_SKYTEX : 0) : 0)) > 1e15f)    
         return &sunlightent;
     const vector<extentity *> &ents = entities::getents();
     const vector<int> &lights = checklightcache(int(target.x), int(target.y));
