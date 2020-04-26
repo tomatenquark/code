@@ -38,6 +38,7 @@ void drawglaretex()
     glaretex.render(1<<glaresize, 1<<glaresize, blurglare, blurglaresigma/100.0f);
 }
 
+FVAR(glaremod, 0.5f, 0.75f, 1);
 FVARP(glarescale, 0, 1, 8);
 
 void addglare()
@@ -51,7 +52,8 @@ void addglare()
 
     glBindTexture(GL_TEXTURE_2D, glaretex.rendertex);
 
-    gle::colorf(glarescale, glarescale, glarescale);
+    float g = glarescale*glaremod;
+    gle::colorf(g, g, g);
 
     screenquad(1, 1);
 
