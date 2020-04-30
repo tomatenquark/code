@@ -57,9 +57,9 @@ ifneq (,$(STRIP))
   STRIP= $(TOOLCHAIN)strip
 endif
 endif
-OSXMIN= 10.6
+OSXMIN= 10.7
 override CC+= -arch x86_64 -mmacosx-version-min=$(OSXMIN)
-override CXX+= -arch x86_64 -mmacosx-version-min=$(OSXMIN)
+override CXX+= -arch x86_64 -mmacosx-version-min=$(OSXMIN) -stdlib=libc++
 CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iassetbundler
 CLIENT_LIBS= -Fxcode/Frameworks -framework SDL2 -framework SDL2_image
 CLIENT_LIBS+= -framework SDL2_mixer -framework CoreAudio -framework AudioToolbox
