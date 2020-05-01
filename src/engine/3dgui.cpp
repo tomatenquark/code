@@ -1349,6 +1349,7 @@ void g3d_render2d()
     if(guis2d.length())
     {
         glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         loopvrev(guis2d) guis2d[i].draw();
 
