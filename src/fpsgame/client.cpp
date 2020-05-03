@@ -2210,7 +2210,7 @@ namespace game
 	
     void delmap(const char* mname)
     {
-        defformatstring(fname)("%s%s.ogz", strstr(mname, "/") ? "" : "packages/base/", mname);
+        defformatstring(fname, "%s%s.ogz", strstr(mname, "/") ? "" : "packages/base/", mname);
         if(remove(findfile(fname, "rb")) != 0)
             conoutf(CON_ERROR, "could not find \"%s\" map file", fname);
         else
