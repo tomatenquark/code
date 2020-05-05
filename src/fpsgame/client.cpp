@@ -2217,5 +2217,17 @@ namespace game
             conoutf(CON_WARN, "map \f8%s \f~successfully deleted", mname);
     }
     COMMAND(delmap, "s");
+
+    void renamemap(const char* moldname, const char* mnewname)
+    {
+        if( (strlen(moldname) == 0) || (strlen(mnewname) == 0) ) return;
+        defformatstring(foldname, "%s%s.ogz", strstr(moldname, "/") ? "" : "packages/base/", moldname);
+        defformatstring(fnewname, "%s%s.ogz", strstr(mnewname, "/") ? "" : "packages/base/", mnewname);
+        if( rename(findfile(foldname, "rb"), fnewname) != 0 )
+            conoutf(CON_ERROR, "could not rename map %s", foldname);
+        else
+            conoutf(CON_WARN, "map \f8%s.ogz \f~has been renamed to \f8%s.ogz", moldname, mnewname);
+    }
+    COMMAND(renamemap, "ss");
 }
 
