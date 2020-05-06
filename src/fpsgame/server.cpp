@@ -605,6 +605,37 @@ namespace server
     stream *demotmp = NULL, *demorecord = NULL, *demoplayback = NULL;
     int nextplayback = 0, demomillis = 0;
 
+    void jumpto(const char *time)
+    {
+        if(!demoplayback)
+        {
+            conoutf(CON_ERROR, "jumpto command works only in demo playback");
+            return;
+        }
+        int min, sec = 0;
+        bool wrong_argument = false;
+        wrong_argument = wrong_argument || (sscanf(time, "%d:%d", &min, &sec) < 1);
+        wrong_argument = wrong_argument || (sec > 59);
+        int timeleft = game::maplimit - lastmillis;
+        int millis = (min*60*1000)+(sec*1000);
+        wrong_argument = wrong_argument || (millis < 0);
+        if(wrong_argument)
+        {
+            error:;
+            conoutf("format for jumpto is mm[:ss]");
+            return;
+        }
+        if(millis > timeleft)
+        {
+            conoutf("going back in demos is not supported");
+            return;
+        }
+        int diffmillis = timeleft-millis;
+        demomillis += diffmillis;
+        lastmillis += diffmillis;
+    }
+    COMMAND(jumpto, "s");
+
     VAR(maxdemos, 0, 5, 25);
     VAR(maxdemosize, 0, 16, 31);
     VAR(restrictdemos, 0, 1, 1);
