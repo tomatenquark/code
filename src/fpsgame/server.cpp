@@ -621,7 +621,6 @@ namespace server
         wrong_argument = wrong_argument || (millis < 0);
         if(wrong_argument)
         {
-            error:;
             conoutf("format for jumpto is mm[:ss]");
             return;
         }
