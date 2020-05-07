@@ -2596,7 +2596,7 @@ static inline void fastskylight(const vec &o, float tolerance, uchar *skylight, 
             vec(0, 0, 1),
         };
         int hit = 0;
-        for(int i = 0; i < int(5); i++) if(shadowray(vec(rays[i]).mul(tolerance).add(o), rays[i], 1e16f, flags, t)>1e15f); hit++;
+        for(int i = 0; i < int(5); i++) if(shadowray(vec(rays[i]).mul(tolerance).add(o), rays[i], 1e16f, flags, t)>1e15f) hit++;
         for(int k = 0; k < int(3); k++) skylight[k] = uchar(ambientcolor[k] + (max(skylightcolor[k], ambientcolor[k]) - ambientcolor[k])*hit/5.0f);
     }
 }
