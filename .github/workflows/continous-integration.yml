@@ -34,4 +34,4 @@ jobs:
           sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev libcurl4-openssl-dev
       - name: Build for Ubuntu
         working-directory: ./src
-        run: make CC=/usr/bin/clang-9 CXX=/usr/bin/clang++-9
+        run: make
