@@ -605,6 +605,7 @@ namespace server
     stream *demotmp = NULL, *demorecord = NULL, *demoplayback = NULL;
     int nextplayback = 0, demomillis = 0;
 
+#ifndef STANDALONE
     void setdemotime(const char *time)
     {
         if(!demoplayback)
@@ -612,7 +613,7 @@ namespace server
             conoutf(CON_ERROR, "setdemotime command works only in demo playback");
             return;
         }
-        int min, sec = 0;
+        int min = 0, sec = 0;
         bool wrong_argument = false;
         wrong_argument = wrong_argument || (sscanf(time, "%d:%d", &min, &sec) < 1);
         wrong_argument = wrong_argument || (sec > 59);
@@ -634,6 +635,7 @@ namespace server
         lastmillis += diffmillis;
     }
     COMMAND(setdemotime, "s");
+#endif
 
     VAR(maxdemos, 0, 5, 25);
     VAR(maxdemosize, 0, 16, 31);
