@@ -112,17 +112,20 @@ namespace game
     #include "capture.h"
     #include "ctf.h"
     #include "collect.h"
+    #include "hideandseek.h"
 
     clientmode *cmode = NULL;
     captureclientmode capturemode;
     ctfclientmode ctfmode;
     collectclientmode collectmode;
+    hideandseekclientmode hideandseekmode;
 
     void setclientmode()
     {
         if(m_capture) cmode = &capturemode;
         else if(m_ctf) cmode = &ctfmode;
         else if(m_collect) cmode = &collectmode;
+        else if(m_hideandseek) cmode = &hideandseekmode;
         else cmode = NULL;
     }
 
@@ -562,6 +565,7 @@ namespace game
     ICOMMANDS("m_protect", "i", (int *mode), { int gamemode = *mode; intret(m_protect); });
     ICOMMANDS("m_hold", "i", (int *mode), { int gamemode = *mode; intret(m_hold); });
     ICOMMANDS("m_collect", "i", (int *mode), { int gamemode = *mode; intret(m_collect); });
+    ICOMMANDS("m_hideandseek", "i", (int *mode), { int gamemode = *mode; intret(m_hideandseek); });
     ICOMMANDS("m_teammode", "i", (int *mode), { int gamemode = *mode; intret(m_teammode); });
     ICOMMANDS("m_demo", "i", (int *mode), { int gamemode = *mode; intret(m_demo); });
     ICOMMANDS("m_edit", "i", (int *mode), { int gamemode = *mode; intret(m_edit); });
