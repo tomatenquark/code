@@ -12,17 +12,17 @@ struct hideandseekclientmode : clientmode
 #endif
 {
 
+#define STARTINVISIBLESECS 30
+
 #ifdef SERVMODE
     struct seekersinfo {
         int cn;
-        bool freezed;
-        seekersinfo(int cn_, bool freezed_): cn(cn_), freezed(freezed_) {}
+        seekersinfo(int cn_, bool freezed_): cn(cn_) {}
     };
 #endif
 
 #ifndef SERVMODE
 
-#define STARTINVISIBLESECS 30
 #define ishider(ci) (strcmp(ci->team, TEAM_HIDE) == 0 && ci->state != CS_SPECTATOR ? true : false)
 
     void setup() {
@@ -147,9 +147,10 @@ struct hideandseekclientmode : clientmode
     }
 
     bool checkfinished() {
+        if (totalmillis-game::maptime < STARTINVISIBLESECS*1000) return false;
         if(interm) return false;
         // if all seekers are freezed and there are at least 2 players
-        if (getactiveplayers().length() >= 2 && getnonfreezedseekers() == 0) return true;
+        if (getactiveplayers().length() >= 2) return true;
         // check if no hider is alive
         loopv(clients) if (ishider(clients[i])) return false;
         return true;
@@ -176,31 +177,7 @@ struct hideandseekclientmode : clientmode
         // teamkills and suicides are disabled; hiders can't kill
         // defformatstring(msg)("sameplayer:%s sameteam:%s ishider(actor):%s", actor==target?"true":"false", isteam(actor->team, target->team)?"true":"false", ishider(actor)?"true":"false");
         // sendservmsg(msg);
-        // if(!m_freeze && isteam(actor->team, target->team) || ishider(actor)) return false;
         if (!actor || !target || actor==target) return false;
-        /*if (!m_freeze) {
-            if (isteam(actor->team, target->team) || ishider(actor)) return false;
-        } else {
-            if (ishider(actor) && isseeker(target)) {
-                if (isfreezed(target)) return false;
-                // freeze seeker
-                setfreezedstate(target, true);
-                sendf(target->clientnum, 1, "rii", N_PAUSEGAME, 1);
-                defformatstring(msg)("%s got freezed by %s!", target->name, actor->name);
-                announceseekers(msg);
-                return false;
-            } else if (isseeker(actor) && isseeker(target)) {
-                if (!isfreezed(target)) return false;
-                // unfreeze seeker
-                setfreezedstate(target, false);
-                sendf(target->clientnum, 1, "rii", N_PAUSEGAME, 0);
-                defformatstring(msg)("You got unfreezed by %s", actor->name);
-                sendf(target->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
-                defformatstring(msg2)("You unfreezed %s", target->name);
-                sendf(actor->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg2);
-                return false;
-            }
-        }*/
         conoutf("d");
         return true;
     }
@@ -258,21 +235,6 @@ struct hideandseekclientmode : clientmode
         int numhiders = 0;
         loopv(clients) if (ishider(clients[i])) numhiders++;
         return numhiders;
-    }
-
-    bool isfreezed(clientinfo *ci) {
-        loopv(seekersinfos) if(seekersinfos[i]->cn == ci->clientnum && seekersinfos[i]->freezed) return true;
-        return false;
-    }
-
-    void setfreezedstate(clientinfo *ci, bool state) {
-        loopv(seekersinfos) if(seekersinfos[i]->cn == ci->clientnum) seekersinfos[i]->freezed = state;
-    }
-
-    int getnonfreezedseekers() {
-        int numseekers = 0;
-        loopv(seekersinfos) if(seekersinfos[i]->cn != -1 && !seekersinfos[i]->freezed) numseekers++;
-        return numseekers;
     }
 
     void announceseekers(char* msg) {
