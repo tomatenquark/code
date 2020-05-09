@@ -978,7 +978,7 @@ struct skelmodel : animmodel
         {
             matrix4x3 t;
             t.mul(bones[tags[i].bone].base, tags[i].matrix);
-            t.translate(vec(p->translate).mul(p->model->scale));
+            t.posttranslate(p->translate, p->model->scale);
             n.mul(m, t);
         }
 

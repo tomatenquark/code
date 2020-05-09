@@ -647,8 +647,8 @@ struct animmodel : model
         void calcbb(vec &bbmin, vec &bbmax, const matrix4x3 &m)
         {
             matrix4x3 t = m;
-            t.translate(translate);
             t.scale(model->scale);
+            t.translate(translate);
             meshes->calcbb(bbmin, bbmax, t);
             loopv(links)
             {
@@ -662,8 +662,8 @@ struct animmodel : model
         void genBIH(vector<BIH::mesh> &bih, const matrix4x3 &m)
         {
             matrix4x3 t = m;
-            t.translate(translate);
             t.scale(model->scale);
+            t.translate(translate);
             meshes->genBIH(skins, bih, t);
             loopv(links)
             {

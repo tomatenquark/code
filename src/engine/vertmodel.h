@@ -250,7 +250,7 @@ struct vertmodel : animmodel
         void concattagtransform(part *p, int i, const matrix4x3 &m, matrix4x3 &n)
         {
             n.mul(m, tags[numtags + i].transform);
-            n.translate(m.transformnormal(p->translate).mul(p->model->scale));
+            n.posttranslate(m.transformnormal(p->translate), p->model->scale);
         }
 
         void calctagmatrix(part *p, int i, const animstate &as, matrix4 &matrix)
