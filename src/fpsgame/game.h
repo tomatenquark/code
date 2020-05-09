@@ -90,7 +90,8 @@ enum
     M_DMSP       = 1<<16,
     M_CLASSICSP  = 1<<17,
     M_SLOWMO     = 1<<18,
-    M_COLLECT    = 1<<19
+    M_COLLECT    = 1<<19,
+    M_HIDEANDSEEK= 1<<20
 };
 
 static struct gamemodeinfo
@@ -125,7 +126,8 @@ static struct gamemodeinfo
     { "effic hold", M_NOITEMS | M_EFFICIENCY | M_CTF | M_HOLD | M_TEAM, "Efficiency Hold The Flag: Hold \fs\f7the flag\fr for 20 seconds to score points for \fs\f1your team\fr. You spawn with all weapons and armour. There are no items." },
     { "collect", M_COLLECT | M_TEAM, "Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. Collect items for ammo." },
     { "insta collect", M_NOITEMS | M_INSTA | M_COLLECT | M_TEAM, "Instagib Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with full rifle ammo and die instantly from one shot. There are no items." },
-    { "effic collect", M_NOITEMS | M_EFFICIENCY | M_COLLECT | M_TEAM, "Efficiency Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with all weapons and armour. There are no items." }
+    { "effic collect", M_NOITEMS | M_EFFICIENCY | M_COLLECT | M_TEAM, "Efficiency Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with all weapons and armour. There are no items." },
+    { "hideandseek", M_HIDEANDSEEK | M_TEAM , "Hide and Seek: Hiders hide, seekers seek. No teamkills." }
 };
 
 #define STARTGAMEMODE (-3)
@@ -150,6 +152,7 @@ static struct gamemodeinfo
 #define m_protect      (m_checkall(gamemode, M_CTF | M_PROTECT))
 #define m_hold         (m_checkall(gamemode, M_CTF | M_HOLD))
 #define m_collect      (m_check(gamemode, M_COLLECT))
+#define m_hideandseek  (m_check(gamemode, M_HIDEANDSEEK))
 #define m_teammode     (m_check(gamemode, M_TEAM))
 #define m_overtime     (m_check(gamemode, M_OVERTIME))
 #define isteam(a,b)    (m_teammode && strcmp(a, b)==0)
