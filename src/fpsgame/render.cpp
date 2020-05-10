@@ -269,15 +269,15 @@ namespace game
                         particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, 2.0f);
                         offset += th;
                     }
+                    for(int i = 100; i < min(d->maxhealth, boost.max); i += boost.info)
+                    {
+                        particle_texticon(p, boost.icon%4, boost.icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, 2.0f);
+                        offset += th;
+                    }
                     if(d->quadmillis)
                     {
                         int icon = itemstats[I_QUAD-I_SHELLS].icon;
                         particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, 2.0f);
-                        offset += th;
-                    }
-                    for(int i = 100; i < min(d->maxhealth, boost.max); i += boost.info)
-                    {
-                        particle_texticon(p, boost.icon%4, boost.icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, 2.0f);
                         offset += th;
                     }
                 }
