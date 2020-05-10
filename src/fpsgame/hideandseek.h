@@ -1,4 +1,4 @@
-// bomb.h: client and server state for bomb gamemode
+// hideandseek.h: client and server state for hide and seek gamemode
 #ifndef PARSEMESSAGES
 
 #define TEAM_HIDE "hide"
@@ -12,21 +12,11 @@ struct hideandseekclientmode : clientmode
 #endif
 {
 
-#define STARTINVISIBLESECS 30
-
-#ifdef SERVMODE
-    struct seekersinfo {
-        int cn;
-        seekersinfo(int cn_, bool freezed_): cn(cn_) {}
-    };
-#endif
-
 #ifndef SERVMODE
 
 #define ishider(ci) (strcmp(ci->team, TEAM_HIDE) == 0 && ci->state != CS_SPECTATOR ? true : false)
-
-    void setup() {
-    }
+    
+    void setup() {}
 
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, float size_factor) {
         float scale = calcradarscale();
@@ -65,13 +55,7 @@ struct hideandseekclientmode : clientmode
         }
     }
 
-    bool isinvisible(fpsent *d) {
-        if (ishider(d) && (totalmillis-maptime < STARTINVISIBLESECS*1000 || ishider(player1))) return true;
-        return false;
-    }
-
-    void rendergame() {
-    }
+    void rendergame() {}
 
     /*void renderscoreboard(g3d_gui &g, game::scoregroup &sg, int fgcolor, int bgcolor) {
 
@@ -87,11 +71,9 @@ struct hideandseekclientmode : clientmode
         }
     }*/
 
-    void killed(fpsent *d, fpsent *actor) {
-    }
+    void killed(fpsent *d, fpsent *actor) {}
 
-    void respawned(fpsent *d) {
-    }
+    void respawned(fpsent *d) {}
 
     void pickspawn(fpsent *d) {
         findplayerspawn(player1);
@@ -103,82 +85,87 @@ struct hideandseekclientmode : clientmode
 
 #else
 
-// #define ishider(d) (strcmp(d->team, TEAM_HIDE) == 0 ? true : false)
 #define ishider(ci) (strcmp(ci->team, TEAM_HIDE) == 0 && ci->state.state != CS_SPECTATOR ? true : false)
 #define isseeker(ci) (strcmp(ci->team, TEAM_SEEK) == 0 && ci->state.state != CS_SPECTATOR ? true : false)
 
-    vector<seekersinfo*> seekersinfos;
     int lastupdatecheck;
 
     void setup() {
         lastupdatecheck = totalmillis;
-        seekersinfos.deletecontents();
         initplayers();
     }
-
-    void initplayers() {
-        loopv(clients) initplayer(clients[i]);
-        vector<clientinfo*> activeplayers = getactiveplayers();
-        if(activeplayers.length() < 2) return;
-        int seeker = rnd(activeplayers.length());
-        setseeker(activeplayers[seeker]);
+    
+    void sethider(clientinfo *ci) {
+        copystring(ci->team, TEAM_HIDE, MAXTEAMLEN+1);
+        sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
     }
-
+    
+    void setseeker(clientinfo *ci) {
+        copystring(ci->team, TEAM_SEEK, MAXTEAMLEN+1);
+        sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
+    }
+    
+    vector<clientinfo*> getactiveclients() {
+        vector<clientinfo*> activeclients;
+        loopv(clients) if(clients[i]->state.state != CS_SPECTATOR) activeclients.add(clients[i]);
+        return activeclients;
+    }
+    
     void initplayer(clientinfo *ci) {
         sethider(ci);
     }
-
-    void initclient(clientinfo *ci, packetbuf &p, bool connecting) {
-        setseeker(ci);
+    
+    void initplayers() {
+        loopv(clients) initplayer(clients[i]);
+        // TODO: Fix bug where connecting clients would not be counted
+        loopv(bots) sethider(bots[i]);
+        vector<clientinfo*> activeclients = getactiveclients();
+        if(activeclients.length() < 2) return;
+        int seeker = rnd(activeclients.length());
+        setseeker(activeclients[seeker]);
     }
 
-    void connected(clientinfo *ci) {
-        setseeker(ci);
+    // TODO: FIX FUCKING BUG WHERE BOTS WOULD NOT BE SEEN AS PLAYERS. SAUER. COME ON. ITS NOT THAT HARD.
+    void initclient(clientinfo *ci, packetbuf &p, bool connecting) { setseeker(ci); }
+
+    void entergame(clientinfo *ci) { }
+
+    void leavegame(clientinfo *ci, bool disconnecting) {}
+
+    void cleanup() {}
+    
+    int getremaininghiders() {
+        int numhiders = 0;
+        vector<clientinfo*> activeclients = getactiveclients();
+        loopv(activeclients) if (ishider(activeclients[i])) numhiders++;
+        return numhiders;
     }
 
-    void leavegame(clientinfo *ci, bool disconnecting) {
-        loopv(seekersinfos) if(seekersinfos[i]->cn == ci->clientnum){
-            seekersinfos[i]->cn = -1;
-        }
-    }
-
-    void cleanup() {
-        seekersinfos.deletecontents();
-    }
-
-    bool checkfinished() {
-        if (totalmillis-game::maptime < STARTINVISIBLESECS*1000) return false;
+    bool finished() {
+        //if (totalmillis-game::maptime < STARTINVISIBLESECS*1000) return false;
         if(interm) return false;
-        // if all seekers are freezed and there are at least 2 players
-        if (getactiveplayers().length() >= 2) return true;
         // check if no hider is alive
-        loopv(clients) if (ishider(clients[i])) return false;
-        return true;
+        return getremaininghiders() == 0;
     }
 
     void update() {
         if (totalmillis > lastupdatecheck + 1000) {
             lastupdatecheck = totalmillis;
-            if(checkfinished()) game::forceintermission();
+            bool finito = finished();
+            if (finito) game::forceintermission();
         }
     }
 
-    void intermission() {
-    }
+    void intermission() { }
 
-    void spawned(fpsent *d) {
-    }
+    void spawned(fpsent *d) { }
 
-    bool canspawn(clientinfo *ci, bool connecting) {
-        return true;
-    }
+    bool canspawn(clientinfo *ci, bool connecting) { return true; }
 
     bool canhit(clientinfo *target, clientinfo *actor) {
         // teamkills and suicides are disabled; hiders can't kill
-        // defformatstring(msg)("sameplayer:%s sameteam:%s ishider(actor):%s", actor==target?"true":"false", isteam(actor->team, target->team)?"true":"false", ishider(actor)?"true":"false");
-        // sendservmsg(msg);
         if (!actor || !target || actor==target) return false;
-        conoutf("d");
+        if (isteam(actor->team, target->team) || ishider(actor)) return false;
         return true;
     }
 
@@ -189,59 +176,24 @@ struct hideandseekclientmode : clientmode
             if (!actor) {
                 if (remaining > 0) {
                     defformatstring(msg, "%s suicided! %d Hiders remaining!", target->name, remaining);
-                    //sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
+                    sendservmsg(msg);
                 } else {
-                    defformatstring(msg, "%s suicided! All Hiders eliminated!", target->name);
-                    //sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
+                    defformatstring(msg, "%s suicided! All hiders eliminated!", target->name);
+                    sendservmsg(msg);
                 }
             } else {
                 if (remaining > 0) {
                     defformatstring(msg, "%s killed %s! %d Hiders remaining!", actor->name, target->name, remaining);
-                    //sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
+                    sendservmsg(msg);
                 } else {
-                    defformatstring(msg, "%s killed %s! All Hiders eliminated!", actor->name, target->name);
-                    //sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
+                    defformatstring(msg, "%s killed %s! All hiders eliminated!", actor->name, target->name);
+                    sendservmsg(msg);
                 }
             }
         }
     }
 
-    bool canchangeteam(clientinfo *ci, const char *oldteam, const char *newteam) {
-          return false;
-    }
-
-    void setseeker(clientinfo *ci) {
-        copystring(ci->team, TEAM_SEEK, MAXTEAMLEN+1);
-        sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
-        seekersinfos.add(new seekersinfo(ci->clientnum, false));
-    }
-
-    void sethider(clientinfo *ci) {
-        copystring(ci->team, TEAM_HIDE, MAXTEAMLEN+1);
-        sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
-    }
-
-    vector<clientinfo*> getactiveplayers() {
-        vector<clientinfo*> activepl;
-        loopv(clients){
-            clientinfo* ci = clients[i];
-            if(ci->state.state == CS_SPECTATOR) continue;
-            activepl.add(ci);
-        }
-        return activepl;
-    }
-
-    int getremaininghiders() {
-        int numhiders = 0;
-        loopv(clients) if (ishider(clients[i])) numhiders++;
-        return numhiders;
-    }
-
-    void announceseekers(char* msg) {
-        /*loopv(clients) if (isseeker(clients[i])) {
-            sendf(clients[i]->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 1000, E_STATIC_TOP, msg);
-        }*/
-    }
+    bool canchangeteam(clientinfo *ci, const char *oldteam, const char *newteam) { return false; }
 
 #endif
 
