@@ -303,6 +303,9 @@
     <ClInclude Include="..\assetbundler\assetbundler.h">
       <Filter>assetbundler</Filter>
     </ClInclude>
+    <ClInclude Include="..\fpsgame\hideandseek.h">
+      <Filter>fpsgame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomatenquarkrc.rc" />
