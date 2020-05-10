@@ -93,7 +93,7 @@ enum
     PT_TAPE,
     PT_TRAIL,
     PT_TEXT,
-    PT_TEXTUP,
+    PT_TEXTICON,
     PT_METER,
     PT_METERVS,
     PT_FIREBALL,
@@ -117,7 +117,7 @@ enum
     PT_FLIP  = PT_HFLIP | PT_VFLIP | PT_ROT
 };
 
-const char *partnames[] = { "part", "tape", "trail", "text", "textup", "meter", "metervs", "fireball", "lightning", "flare" };
+const char *partnames[] = { "part", "tape", "trail", "text", "texticon", "meter", "metervs", "fireball", "lightning", "flare" };
 
 struct particle
 {
@@ -485,8 +485,7 @@ struct textrenderer : listrenderer
 
     void renderpart(listparticle *p, const vec &o, const vec &d, int blend, int ts)
     {
-        float scale = p->size/80.0f, xoff = -text_width(p->text)/2, yoff = 0;
-        if((type&0xFF)==PT_TEXTUP) { xoff += detrnd((size_t)p, 100)-50; yoff -= detrnd((size_t)p, 101); }
+        float scale = p->size/80.0f, xoff = -(text_width(p->text) + ((p->flags>>1)&7)*FONTH)/2, yoff = 0;
 
         matrix4x3 m(camright, vec(camup).neg(), vec(camdir).neg(), o);
         m.scale(scale);
@@ -498,6 +497,51 @@ struct textrenderer : listrenderer
     } 
 };
 static textrenderer texts(PT_TEXT|PT_LERP);
+
+struct texticonrenderer : listrenderer
+{
+    texticonrenderer(const char *texname, int type)
+        : listrenderer(texname, 3, type)
+    {}
+
+    void startrender()
+    {
+        gle::defvertex();
+        gle::deftexcoord0();
+        gle::defcolor(4, GL_UNSIGNED_BYTE);
+        gle::begin(GL_QUADS);
+    }
+
+    void endrender()
+    {
+        gle::end();
+    }
+
+    void renderpart(listparticle *p, const vec &o, const vec &d, int blend, int ts)
+    {
+        float scale = p->size/80.0f, xoff = p->val, yoff = 0;
+
+        matrix4x3 m(camright, vec(camup).neg(), vec(camdir).neg(), o);
+        m.scale(scale);
+        m.translate(xoff, yoff, 50);
+
+        float tx = 0.25f*(p->flags&3), ty = 0.25f*((p->flags>>2)&3);
+
+        gle::attrib(m.transform(vec2(0, 0)));
+            gle::attrib(tx, ty);
+            gle::attrib(p->color, blend);
+        gle::attrib(m.transform(vec2(FONTH, 0)));
+            gle::attrib(tx + 0.25f, ty);
+            gle::attrib(p->color, blend);
+        gle::attrib(m.transform(vec2(FONTH, FONTH)));
+            gle::attrib(tx + 0.25f, ty + 0.25f);
+            gle::attrib(p->color, blend);
+        gle::attrib(m.transform(vec2(0, FONTH)));
+            gle::attrib(tx, ty + 0.25f);
+            gle::attrib(p->color, blend);
+    }
+};
+static texticonrenderer texticons("packages/hud/items.png", PT_TEXTICON|PT_LERP);
 
 template<int T>
 static inline void modifyblend(const vec &o, int &blend)
@@ -878,6 +922,7 @@ static partrenderer *parts[] =
     new quadrenderer("packages/hud/items.png", PT_PART|PT_FEW|PT_ICON),                            // hud icon
     new quadrenderer("<colorify:1/1/1>packages/hud/items.png", PT_PART|PT_FEW|PT_ICON),            // grey hud icon
     &texts,                                                                                        // text
+    &texticons,                                                                                    // text icons
     &meters,                                                                                       // meter
     &metervs,                                                                                      // meter vs.
     &flares                                                                                        // lens flares - must be done last
@@ -1118,12 +1163,13 @@ void particle_trail(int type, int fade, const vec &s, const vec &e, int color, f
 VARP(particletext, 0, 1, 1);
 VARP(maxparticletextdistance, 0, 128, 10000);
 
-void particle_text(const vec &s, const char *t, int type, int fade, int color, float size, int gravity)
+void particle_text(const vec &s, const char *t, int type, int fade, int color, float size, int gravity, int icons)
 {
     if(!canaddparticles()) return;
     if(!particletext || camera1->o.dist(s) > maxparticletextdistance) return;
     particle *p = newparticle(s, vec(0, 0, 1), fade, type, color, size, gravity);
     p->text = t;
+    p->flags = icons<<1;
 }
 
 void particle_textcopy(const vec &s, const char *t, int type, int fade, int color, float size, int gravity)
@@ -1133,6 +1179,15 @@ void particle_textcopy(const vec &s, const char *t, int type, int fade, int colo
     particle *p = newparticle(s, vec(0, 0, 1), fade, type, color, size, gravity);
     p->text = newstring(t);
     p->flags = 1;
+}
+
+void particle_texticon(const vec &s, int ix, int iy, float offset, int type, int fade, int color, float size, int gravity)
+{
+    if(!canaddparticles()) return;
+    if(!particletext || camera1->o.dist(s) > maxparticletextdistance) return;
+    particle *p = newparticle(s, vec(0, 0, 1), fade, type, color, size, gravity);
+    p->flags |= ix | (iy<<2);
+    p->val = offset;
 }
 
 void particle_icon(const vec &s, int ix, int iy, int type, int fade, int color, float size, int gravity)
