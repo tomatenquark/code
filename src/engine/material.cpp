@@ -80,7 +80,6 @@ static void renderwaterfall(const materialsurface &m, float offset, const vec *n
     {
         gle::defvertex();
         if(normal) gle::defnormal();
-        gle::deftexcoord0();
         gle::begin(GL_QUADS);
     }
     float x = m.o.x, y = m.o.y, zmin = m.o.z, zmax = zmin;
@@ -95,7 +94,6 @@ static void renderwaterfall(const materialsurface &m, float offset, const vec *n
                 vec v(mx sx, my sy, mz sz); \
                 gle::attrib(v); \
                 GENFACENORMAL \
-                gle::attribf(wfxscale*v.y, wfyscale*(v.z+wfscroll)); \
             }
 #undef GENFACEVERTY
 #define GENFACEVERTY(orient, vert, mx,my,mz, sx,sy,sz) \
@@ -103,7 +101,6 @@ static void renderwaterfall(const materialsurface &m, float offset, const vec *n
                 vec v(mx sx, my sy, mz sz); \
                 gle::attrib(v); \
                 GENFACENORMAL \
-                gle::attribf(wfxscale*v.x, wfyscale*(v.z+wfscroll)); \
             }
 #define GENFACENORMAL gle::attrib(n);
     if(normal) 
@@ -720,13 +717,6 @@ void rendermaterials()
                     {
                         changematerial(lastmat, lastorient);
                         glBindTexture(GL_TEXTURE_2D, mslot->sts[1].t->id);
-                        float angle = fmod(float(lastmillis/600.0f/(2*M_PI)), 1.0f), 
-                              s = angle - int(angle) - 0.5f;
-                        s *= 8 - fabs(s)*16;
-                        wfwave = vertwater ? WATER_AMPLITUDE*s-WATER_OFFSET : -WATER_OFFSET;
-                        wfscroll = 16.0f*lastmillis/1000.0f;
-                        wfxscale = TEX_SCALE/(mslot->sts[1].t->xs*mslot->scale);
-                        wfyscale = TEX_SCALE/(mslot->sts[1].t->ys*mslot->scale);
 
                         bvec wfcol = getwaterfallcolor(m.material);
                         if(wfcol.iszero()) wfcol = getwatercolor(m.material);
@@ -739,12 +729,11 @@ void rendermaterials()
                             fogtype = 1;
                             if(blended) { glDisable(GL_BLEND); blended = false; }
                             if(!depth) { glDepthMask(GL_TRUE); depth = true; }
-                            break;
                         }
                         else if((!waterfallrefract || reflecting || refracting) && !waterfallenv)
                         {
                             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-                            foggedshader->set();
+                            SETSHADER(waterfall);
                             fogtype = 0;
                             if(!blended) { glEnable(GL_BLEND); blended = true; }
                             if(depth) { glDepthMask(GL_FALSE); depth = false; }
@@ -779,7 +768,7 @@ void rendermaterials()
                             if(usedwaterfall != m.material)
                             {
                                 Texture *dudv = mslot->sts.inrange(5) ? mslot->sts[5].t : notexture;
-                                float scale = 8.0f/(dudv->ys*mslot->scale);
+                                float scale = TEX_SCALE/(dudv->ys*mslot->scale);
                                 LOCALPARAMF(dudvoffset, 0, scale*16*lastmillis/1000.0f);
 
                                 glActiveTexture_(GL_TEXTURE1);
@@ -802,6 +791,14 @@ void rendermaterials()
                                 usedwaterfall = m.material;
                             }
                         }
+                        float angle = fmod(float(lastmillis/600.0f/(2*M_PI)), 1.0f), 
+                              s = angle - int(angle) - 0.5f;
+                        s *= 8 - fabs(s)*16;
+                        wfwave = vertwater ? WATER_AMPLITUDE*s-WATER_OFFSET : -WATER_OFFSET;
+                        float scroll = 16.0f*lastmillis/1000.0f;
+                        float xscale = TEX_SCALE/(mslot->sts[1].t->xs*mslot->scale);
+                        float yscale = -TEX_SCALE/(mslot->sts[1].t->ys*mslot->scale);
+                        LOCALPARAMF(waterfalltexgen, xscale, yscale, 0.0f, scroll);
                     }
                     break;
 
@@ -815,16 +812,6 @@ void rendermaterials()
                         if(!mslot->sts.inrange(subslot)) continue;
                         changematerial(lastmat, lastorient);
                         glBindTexture(GL_TEXTURE_2D, mslot->sts[subslot].t->id);
-                    }
-                    if(m.orient!=O_TOP)
-                    {
-                        float angle = fmod(float(lastmillis/2000.0f/(2*M_PI)), 1.0f),
-                              s = angle - int(angle) - 0.5f;
-                        s *= 8 - fabs(s)*16;
-                        wfwave = vertwater ? WATER_AMPLITUDE*s-WATER_OFFSET : -WATER_OFFSET;
-                        wfscroll = 16.0f*lastmillis/3000.0f;
-                        wfxscale = TEX_SCALE/(mslot->sts[1].t->xs*mslot->scale);
-                        wfyscale = TEX_SCALE/(mslot->sts[1].t->ys*mslot->scale);
                     }
                     if(lastmat!=m.material)
                     {
@@ -840,6 +827,18 @@ void rendermaterials()
                         if(glaring) SETSHADER(lavaglare); else SETSHADER(lava);
                         fogtype = 1;
                     }
+                    if(m.orient!=O_TOP)
+                    {
+                        float angle = fmod(float(lastmillis/2000.0f/(2*M_PI)), 1.0f),
+                              s = angle - int(angle) - 0.5f;
+                        s *= 8 - fabs(s)*16;
+                        wfwave = vertwater ? WATER_AMPLITUDE*s-WATER_OFFSET : -WATER_OFFSET;
+                        float scroll = 16.0f*lastmillis/3000.0f;
+                        float xscale = TEX_SCALE/(mslot->sts[1].t->xs*mslot->scale);
+                        float yscale = -TEX_SCALE/(mslot->sts[1].t->ys*mslot->scale);
+                        LOCALPARAMF(lavatexgen, xscale, yscale, 0.0f, scroll);
+                    }
+                    else setuplava(mslot->sts[0].t, mslot->scale);
                     break;
 
                 case MAT_GLASS:
@@ -885,12 +884,12 @@ void rendermaterials()
         switch(matvol)
         {
             case MAT_WATER:
-                renderwaterfall(m, 0.1f, waterfallenv ? &normals[m.orient] : NULL);
+                renderwaterfall(m, 0.1f, &normals[m.orient]);
                 break;
 
             case MAT_LAVA:
-                if(m.orient==O_TOP) renderlava(m, mslot->sts[0].t, mslot->scale);
-                else renderwaterfall(m, 0.1f);
+                if(m.orient==O_TOP) renderlava(m);
+                else renderwaterfall(m, 0.1f, &normals[m.orient]);
                 break;
 
             case MAT_GLASS:
