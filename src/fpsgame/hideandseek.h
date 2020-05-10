@@ -110,23 +110,26 @@ struct hideandseekclientmode : clientmode
         loopv(clients) if(clients[i]->state.state != CS_SPECTATOR) activeclients.add(clients[i]);
         return activeclients;
     }
-    
-    void initplayer(clientinfo *ci) {
-        sethider(ci);
-    }
-    
+
     void initplayers() {
-        loopv(clients) initplayer(clients[i]);
-        // TODO: Fix bug where connecting clients would not be counted
-        loopv(bots) sethider(bots[i]);
+        loopv(clients) sethider(clients[i]);
         vector<clientinfo*> activeclients = getactiveclients();
         if(activeclients.length() < 2) return;
         int seeker = rnd(activeclients.length());
         setseeker(activeclients[seeker]);
     }
 
-    // TODO: FIX FUCKING BUG WHERE BOTS WOULD NOT BE SEEN AS PLAYERS. SAUER. COME ON. ITS NOT THAT HARD.
-    void initclient(clientinfo *ci, packetbuf &p, bool connecting) { setseeker(ci); }
+    void initclient(clientinfo *ci, packetbuf &p, bool connecting) {
+        if (getnumseekers() == 0 && getnumhiders() > 0) {
+            copystring(ci->team, TEAM_SEEK, MAXTEAMLEN+1);
+        } else {
+            copystring(ci->team, TEAM_HIDE, MAXTEAMLEN+1);
+        }
+        putint(p, N_SETTEAM);
+        putint(p, ci->clientnum);
+        sendstring(ci->team, p);
+        putint(p, -1);
+    }
 
     void entergame(clientinfo *ci) { }
 
@@ -134,7 +137,14 @@ struct hideandseekclientmode : clientmode
 
     void cleanup() {}
     
-    int getremaininghiders() {
+    int getnumseekers() {
+        int numseekers = 0;
+        vector<clientinfo*> activeclients = getactiveclients();
+        loopv(activeclients) if (isseeker(activeclients[i])) numseekers++;
+        return numseekers;
+    }
+    
+    int getnumhiders() {
         int numhiders = 0;
         vector<clientinfo*> activeclients = getactiveclients();
         loopv(activeclients) if (ishider(activeclients[i])) numhiders++;
@@ -142,17 +152,16 @@ struct hideandseekclientmode : clientmode
     }
 
     bool finished() {
-        //if (totalmillis-game::maptime < STARTINVISIBLESECS*1000) return false;
         if(interm) return false;
         // check if no hider is alive
-        return getremaininghiders() == 0;
+        return getnumhiders() == 0;
     }
 
     void update() {
         if (totalmillis > lastupdatecheck + 1000) {
             lastupdatecheck = totalmillis;
             bool finito = finished();
-            if (finito) game::forceintermission();
+            if (finished()) startintermission();
         }
     }
 
@@ -164,7 +173,6 @@ struct hideandseekclientmode : clientmode
 
     bool canhit(clientinfo *target, clientinfo *actor) {
         // teamkills and suicides are disabled; hiders can't kill
-        if (!actor || !target || actor==target) return false;
         if (isteam(actor->team, target->team) || ishider(actor)) return false;
         return true;
     }
@@ -172,7 +180,7 @@ struct hideandseekclientmode : clientmode
     void died(clientinfo *target, clientinfo *actor) {
         if (target && ishider(target)) {
             setseeker(target);
-            int remaining = getremaininghiders();
+            int remaining = getnumhiders();
             if (!actor) {
                 if (remaining > 0) {
                     defformatstring(msg, "%s suicided! %d Hiders remaining!", target->name, remaining);
