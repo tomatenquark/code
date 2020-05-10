@@ -632,6 +632,20 @@ static void drawglass(const materialsurface &m, float offset, const vec *normal 
 
 VARFP(waterfallenv, 0, 1, 1, preloadwatershaders());
 
+static inline void changematerial(int mat, int orient)
+{
+    switch(mat)
+    {
+        case MAT_LAVA:
+            if(orient==O_TOP) flushlava();
+            else xtraverts += gle::end();
+            break;
+        default:
+            xtraverts += gle::end();
+            break;
+    }
+}
+
 void rendermaterials()
 {
     vector<materialsurface *> vismats;
@@ -704,7 +718,7 @@ void rendermaterials()
                     if(!mslot->loaded || !mslot->sts.inrange(1)) continue;
                     else
                     {
-                        xtraverts += gle::end();
+                        changematerial(lastmat, lastorient);
                         glBindTexture(GL_TEXTURE_2D, mslot->sts[1].t->id);
                         float angle = fmod(float(lastmillis/600.0f/(2*M_PI)), 1.0f), 
                               s = angle - int(angle) - 0.5f;
@@ -799,7 +813,7 @@ void rendermaterials()
                     {
                         int subslot = m.orient==O_TOP ? 0 : 1;
                         if(!mslot->sts.inrange(subslot)) continue;
-                        xtraverts += gle::end();
+                        changematerial(lastmat, lastorient);
                         glBindTexture(GL_TEXTURE_2D, mslot->sts[subslot].t->id);
                     }
                     if(m.orient!=O_TOP)
@@ -830,7 +844,7 @@ void rendermaterials()
 
                 case MAT_GLASS:
                     if((m.envmap==EMID_NONE || !glassenv || envmapped==m.envmap) && lastmat==m.material) break;
-                    xtraverts += gle::end();
+                    changematerial(lastmat, lastorient);
                     if(m.envmap!=EMID_NONE && glassenv && envmapped!=m.envmap)
                     {
                         glBindTexture(GL_TEXTURE_CUBE_MAP, lookupenvmap(m.envmap));
@@ -886,7 +900,7 @@ void rendermaterials()
         }
     }
 
-    xtraverts += gle::end();
+    changematerial(lastmat, lastorient);
 
     if(!depth) glDepthMask(GL_TRUE);
     if(blended) glDisable(GL_BLEND);
