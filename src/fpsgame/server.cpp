@@ -859,6 +859,7 @@ namespace server
             if(victim==actor || isteam(victim->team, actor->team)) return -1;
             return 1;
         }
+        virtual bool canhit(clientinfo *victim, clientinfo *actor) { return true; }
         virtual void died(clientinfo *victim, clientinfo *actor) {}
         virtual bool canchangeteam(clientinfo *ci, const char *oldteam, const char *newteam) { return true; }
         virtual void changeteam(clientinfo *ci, const char *oldteam, const char *newteam) {}
@@ -2200,6 +2201,7 @@ namespace server
 
     void dodamage(clientinfo *target, clientinfo *actor, int damage, int gun, const vec &hitpush = vec(0, 0, 0))
     {
+        if (smode && !smode->canhit(target, actor)) return;
         gamestate &ts = target->state;
         ts.dodamage(damage);
         if(target!=actor && !isteam(target->team, actor->team)) actor->state.damage += damage;
