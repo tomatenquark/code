@@ -74,12 +74,22 @@ struct QuadNode
 
 static float wfwave;
 
-static void renderwaterfall(const materialsurface &m, float offset, const vec &normal)
+static const bvec4 matnormals[6] =
+{
+    bvec4(0x80, 0, 0),
+    bvec4(0x7F, 0, 0),
+    bvec4(0, 0x80, 0),
+    bvec4(0, 0x7F, 0),
+    bvec4(0, 0, 0x80),
+    bvec4(0, 0, 0x7F)
+};
+
+static void renderwaterfall(const materialsurface &m, float offset)
 {
     if(gle::attribbuf.empty())
     {
         gle::defvertex();
-        gle::defnormal();
+        gle::defnormal(4, GL_BYTE);
         gle::begin(GL_QUADS);
     }
     float x = m.o.x, y = m.o.y, zmin = m.o.z, zmax = zmin;
@@ -93,7 +103,7 @@ static void renderwaterfall(const materialsurface &m, float offset, const vec &n
     #define GENFACEVERT(orient, vert, mx,my,mz, sx,sy,sz) \
         { \
             gle::attribf(mx sx, my sy, mz sz); \
-            gle::attribf(normal.x, normal.y, normal.z); \
+            gle::attrib(matnormals[orient]); \
         }
         GENFACEVERTSXY(x, x, y, y, zmin, zmax, /**/, + csize, /**/, + rsize, + offset, - offset)
     #undef GENFACEORIENT
@@ -574,12 +584,12 @@ GETMATIDXVAR(glass, color, const bvec &)
 
 VARP(glassenv, 0, 1, 1);
 
-static void drawglass(const materialsurface &m, float offset, const vec &normal)
+static void drawglass(const materialsurface &m, float offset)
 {
     if(gle::attribbuf.empty())
     {
         gle::defvertex();
-        gle::defnormal();
+        gle::defnormal(4, GL_BYTE);
         gle::begin(GL_QUADS);
     }
     float x = m.o.x, y = m.o.y, z = m.o.z, csize = m.csize, rsize = m.rsize;
@@ -590,7 +600,7 @@ static void drawglass(const materialsurface &m, float offset, const vec &normal)
     #define GENFACEVERT(orient, vert, mx,my,mz, sx,sy,sz) \
         { \
             gle::attribf(mx sx, my sy, mz sz); \
-            gle::attribf(normal.x, normal.y, normal.z); \
+            gle::attrib(matnormals[orient]); \
         }
         GENFACEVERTS(x, x, y, y, z, z, /**/, + csize, /**/, + rsize, + offset, - offset)
     #undef GENFACEORIENT
@@ -626,15 +636,6 @@ void rendermaterials()
     int lastorient = -1, lastmat = -1, usedwaterfall = -1;
     bool depth = true, blended = false;
     ushort envmapped = EMID_NONE;
-    static const vec normals[6] =
-    {
-        vec(-1, 0, 0),
-        vec( 1, 0, 0),
-        vec(0, -1, 0),
-        vec(0,  1, 0),
-        vec(0, 0, -1),
-        vec(0, 0,  1)
-    };
 
     GLOBALPARAM(camera, camera1->o);
 
@@ -855,16 +856,16 @@ void rendermaterials()
         switch(matvol)
         {
             case MAT_WATER:
-                renderwaterfall(m, 0.1f, normals[m.orient]);
+                renderwaterfall(m, 0.1f);
                 break;
 
             case MAT_LAVA:
                 if(m.orient==O_TOP) renderlava(m);
-                else renderwaterfall(m, 0.1f, normals[m.orient]);
+                else renderwaterfall(m, 0.1f);
                 break;
 
             case MAT_GLASS:
-                drawglass(m, 0.1f, normals[m.orient]);
+                drawglass(m, 0.1f);
                 break;
         }
     }

@@ -179,7 +179,7 @@ void setuplava(Texture *tex, float scale)
     float yk = TEX_SCALE/(tex->ys*scale);
     float scroll = lastmillis/1000.0f;
     LOCALPARAMF(lavatexgen, xk, yk, scroll, scroll);
-    gle::normal(0, 0, 1);
+    gle::normal(vec(0, 0, 1));
     whoffset = fmod(float(lastmillis/2000.0f/(2*M_PI)), 1.0f);
 }
 
