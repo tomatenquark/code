@@ -544,6 +544,12 @@ namespace game
     }
     ICOMMAND(mode, "i", (int *val), setmode(*val));
     ICOMMAND(getmode, "", (), intret(gamemode));
+    ICOMMAND(getmodeinfo, "i", (int *m),
+    {
+        int nummodes = sizeof(gamemodes) / sizeof(gamemodes[0]);
+        if (*m < 0 || *m > nummodes - 4) return;
+        result(gamemodes[*m + 3].info);
+    });
     ICOMMAND(timeremaining, "i", (int *formatted), 
     {
         int val = max(maplimit - lastmillis + 999, 0)/1000;
