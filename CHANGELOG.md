@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2020-11-05
+### Added 
+- Added player name status icons
+- Add hide and seek game mode
+- Add getmodeinfo command
+- Added explodebright variable
+
+### Changed
+- Add cleanups for rendering water and glass
+
 ## [0.1.6] - 2020-07-05
 ### Added
 - Added setdemotime command
@@ -968,7 +978,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/tomatenquark/code/compare/v0.1.6...0.1.7
 [0.1.6]: https://github.com/tomatenquark/code/compare/v0.1.5...0.1.6
 [0.1.5]: https://github.com/tomatenquark/code/compare/v0.1.4...0.1.5
 [0.1.4]: https://github.com/tomatenquark/code/compare/v0.1.3...0.1.4
