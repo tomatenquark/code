@@ -2027,7 +2027,7 @@ namespace server
 
         gamemode = mode;
         gamemillis = 0;
-        gamelimit = (m_overtime ? 15 : 10)*60000;
+        gamelimit = (m_overtime ? 15 : m_halftime ? 5 : 10)*60000;
         interm = 0;
         nextexceeded = 0;
         copystring(smapname, s);
