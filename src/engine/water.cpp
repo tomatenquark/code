@@ -105,6 +105,7 @@ void flushwaterstrips()
         gle::multidraw();
     }
     waterstrips.setsize(0);
+    wsize = 0;
     xtraverts += gle::end();
 }
 

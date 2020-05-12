@@ -614,7 +614,7 @@ VARFP(waterfallenv, 0, 1, 1, preloadwatershaders());
 
 static inline void changematerial(int mat, int orient)
 {
-    switch(mat)
+    switch(mat&~MATF_INDEX)
     {
         case MAT_LAVA:
             if(orient==O_TOP) flushlava();
