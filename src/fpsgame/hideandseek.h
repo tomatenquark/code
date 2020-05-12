@@ -160,7 +160,6 @@ struct hideandseekclientmode : clientmode
     void update() {
         if (totalmillis > lastupdatecheck + 1000) {
             lastupdatecheck = totalmillis;
-            bool finito = finished();
             if (finished()) startintermission();
         }
     }
