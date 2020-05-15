@@ -135,7 +135,12 @@ struct hideandseekclientmode : clientmode
 
     void leavegame(clientinfo *ci, bool disconnecting) {}
 
-    void cleanup() {}
+    void cleanup() {
+        loopv(clients) {
+            copystring(clients[i]->team, rand() & 1 ? "evil" : "good", MAXTEAMLEN+1);
+            sendf(-1, 1, "riisi", N_SETTEAM, clients[i]->clientnum, clients[i]->team, 1);
+        }
+    }
     
     int getnumseekers() {
         int numseekers = 0;
