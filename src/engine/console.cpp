@@ -61,6 +61,7 @@ VARP(fullconsize, 0, 75, 100);
 HVARP(confilter, 0, 0x7FFFFFF, 0x7FFFFFF);
 HVARP(fullconfilter, 0, 0x7FFFFFF, 0x7FFFFFF);
 HVARP(miniconfilter, 0, 0, 0x7FFFFFF);
+VAR(dbgbind, 0, 0, 1);
 
 int conskip = 0, miniconskip = 0;
 
@@ -394,6 +395,7 @@ void execbind(keym &k, bool isdown)
         keypressed = &k;
         execute(keyaction);
         keypressed = NULL;
+        if(dbgbind) conoutf(CON_DEBUG, "key: \f8%s \f7command: \f8(%s)", escapestring(k.name), keyaction);
         if(keyaction!=action) delete[] keyaction;
     }
     k.pressed = isdown;
