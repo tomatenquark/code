@@ -649,10 +649,10 @@ void renderoutline()
             drawvatris(va, 3*va->tris, va->edata);
             xtravertsva += va->verts;
         }
-        if(va->alphaback || va->alphafront)
+        if(va->alphatris)
         {
-            drawvatris(va, 3*(va->alphabacktris + va->alphafronttris), &va->edata[3*(va->tris + va->blendtris)]);
-            xtravertsva += 3*(va->alphabacktris + va->alphafronttris);
+            drawvatris(va, 3*va->alphatris, &va->edata[3*(va->tris + va->blendtris)]);
+            xtravertsva += 3*va->alphatris;
         }
         
         prev = va;
@@ -814,10 +814,10 @@ void renderdepthobstacles(const vec &bbmin, const vec &bbmax, float scale, float
 
         drawvatris(va, 3*va->tris, va->edata);
         xtravertsva += va->verts;
-        if(va->alphabacktris + va->alphafronttris > 0) 
+        if(va->alphatris > 0)
         {
-            drawvatris(va, 3*(va->alphabacktris + va->alphafronttris), va->edata + 3*(va->tris + va->blendtris));
-            xtravertsva += 3*(va->alphabacktris + va->alphafronttris);
+            drawvatris(va, 3*va->alphatris, va->edata + 3*(va->tris + va->blendtris));
+            xtravertsva += 3*va->alphatris;
         }
 
         prev = va;
@@ -1311,7 +1311,7 @@ void renderzpass(renderstate &cur, vtxarray *va)
     {
         firsttex += va->texs + va->blends;
         edata += 3*(va->tris + va->blendtris);
-        numtris = va->alphabacktris + va->alphafronttris;
+        numtris = va->alphatris;
         xtravertsva += 3*numtris;
     }
     else xtravertsva += va->verts;
@@ -1709,7 +1709,7 @@ void renderalphageom(bool fogpass)
     bool hasback = false;
     for(vtxarray *va = FIRSTVA; va; va = NEXTVA)
     {
-        if(!va->alphabacktris && !va->alphafronttris) continue;
+        if(!va->alphatris) continue;
         if(refracting)
         {
             if((refracting < 0 ? va->geommin.z > reflectz : va->geommax.z <= reflectz) || va->occluded >= OCCLUDE_BB) continue;
