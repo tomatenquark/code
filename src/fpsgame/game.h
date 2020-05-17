@@ -594,6 +594,16 @@ struct fpsent : dynent, fpsstate
         if(idlechan >= 0) stopsound(idlesound, idlechan, 100);
         idlesound = idlechan = -1;
     }
+    
+    int damagesound(int health)
+    {
+        if (health <= (1/6 * 100)) return 5;
+        else if (health <= 20) return 4;
+        else if (health <= 25) return 3;
+        else if (health <= (1/3) * 100) return 2;
+        else if (health <= 50) return 1;
+        else return 0;
+    }
 
     void respawn()
     {

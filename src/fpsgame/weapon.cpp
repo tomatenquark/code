@@ -389,8 +389,9 @@ namespace game
                     damageblend(damage);
                     damagecompass(damage, at ? at->o : f->o);
                     playsound(S_PAIN6);
+                    playsound(S_PAIN1+f->damagesound(f->health));
                 }
-                else playsound(S_PAIN1+rnd(5), &f->o);
+                playsound(S_PAIN1+f->damagesound(f->health), &f->o);
             }
         }
     }
