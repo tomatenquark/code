@@ -1,6 +1,6 @@
 # Build instructions
 
-Clone the repository and use `cd code`.
+Clone the repository and use `cd code`. In order to clone the repository you will need to install [Git LFS](https://git-lfs.github.com/).
 
 ## Linux
 
