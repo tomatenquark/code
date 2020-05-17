@@ -448,6 +448,7 @@ struct vacollect : verthash
         va->alphafront = 0;
         va->ebuf = 0;
         va->edata = 0;
+        va->texmask = 0;
         if(va->texs)
         {
             va->eslist = new elementset[va->texs];
@@ -487,15 +488,10 @@ struct vacollect : verthash
                 if(k.layer==LAYER_BLEND) { va->texs--; va->tris -= e.length[1]/3; va->blends++; va->blendtris += e.length[1]/3; }
                 else if(k.alpha==ALPHA_BACK) { va->texs--; va->tris -= e.length[1]/3; va->alphaback++; va->alphabacktris += e.length[1]/3; }
                 else if(k.alpha==ALPHA_FRONT) { va->texs--; va->tris -= e.length[1]/3; va->alphafront++; va->alphafronttris += e.length[1]/3; } 
+                Slot &slot = *lookupvslot(k.tex, false).slot;
+                loopvj(slot.sts) va->texmask |= 1<<slot.sts[j].type;
+                if(slot.shader->type&SHADER_ENVMAP) va->texmask |= 1<<TEX_ENVMAP;
             }
-        }
-
-        va->texmask = 0;
-        for(int i = 0; i < int(va->texs+va->blends+va->alphaback+va->alphafront); i++)
-        {
-            Slot &slot = *lookupvslot(va->eslist[i].texture, false).slot;
-            loopvj(slot.sts) va->texmask |= 1<<slot.sts[j].type;
-            if(slot.shader->type&SHADER_ENVMAP) va->texmask |= 1<<TEX_ENVMAP;
         }
 
         if(grasstris.length())
