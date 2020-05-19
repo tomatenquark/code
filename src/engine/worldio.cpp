@@ -1073,8 +1073,6 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     setvar("mapscale", worldscale, true, false);
 
     renderprogress(0, "loading vars...");
-    char *skybox; // Read skybox separately as it could be overriden by config
-
     for(int i = 0; i < int(hdr.numvars); i++)
     {
         int type = f->getchar(), ilen = f->getlil<ushort>();
@@ -1109,16 +1107,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
                 f->read(val, min(slen, MAXSTRLEN-1));
                 val[min(slen, MAXSTRLEN-1)] = '\0';
                 if(slen >= MAXSTRLEN) f->seek(slen - (MAXSTRLEN-1), SEEK_CUR);
-                if(exists) {
-                    if (strcmp("skybox", name))
-                    {
-                        setsvar(name, val);
-                    }
-                    else
-                    {
-                        skybox = val;
-                    }
-                }
+                if(exists) setsvar(name, val);
                 if(dbgvars) conoutf(CON_DEBUG, "read svar %s: %s", name, val);
                 break;
             }
@@ -1258,7 +1247,6 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     identflags |= IDF_OVERRIDDEN;
     execfile("data/default_map_settings.cfg", false);
     execfile(cfgname, false);
-    if (strlen(skybox) && !strlen(skybox)) setsvar("skybox", skybox);
     identflags &= ~IDF_OVERRIDDEN;
    
     extern void fixlightmapnormals();
