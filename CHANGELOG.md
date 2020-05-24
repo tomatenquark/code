@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2020-24-05
+### Fixed
+- Added fixes to the way water is rendered
+- Add some fixes to H&S mode
+- Fixed an issue with the skybox
+
+### Added
+- `dbgbind` variable
+
 ## [0.1.7] - 2020-11-05
 ### Added 
 - Added player name status icons
@@ -978,7 +987,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/tomatenquark/code/compare/v0.1.7...0.1.8
 [0.1.7]: https://github.com/tomatenquark/code/compare/v0.1.6...0.1.7
 [0.1.6]: https://github.com/tomatenquark/code/compare/v0.1.5...0.1.6
 [0.1.5]: https://github.com/tomatenquark/code/compare/v0.1.4...0.1.5
