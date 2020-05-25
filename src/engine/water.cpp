@@ -568,7 +568,7 @@ void cleanreflections()
     }
 }
 
-VARFP(reflectsize, 6, 8, 10, cleanreflections());
+VARFP(reflectsize, 6, 8, 11, cleanreflections());
 
 void genwatertex(GLuint &tex, GLuint &fb, GLuint &db, bool refract = false)
 {
