@@ -1174,6 +1174,21 @@ namespace game
 
     bool serverinfoentry(g3d_gui *g, int i, const char *name, int port, const char *sdesc, const char *map, int ping, const vector<int> &attr, int np)
     {
+        const char* pingcolor;
+        if(attr.length() >= 4) {
+            if(ping < 70) {
+                pingcolor = "\f0";
+            } else if(ping < 135) {
+                pingcolor = "\f2";
+            } else if(ping < 200) {
+                pingcolor = "\f6";
+            } else {
+                pingcolor = "\f3";
+            }
+        } else {
+            pingcolor = "";
+        }
+
         if(ping < 0 || attr.empty() || attr[0]!=PROTOCOL_VERSION)
         {
             switch(i)
@@ -1214,7 +1229,7 @@ namespace game
             case 0:
             {
                 const char *icon = attr.inrange(3) && np >= attr[3] ? "serverfull" : (attr.inrange(4) ? mastermodeicon(attr[4], "serverunk") : "serverunk");
-                if(g->buttonf("%d ", 0xFFFFDD, icon, ping)&G3D_UP) return true;
+                if(g->buttonf("%s%d ", 0xFFFFDD, icon, pingcolor, ping)&G3D_UP) return true;
                 break;
             }
 
@@ -1280,4 +1295,3 @@ namespace game
         execfile("auth.cfg", false);
     }
 }
-

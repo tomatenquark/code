@@ -313,8 +313,20 @@ namespace game
                     {
                         fpsent *p = o->ownernum >= 0 ? getclient(o->ownernum) : o;
                         if(!p) p = o;
-                        if(!showpj && p->state==CS_LAGGED) g.text("LAG", 0xFFFFDD);
-                        else g.textf("%d", 0xFFFFDD, NULL, p->ping);
+
+                        const char *pingcolor;
+                        if (p->ping < 70) {
+                            pingcolor = "\f0";
+                        } else if (p->ping < 135) {
+                            pingcolor = "\f2";
+                        } else if (p->ping < 200) {
+                            pingcolor = "\f6";
+                        } else {
+                            pingcolor = "\f3";
+                        }
+
+                        if(!showpj && p->state==CS_LAGGED) g.text("\f3LAG", 0xFFFFFF);
+                        else g.textf("%s%d", 0xFFFFFF, NULL, pingcolor, p->ping);
                     });
                     g.poplist();
                 }
@@ -541,4 +553,3 @@ namespace game
         pophudmatrix();
     }
 }
-
