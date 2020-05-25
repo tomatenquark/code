@@ -26,8 +26,15 @@
 *.a
 *.lib
 
+# Data directories (should be copied or symlinked from https://github.com/tomatenquark/essential)
+/data
+/packages
+
 # Executables
 *.exe
 *.out
 *.app
-
+tomaten_client
+tomaten_server
+native_client
+native_server
