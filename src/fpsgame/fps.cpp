@@ -412,7 +412,8 @@ namespace game
         if(m_sp && slowmosp && d==player1 && d->health < 1) d->health = 1;
 
         if(d->health<=0) { if(local) killed(d, actor); }
-        playsound(S_PAIN1+d->damagesound(d->health));
+        else if(d==h) playsound(S_PAIN6);
+        else playsound(S_PAIN1+rnd(5), &d->o);
     }
 
     VARP(deathscore, 0, 1, 1);
