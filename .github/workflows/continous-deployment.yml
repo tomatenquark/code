@@ -36,7 +36,7 @@ jobs:
         working-directory: ./src/vcpp
         run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /p:Configuration=Release tomatenquark.sln
       - name: Archive Windows binaries
-        run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat -DestinationPath tomatenquark_windows.zip
+        run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat, .\server.bat, .\server-init.cfg -DestinationPath tomatenquark_windows.zip
       - uses: actions/upload-artifact@v1
         with: 
           name: tomatenquark_windows
