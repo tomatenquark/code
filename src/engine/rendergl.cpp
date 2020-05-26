@@ -1668,7 +1668,7 @@ HVARFR(minimapcolour, 0, 0, 0xFFFFFF,
     minimapcolor = bvec((minimapcolour>>16)&0xFF, (minimapcolour>>8)&0xFF, minimapcolour&0xFF);
 });
 VARR(minimapclip, 0, 0, 1);
-VARFP(minimapsize, 7, 8, 10, { if(minimaptex) drawminimap(); });
+VARFP(minimapsize, 7, 8, 11, { if(minimaptex) drawminimap(); });
 
 void bindminimap()
 {
