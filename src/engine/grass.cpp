@@ -7,6 +7,7 @@ FVARP(grasstaper, 0, 0.2, 1);
 FVARP(grassstep, 0.5, 3, 8);
 VARP(grassheight, 1, 4, 64);
 VARP(grassmargin, 0, 8, 32);
+FVAR(grassmarginfade, 0, 0.5f, 1);
 
 #define NUMGRASSWEDGES 8
 
@@ -288,7 +289,7 @@ void rendergrass()
 
     SETSHADER(grass);
 
-    LOCALPARAMF(grassmargin, grassmargin, grassmargin ? 0.5f / grassmargin : 0.0f, grassmargin ? 0.5f : 1.0f);
+    LOCALPARAMF(grassmargin, grassmargin, grassmargin ? grassmarginfade / grassmargin : 0.0f, grassmargin ? grassmarginfade : 1.0f);
  
     gle::bindvbo(grassvbo);
 
