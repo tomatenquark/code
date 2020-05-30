@@ -718,12 +718,12 @@ void addgrasstri(int face, vertex *verts, int numv, ushort texture, ushort lmid)
     by.z = by.x*g.v[1][px] - by.y*g.v[1][py] - 1;
     by.sub(bx);
 
-    float tc1u = verts[i1].lm.x/float(SHRT_MAX),
-          tc1v = verts[i1].lm.y/float(SHRT_MAX),
-          tc2u = (verts[i2].lm.x - verts[i1].lm.x)/float(SHRT_MAX),
-          tc2v = (verts[i2].lm.y - verts[i1].lm.y)/float(SHRT_MAX),
-          tc3u = (verts[i3].lm.x - verts[i1].lm.x)/float(SHRT_MAX),
-          tc3v = (verts[i3].lm.y - verts[i1].lm.y)/float(SHRT_MAX);
+    float tc1u = verts[i1].lm.x,
+          tc1v = verts[i1].lm.y,
+          tc2u = verts[i2].lm.x - verts[i1].lm.x,
+          tc2v = verts[i2].lm.y - verts[i1].lm.y,
+          tc3u = verts[i3].lm.x - verts[i1].lm.x,
+          tc3v = verts[i3].lm.y - verts[i1].lm.y;
         
     g.tcu = vec4(0, 0, 0, tc1u - (bx.z*tc2u + by.z*tc3u));
     g.tcu[px] = bx.x*tc2u + by.x*tc3u;
