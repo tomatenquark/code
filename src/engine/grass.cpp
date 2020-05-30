@@ -288,7 +288,7 @@ void rendergrass()
 
     SETSHADER(grass);
 
-    LOCALPARAMF(grassmargin, grassmargin, grassmargin ? 1.0f / grassmargin : 0.0f);
+    LOCALPARAMF(grassmargin, grassmargin, grassmargin ? 0.5f / grassmargin : 0.0f, grassmargin ? 0.5f : 1.0f);
  
     gle::bindvbo(grassvbo);
 
