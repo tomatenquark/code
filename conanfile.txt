@@ -1,0 +1,17 @@
+[requires]
+zlib/1.2.11
+enet/1.3.14
+sdl2/2.0.12@bincrafters/stable
+sdl2_image/2.0.5@bincrafters/stable
+sdl2_mixer/2.0.4@bincrafters/stable
+
+[options]
+sdl2:sdl2main=False
+# sdl2_image:jpg=libjpeg
+
+[generators]
+cmake
+
+[imports]
+bin, glib-2.0-0.dll -> ./bin
+bin, glib-2.0-0.dll -> ./bin64
