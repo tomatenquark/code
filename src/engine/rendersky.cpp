@@ -601,7 +601,7 @@ void drawskybox(int farplane, bool limited, bool force)
 
     if(clampsky) glDepthRange(1, 1);
 
-    if(skybox[0] && (!atmo || atmoalpha < 1))
+    if(!atmo || (skybox[0] && atmoalpha < 1))
     {
         if(glaring) SETSHADER(skyboxglare);
         else SETSHADER(skybox);
