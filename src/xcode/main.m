@@ -5,8 +5,8 @@
 @interface SDLApplication : NSApplication
 @end
 
-@implementation SDLApplication
-@end
+//@implementation SDLApplication
+//@end
 
 #ifdef main
 #  undef main

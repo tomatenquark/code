@@ -22,6 +22,7 @@ endif()
 if(NOT MSVC)
    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+       set(BUILD_CXX_FLAGS "${BUILD_CXX_FLAGS} -fno-common")
    endif()
 
    set(BUILD_C_FLAGS "${BUILD_C_FLAGS} -fomit-frame-pointer -Wall -fsigned-char")
@@ -63,16 +64,13 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 
 
 # --- Conan --- #
-# Download Conan
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake v0.15 from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/b9fdb9f674e89d990c7764117cd26ae2693ff022/conan.cmake"
-            "${CMAKE_BINARY_DIR}/conan.cmake")
+   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+                 "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 # Include Conan CMake wrapper
-cmake_policy(SET CMP0025 NEW)
-
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 # Make sure we have a recent Conan version
@@ -89,7 +87,6 @@ conan_cmake_run(CONANFILE conanfile.txt
         UPDATE
         )
 
-
 ################ Files ################
 
 include_directories(src/shared src/engine src/fpsgame)
@@ -99,7 +96,7 @@ if(WIN32)
     set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/vcpp/sauerbraten.rc")
 else()
     set(GOSAUR_APPLICATION_TYPE "")
-    set(GOSAUR_ADDITIONAL_SOURCE_FILES "")
+    set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/xcode/main.m")
 endif()
 
 
@@ -190,9 +187,11 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOSAUR_APPLICATION_TYPE}
         src/fpsgame/server.cpp
         src/fpsgame/waypoint.cpp
         src/fpsgame/weapon.cpp
+        src/assetbundler/assetbundler.cpp
         ${GOSAUR_ADDITIONAL_SOURCE_FILES}
 )
 
+target_include_directories(sauerbraten PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 # enet.lib;zdll.lib;opengl32.lib;SDL2.lib;SDL2_image.lib;ws2_32.lib;SDL2_mixer.lib;winmm.lib;dbghelp.lib;kernel32.lib;user32.lib
@@ -203,7 +202,9 @@ if(WIN32)
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER "ws2_32" "winmm")
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER "ws2_32" "winmm")
 else()
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL")
+    enable_language(OBJC)
+    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
+    #list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL")
     # Server doesn't need more libs linked on UNIX
 endif()
 
@@ -212,10 +213,6 @@ target_link_libraries(sauer_server ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECI
 target_link_libraries(sauer_master ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
-
-    
-message(STATUS "CONAN_LIBS='${CONAN_LIBS}'")
-
 
 ################ Install targets ################
 set(GOSAUR_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin_unix")
