@@ -39,9 +39,7 @@ void guessshadowdir()
 {
     if(shadowmapangle) return;
     vec dir;
-    extern int sunlight;
-    extern vec sunlightdir;
-    if(sunlight) dir = sunlightdir;
+    if(!sunlightcolor.iszero()) dir = sunlightdir;
     else
     {
         vec lightpos(0, 0, 0), casterpos(0, 0, 0);

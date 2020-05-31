@@ -184,6 +184,7 @@ HVARFR(fogdomecolour, 0, 0, 0xFFFFFF,
 {
     fogdomecolor = bvec((fogdomecolour>>16)&0xFF, (fogdomecolour>>8)&0xFF, fogdomecolour&0xFF);
 });
+VARR(fogdomeclouds, 0, 1, 1);
 
 namespace fogdome
 {
@@ -344,9 +345,156 @@ namespace fogdome
     }
 }
 
+static void drawfogdome(int farplane)
+{
+    SETSHADER(skyfog);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    matrix4 skymatrix = cammatrix, skyprojmatrix;
+    skymatrix.settranslation(vec(cammatrix.c).mul(farplane*fogdomeheight*0.5f));
+    skymatrix.scale(farplane/2, farplane/2, farplane*(0.5f - fogdomeheight*0.5f));
+    skyprojmatrix.mul(projmatrix, skymatrix);
+    LOCALPARAM(skymatrix, skyprojmatrix);
+
+    fogdome::draw();
+
+    glDisable(GL_BLEND);
+}
+
 void cleanupsky()
 {
     fogdome::cleanup();
+}
+
+extern int atmo;
+
+void preloadatmoshaders(bool force = false)
+{
+    static bool needatmo = false;
+    if(force) needatmo = true;
+    if(!atmo || !needatmo) return;
+
+    useshaderbyname("atmosphere");
+    useshaderbyname("atmosphereglare");
+}
+
+void setupsky()
+{
+    preloadatmoshaders(true);
+}
+
+VARFR(atmo, 0, 0, 1, preloadatmoshaders());
+FVARR(atmoplanetsize, 1e-3f, 8, 1e3f);
+FVARR(atmoheight, 1e-3f, 1, 1e3f);
+FVARR(atmobright, 0, 2, 16);
+bvec atmosunlightcolor(0, 0, 0);
+HVARFR(atmosunlight, 0, 0, 0xFFFFFF,
+{
+    if(atmosunlight <= 255) atmosunlight |= (atmosunlight<<8) | (atmosunlight<<16);
+    atmosunlightcolor = bvec((atmosunlight>>16)&0xFF, (atmosunlight>>8)&0xFF, atmosunlight&0xFF);
+});
+FVARR(atmosunlightscale, 0, 1, 16);
+FVARR(atmosundisksize, 0, 1, 10);
+FVARR(atmosundiskbright, 0, 1, 16);
+FVARR(atmohaze, 0, 0.03f, 1);
+bvec atmohazefadecolor(0xAE, 0xAC, 0xA9);
+HVARFR(atmohazefade, 0, 0xAEACA9, 0xFFFFFF,
+{
+    if(atmohazefade <= 255) atmohazefade |= (atmohazefade<<8) | (atmohazefade<<16);
+    atmohazefadecolor = bvec((atmohazefade>>16)&0xFF, (atmohazefade>>8)&0xFF, atmohazefade&0xFF);
+});
+FVARR(atmohazefadescale, 0, 1, 1);
+FVARR(atmoclarity, 0, 0.2f, 10);
+FVARR(atmodensity, 1e-3f, 0.99f, 10);
+FVARR(atmoalpha, 0, 1, 1);
+
+static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
+{
+    if(z1clip >= z2clip) return;
+
+    if(glaring) SETSHADER(atmosphereglare);
+    else SETSHADER(atmosphere);
+
+    matrix4 skymatrix = cammatrix, skyprojmatrix;
+    skymatrix.settranslation(0, 0, 0);
+    skyprojmatrix.mul(projmatrix, skymatrix);
+    LOCALPARAM(skymatrix, skyprojmatrix);
+
+    LOCALPARAM(sunlight, (atmosunlight ? atmosunlightcolor.tocolor().mul(atmosunlightscale) : sunlightcolor.tocolor().mul(sunlightscale)).mul(atmobright));
+    LOCALPARAM(sundir, sunlightdir);
+
+    vec sundiskparams;
+    sundiskparams.y = -(1 - 0.0075f * atmosundisksize);
+    sundiskparams.x = 1/(1 + sundiskparams.y);
+    sundiskparams.y *= sundiskparams.x;
+    sundiskparams.z = atmosundiskbright;
+    LOCALPARAM(sundiskparams, sundiskparams);
+
+    const float earthradius = 6.371e6f, earthatmoheight = 0.1e6f;
+    float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight;
+    LOCALPARAMF(atmoradius, planetradius, atmoradius*atmoradius, atmoradius*atmoradius - planetradius*planetradius);
+
+    float gm = (1 - atmohaze)*0.2f + 0.75f;
+    LOCALPARAMF(gm, gm);
+
+    vec lambda(680e-9f, 550e-9f, 450e-9f),
+        betar = vec(lambda).square().square().recip().mul(1.86e-31f / atmodensity),
+        betam = vec(lambda).recip().mul(2*M_PI).square().mul(atmohazefadecolor.tocolor().mul(atmohazefadescale)).mul(1.36e-19f * max(atmohaze, 1e-3f)),
+        betarm = vec(betar).div(1+atmoclarity).add(betam);
+    betar.div(betarm).mul(3/(16*M_PI));
+    betam.div(betarm).mul((1-gm)*(1-gm)/(4*M_PI));
+    LOCALPARAM(betar, betar);
+    LOCALPARAM(betam, betam);
+    LOCALPARAM(betarm, betarm.div(M_LN2));
+
+    LOCALPARAMF(atmoalpha, atmoalpha);
+
+    float z1 = 2*w*(z1clip-0.5f), z2 = ceil(2*w*(z2clip-0.5f));
+
+    gle::defvertex();
+    gle::begin(GL_QUADS);
+
+    gle::attribf(-w, -w, z1);
+    gle::attribf(-w,  w, z1);
+    gle::attribf(-w,  w, z2);
+    gle::attribf(-w, -w, z2);
+
+    gle::attribf(w, -w, z2);
+    gle::attribf(w,  w, z2);
+    gle::attribf(w,  w, z1);
+    gle::attribf(w, -w, z1);
+
+    gle::attribf(-w, -w, z2);
+    gle::attribf( w, -w, z2);
+    gle::attribf( w, -w, z1);
+    gle::attribf(-w, -w, z1);
+
+
+    gle::attribf( w, w, z2);
+    gle::attribf(-w, w, z2);
+    gle::attribf(-w, w, z1);
+    gle::attribf( w, w, z1);
+
+    if(z1clip <= 0)
+    {
+        gle::attribf(-w, -w, -w);
+        gle::attribf( w, -w, -w);
+        gle::attribf( w,  w, -w);
+        gle::attribf(-w,  w, -w);
+    }
+
+    if(z2clip >= 1)
+    {
+        gle::attribf( w, -w, w);
+        gle::attribf(-w, -w, w);
+        gle::attribf(-w,  w, w);
+        gle::attribf( w,  w, w);
+    }
+
+    gle::end();
+    xtraverts += gle::end();
 }
 
 VARP(sparklyfix, 0, 0, 1);
@@ -387,26 +535,6 @@ void drawskyoutline()
 
 VAR(clampsky, 0, 1, 1);
 
-VARR(fogdomeclouds, 0, 1, 1);
-
-static void drawfogdome(int farplane)
-{
-    SETSHADER(skyfog);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    matrix4 skymatrix = cammatrix, skyprojmatrix;
-    skymatrix.settranslation(vec(cammatrix.c).mul(farplane*fogdomeheight*0.5f));
-    skymatrix.scale(farplane/2, farplane/2, farplane*(0.5f - fogdomeheight*0.5f));
-    skyprojmatrix.mul(projmatrix, skymatrix);
-    LOCALPARAM(skymatrix, skyprojmatrix);
-
-    fogdome::draw();
-
-    glDisable(GL_BLEND);
-}
-
 static int yawskyfaces(int faces, int yaw, float spin = 0)
 {
     if(spin || yaw%90) return faces&0x0F ? faces | 0x0F : faces;
@@ -422,10 +550,10 @@ static int yawskyfaces(int faces, int yaw, float spin = 0)
     return (faces & ~0x0F) | (((faces>>idxs[0])&1)<<0) | (((faces>>idxs[1])&1)<<1) | (((faces>>idxs[2])&1)<<2) | (((faces>>idxs[3])&1)<<3);
 }
 
-void drawskybox(int farplane, bool limited)
+void drawskybox(int farplane, bool limited, bool force)
 {
     extern int renderedskyfaces, renderedskyclip; // , renderedsky, renderedexplicitsky;
-    bool alwaysrender = editmode || !insideworld(camera1->o) || reflecting,
+    bool alwaysrender = editmode || !insideworld(camera1->o) || reflecting || force,
          explicitonly = false;
     if(limited)
     {
@@ -462,9 +590,6 @@ void drawskybox(int farplane, bool limited)
     }
     if(skyclip) skyclip = 0.5f + 0.5f*(skyclip-camera1->o.z)/float(worldsize); 
 
-    if(glaring) SETSHADER(skyboxglare);
-    else SETSHADER(skybox);
-
     if(limited) 
     {
         if(explicitonly) glDisable(GL_DEPTH_TEST);
@@ -476,70 +601,96 @@ void drawskybox(int farplane, bool limited)
 
     if(clampsky) glDepthRange(1, 1);
 
-    gle::color(vec::hexcolor(skyboxcolour));
-
-    matrix4 skymatrix = cammatrix, skyprojmatrix;
-    skymatrix.settranslation(0, 0, 0);
-    skymatrix.rotate_around_z((spinsky*lastmillis/1000.0f+yawsky)*-RAD);
-    skyprojmatrix.mul(projmatrix, skymatrix);
-    LOCALPARAM(skymatrix, skyprojmatrix);
-
-    drawenvbox(farplane/2, skyclip, topclip, yawskyfaces(renderedskyfaces, yawsky, spinsky), sky);
-
-    if(!glaring && fogdomemax && !fogdomeclouds)
+    if(skybox[0] && (!atmo || atmoalpha < 1))
     {
-        if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-        drawfogdome(farplane);
-        SETSHADER(skybox);
-    }
+        if(glaring) SETSHADER(skyboxglare);
+        else SETSHADER(skybox);
 
-    if(!glaring && cloudbox[0])
-    {
-        if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        gle::color(vec::hexcolor(cloudboxcolour), cloudboxalpha);
+        gle::color(vec::hexcolor(skyboxcolour));
 
         matrix4 skymatrix = cammatrix, skyprojmatrix;
         skymatrix.settranslation(0, 0, 0);
-        skymatrix.rotate_around_z((spinclouds*lastmillis/1000.0f+yawclouds)*-RAD);
+        skymatrix.rotate_around_z((spinsky*lastmillis/1000.0f+yawsky)*-RAD);
         skyprojmatrix.mul(projmatrix, skymatrix);
         LOCALPARAM(skymatrix, skyprojmatrix);
 
-        drawenvbox(farplane/2, skyclip ? skyclip : cloudclip, topclip, yawskyfaces(renderedskyfaces, yawclouds, spinclouds), clouds);
-
-        glDisable(GL_BLEND);
+        drawenvbox(farplane/2, skyclip, topclip, yawskyfaces(renderedskyfaces, yawsky, spinsky), sky);
     }
 
-    if(!glaring && cloudlayer[0] && cloudheight && renderedskyfaces&(cloudheight < 0 ? 0x1F : 0x2F))
+    if(atmo)
     {
-        if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+        if(atmoalpha < 1)
+        {
+            if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
 
-        glDisable(GL_CULL_FACE);
+        drawatmosphere(farplane/2, skyclip, topclip);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        matrix4 skymatrix = cammatrix, skyprojmatrix;
-        skymatrix.settranslation(0, 0, 0);
-        skymatrix.rotate_around_z((spincloudlayer*lastmillis/1000.0f+yawcloudlayer)*-RAD);
-        skyprojmatrix.mul(projmatrix, skymatrix);
-        LOCALPARAM(skymatrix, skyprojmatrix);
-
-        drawenvoverlay(farplane/2, cloudoverlay, cloudoffsetx + cloudscrollx * lastmillis/1000.0f, cloudoffsety + cloudscrolly * lastmillis/1000.0f);
-
-        glDisable(GL_BLEND);
-
-        glEnable(GL_CULL_FACE);
+        if(atmoalpha < 1) glDisable(GL_BLEND);
     }
 
-	if(!glaring && fogdomemax && fogdomeclouds)
-	{
-        if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-        drawfogdome(farplane);
-	}
+    if(!glaring)
+    {
+        if(fogdomemax && !fogdomeclouds)
+        {
+            if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+            drawfogdome(farplane);
+        }
+
+        if(cloudbox[0])
+        {
+            SETSHADER(skybox);
+
+            if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            gle::color(vec::hexcolor(cloudboxcolour), cloudboxalpha);
+
+            matrix4 skymatrix = cammatrix, skyprojmatrix;
+            skymatrix.settranslation(0, 0, 0);
+            skymatrix.rotate_around_z((spinclouds*lastmillis/1000.0f+yawclouds)*-RAD);
+            skyprojmatrix.mul(projmatrix, skymatrix);
+            LOCALPARAM(skymatrix, skyprojmatrix);
+
+            drawenvbox(farplane/2, skyclip ? skyclip : cloudclip, topclip, yawskyfaces(renderedskyfaces, yawclouds, spinclouds), clouds);
+
+            glDisable(GL_BLEND);
+        }
+
+        if(cloudlayer[0] && cloudheight && renderedskyfaces&(cloudheight < 0 ? 0x1F : 0x2F))
+        {
+            SETSHADER(skybox);
+
+            if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+
+            glDisable(GL_CULL_FACE);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            matrix4 skymatrix = cammatrix, skyprojmatrix;
+            skymatrix.settranslation(0, 0, 0);
+            skymatrix.rotate_around_z((spincloudlayer*lastmillis/1000.0f+yawcloudlayer)*-RAD);
+            skyprojmatrix.mul(projmatrix, skymatrix);
+            LOCALPARAM(skymatrix, skyprojmatrix);
+
+            drawenvoverlay(farplane/2, cloudoverlay, cloudoffsetx + cloudscrollx * lastmillis/1000.0f, cloudoffsety + cloudscrolly * lastmillis/1000.0f);
+
+            glDisable(GL_BLEND);
+
+            glEnable(GL_CULL_FACE);
+        }
+
+	    if(fogdomemax && fogdomeclouds)
+	    {
+            if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+            drawfogdome(farplane);
+	    }
+    }
 
     if(clampsky) glDepthRange(0, 1);
 
@@ -562,5 +713,10 @@ double skyarea = 0;
 bool limitsky()
 {
     return (explicitsky && (useskytexture || editmode)) || (sparklyfix && skyarea / (double(worldsize)*double(worldsize)*6) < 0.9);
+}
+
+bool shouldrenderskyenvmap()
+{
+    return atmo != 0;
 }
 

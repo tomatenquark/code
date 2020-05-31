@@ -84,7 +84,9 @@ struct LightMapTexture
 
 extern vector<LightMapTexture> lightmaptexs;
 
-extern bvec ambientcolor, skylightcolor;
+extern bvec ambientcolor, skylightcolor, sunlightcolor;
+extern float sunlightscale;
+extern vec sunlightdir;
 
 extern void clearlights();
 extern void initlights();

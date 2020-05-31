@@ -2613,6 +2613,13 @@ struct envmap
     int radius, size, blur;
     vec o;
     GLuint tex;
+
+    envmap() : radius(-1), size(0), blur(0), o(0, 0, 0), tex(0) {}
+
+    void clear()
+    {
+        if(tex) { glDeleteTextures(1, &tex); tex = 0; }
+    }
 };  
 
 static vector<envmap> envmaps;
@@ -2625,13 +2632,13 @@ void clearenvmaps()
         if(skyenvmap->type&Texture::TRANSIENT) cleanuptexture(skyenvmap);
         skyenvmap = NULL;
     }
-    loopv(envmaps) glDeleteTextures(1, &envmaps[i].tex);
+    loopv(envmaps) envmaps[i].clear();
     envmaps.shrink(0);
 }
 
 VAR(aaenvmap, 0, 2, 4);
 
-GLuint genenvmap(const vec &o, int envmapsize, int blur)
+GLuint genenvmap(const vec &o, int envmapsize, int blur, bool onlysky)
 {
     int rendersize = 1<<(envmapsize+aaenvmap), sizelimit = min(hwcubetexsize, min(screenw, screenh));
     if(maxtexsize) sizelimit = min(sizelimit, maxtexsize);
@@ -2663,7 +2670,7 @@ GLuint genenvmap(const vec &o, int envmapsize, int blur)
                 yaw = 270; pitch = 90; break;
         }
         glFrontFace((side.flipx==side.flipy)!=side.swapxy ? GL_CW : GL_CCW);
-        drawcubemap(rendersize, o, yaw, pitch, side);
+        drawcubemap(rendersize, o, yaw, pitch, side, onlysky);
         uchar *src = pixels, *dst = &pixels[3*rendersize*rendersize];
         glReadPixels(0, 0, rendersize, rendersize, GL_RGB, GL_UNSIGNED_BYTE, src);
         if(rendersize > texsize)
@@ -2689,8 +2696,9 @@ GLuint genenvmap(const vec &o, int envmapsize, int blur)
 void initenvmaps()
 {
     clearenvmaps();
-    extern char *skybox;
-    skyenvmap = skybox[0] ? cubemapload(skybox, true, false, true) : NULL;
+    skyenvmap = NULL;
+    if(shouldrenderskyenvmap()) envmaps.add().size = 1;
+    else if(skybox[0]) skyenvmap = cubemapload(skybox, true, false, true);
     const vector<extentity *> &ents = entities::getents();
     loopv(ents)
     {
@@ -2701,7 +2709,6 @@ void initenvmaps()
         em.size = ent.attr2 ? clamp(int(ent.attr2), 4, 9) : 0;
         em.blur = ent.attr3 ? clamp(int(ent.attr3), 1, 2) : 0; 
         em.o = ent.o;
-        em.tex = 0;
     }
 }
 
@@ -2713,7 +2720,7 @@ void genenvmaps()
     loopv(envmaps)
     {
         envmap &em = envmaps[i];
-        em.tex = genenvmap(em.o, em.size ? min(em.size, envmapsize) : envmapsize, em.blur);
+        em.tex = genenvmap(em.o, em.size ? min(em.size, envmapsize) : envmapsize, em.blur, em.radius < 0);
         if(renderedframe) continue;
         int millis = SDL_GetTicks();
         if(millis - lastprogress >= 250)
@@ -2761,10 +2768,15 @@ ushort closestenvmap(int orient, const ivec &co, int size)
     return closestenvmap(loc);
 }
 
+static inline GLuint lookupskyenvmap()
+{
+    return envmaps.length() && envmaps[0].radius < 0 ? envmaps[0].tex : (skyenvmap ? skyenvmap->id : 0);
+}
+
 GLuint lookupenvmap(Slot &slot)
 {
     loopv(slot.sts) if(slot.sts[i].type==TEX_ENVMAP && slot.sts[i].t) return slot.sts[i].t->id;
-    return skyenvmap ? skyenvmap->id : 0;
+    return lookupskyenvmap();
 }
 
 GLuint lookupenvmap(ushort emid)
@@ -2772,7 +2784,7 @@ GLuint lookupenvmap(ushort emid)
     if(emid==EMID_SKY || emid==EMID_CUSTOM) return skyenvmap ? skyenvmap->id : 0;
     if(emid==EMID_NONE || !envmaps.inrange(emid-EMID_RESERVED)) return 0;
     GLuint tex = envmaps[emid-EMID_RESERVED].tex;
-    return tex ? tex : (skyenvmap ? skyenvmap->id : 0);
+    return tex ? tex : lookupskyenvmap();
 }
 
 void cleanuptexture(Texture *t)
