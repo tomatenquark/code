@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
-project(sauerbraten CXX)
+project(tomatenquark CXX)
 
 # Define Release by default.
 if(NOT CMAKE_BUILD_TYPE)
@@ -22,7 +22,6 @@ endif()
 if(NOT MSVC)
    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-       set(BUILD_CXX_FLAGS "${BUILD_CXX_FLAGS} -fno-common")
    endif()
 
    set(BUILD_C_FLAGS "${BUILD_C_FLAGS} -fomit-frame-pointer -Wall -fsigned-char")
@@ -94,25 +93,27 @@ include_directories(src/shared src/engine src/fpsgame)
 if(WIN32)
     set(GOSAUR_APPLICATION_TYPE "WIN32")
     set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/vcpp/sauerbraten.rc")
-else()
+elseif(APPLE)
     set(GOSAUR_APPLICATION_TYPE "")
     set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/xcode/main.m")
+else()
+    set(GOSAUR_APPLICATION_TYPE "")
+    set(GOSAUR_ADDITIONAL_SOURCE_FILES "")
 endif()
 
 
-add_executable(sauer_master
+add_executable(tomaten_master
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
         src/engine/command.cpp
         src/engine/master.cpp
-        ${GOSAUR_ADDITIONAL_SOURCE_FILES}
 )
 
-target_compile_definitions(sauer_master PUBLIC STANDALONE)
+target_compile_definitions(tomaten_master PUBLIC STANDALONE)
 
 
-add_executable(sauer_server ${GOSAUR_APPLICATION_TYPE}
+add_executable(tomaten_server ${GOSAUR_APPLICATION_TYPE}
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -121,10 +122,9 @@ add_executable(sauer_server ${GOSAUR_APPLICATION_TYPE}
         src/engine/worldio.cpp
         src/fpsgame/entities.cpp
         src/fpsgame/server.cpp
-        ${GOSAUR_ADDITIONAL_SOURCE_FILES}
 )
 
-target_compile_definitions(sauer_server PUBLIC STANDALONE)
+target_compile_definitions(tomaten_server PUBLIC STANDALONE)
 
 
 add_executable(${CMAKE_PROJECT_NAME} ${GOSAUR_APPLICATION_TYPE}
@@ -191,7 +191,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOSAUR_APPLICATION_TYPE}
         ${GOSAUR_ADDITIONAL_SOURCE_FILES}
 )
 
-target_include_directories(sauerbraten PUBLIC "src/assetbundler")
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 # enet.lib;zdll.lib;opengl32.lib;SDL2.lib;SDL2_image.lib;ws2_32.lib;SDL2_mixer.lib;winmm.lib;dbghelp.lib;kernel32.lib;user32.lib
@@ -201,16 +201,17 @@ if(WIN32)
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "opengl32" "ws2_32" "dbghelp" "winmm" "kernel32" "user32")
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER "ws2_32" "winmm")
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER "ws2_32" "winmm")
-else()
+elseif(APPLE)
     enable_language(OBJC)
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
-    #list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL")
+else()
+    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL")
     # Server doesn't need more libs linked on UNIX
 endif()
 
 target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
-target_link_libraries(sauer_server ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
-target_link_libraries(sauer_master ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
+target_link_libraries(tomaten_server ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
+target_link_libraries(tomaten_master ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
 
@@ -225,5 +226,4 @@ if(WIN32)
     endif()
 endif()
 
-install(TARGETS ${CMAKE_PROJECT_NAME} sauer_server sauer_master RUNTIME DESTINATION ${GOSAUR_TARGET_DIR})
-
+install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server tomaten_master RUNTIME DESTINATION ${GOSAUR_TARGET_DIR})
