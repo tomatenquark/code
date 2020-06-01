@@ -68,7 +68,7 @@ include(cmake/FindENet.cmake)
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
-list(APPEND GOSAUR_LINKING_LIBRARIES_BASE "ZLIB::ZLIB" "${ENET_LIBRARY}")
+list(APPEND GOTQ_LINKING_LIBRARIES_BASE "ZLIB::ZLIB" "${ENET_LIBRARY}")
 
 find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
@@ -76,13 +76,13 @@ find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
 
 if(CURL_FOUND)
-    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
 endif()
 
 if(SDL2_FOUND)
-    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
-    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image")
-    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image")
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
 endif()
 
 ################ Files ################
@@ -90,14 +90,14 @@ endif()
 include_directories(src/shared src/engine src/fpsgame)
 
 if(WIN32)
-    set(GOSAUR_APPLICATION_TYPE "WIN32")
-    set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/vcpp/tomatenquarkrc.rc")
+    set(GOTQ_APPLICATION_TYPE "WIN32")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "src/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
-    set(GOSAUR_APPLICATION_TYPE "")
-    set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/xcode/main.m" "src/xcode/Launcher.m")
+    set(GOTQ_APPLICATION_TYPE "")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "src/xcode/main.m" "src/xcode/Launcher.m")
 else()
-    set(GOSAUR_APPLICATION_TYPE "")
-    set(GOSAUR_ADDITIONAL_SOURCE_FILES "")
+    set(GOTQ_APPLICATION_TYPE "")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "")
 endif()
 
 
@@ -112,7 +112,7 @@ add_executable(tomaten_master
 target_compile_definitions(tomaten_master PUBLIC STANDALONE)
 
 
-add_executable(tomaten_server ${GOSAUR_APPLICATION_TYPE}
+add_executable(tomaten_server ${GOTQ_APPLICATION_TYPE}
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -126,7 +126,7 @@ add_executable(tomaten_server ${GOSAUR_APPLICATION_TYPE}
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
 
 
-add_executable(${CMAKE_PROJECT_NAME} ${GOSAUR_APPLICATION_TYPE}
+add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_TYPE}
         src/shared/crypto.cpp
         src/shared/cube2font.c
         src/shared/geom.cpp
@@ -187,7 +187,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOSAUR_APPLICATION_TYPE}
         src/fpsgame/waypoint.cpp
         src/fpsgame/weapon.cpp
         src/assetbundler/assetbundler.cpp
-        ${GOSAUR_ADDITIONAL_SOURCE_FILES}
+        ${GOTQ_ADDITIONAL_SOURCE_FILES}
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
@@ -197,35 +197,34 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 # curl;enet;SDL2_image;sdl2_mixer;SDL2;SDL2main;jpeg;png16;mpg123;mad;vorbisfile;vorbisenc;vorbis;z;iconv;ogg
 
 if(WIN32)
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "opengl32" "ws2_32" "dbghelp" "winmm" "kernel32" "user32")
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER "ws2_32" "winmm")
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER "ws2_32" "winmm")
+    list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "opengl32" "ws2_32" "dbghelp" "winmm" "kernel32" "user32")
+    list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_SERVER "ws2_32" "winmm")
+    list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_MASTER "ws2_32" "winmm")
 elseif(APPLE)
     enable_language(OBJC)
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
+    list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
 else()
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
+    list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "stdc++fs")
+        list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "stdc++fs")
     endif()
     # Server doesn't need more libs linked on UNIX
 endif()
 
 
-message(STATUS ${GOSAUR_LINKING_LIBRARIES_CLIENT})
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_LIBRARIES_CLIENT} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
-target_link_libraries(tomaten_server PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
-target_link_libraries(tomaten_master PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GOTQ_LINKING_LIBRARIES_BASE} ${GOTQ_LINKING_LIBRARIES_CLIENT} ${GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT})
+target_link_libraries(tomaten_server PRIVATE ${GOTQ_LINKING_LIBRARIES_BASE} ${GOTQ_LINKING_PLATFORM_SPECIFIC_SERVER})
+target_link_libraries(tomaten_master PRIVATE ${GOTQ_LINKING_LIBRARIES_BASE} ${GOTQ_LINKING_PLATFORM_SPECIFIC_MASTER})
 
 ################ Install targets ################
-set(GOSAUR_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin_unix")
+set(GOTQ_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin_unix")
 
 if(WIN32)
     if(BUILD_TARGET_X86)
-        set(GOSAUR_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin")
+        set(GOTQ_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin")
     else()
-        set(GOSAUR_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin64")
+        set(GOTQ_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin64")
     endif()
 endif()
 
-install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server tomaten_master RUNTIME DESTINATION ${GOSAUR_TARGET_DIR})
+install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server tomaten_master RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
