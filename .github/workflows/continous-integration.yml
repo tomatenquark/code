@@ -35,7 +35,7 @@ jobs:
         uses: lukka/run-vcpkg@v3
         with:
           # Response file stored in source control, it provides the list of ports and triplet(s).
-          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgArguments: '${{ env.vcpkgResponseFile }}'
           # Location of the vcpkg as submodule of the repository.
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
