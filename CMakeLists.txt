@@ -68,6 +68,12 @@ include(cmake/FindENet.cmake)
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
+find_package(CURL CONFIG REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+
+find_package(sdl2-image CONFIG REQUIRED)
+find_package(sdl2-mixer CONFIG REQUIRED)
+
 ################ Files ################
 
 include_directories(src/shared src/engine src/fpsgame)
@@ -192,12 +198,21 @@ else()
 endif()
 
 
-target_link_libraries(${CMAKE_PROJECT_NAME} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} CURL::libcurl SDL2::SDL2-static SDL2::SDL2_image SDL2::SDL2_mixer ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${ENET_LIBRARY})
+#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE CURL::libcurl)
+#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2-static)
+#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_image)
+#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_mixer)
+#target_link_libraries(${CMAKE_PROJECT_NAME} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+
 target_link_libraries(tomaten_server PRIVATE ZLIB::ZLIB)
 target_link_libraries(tomaten_server PRIVATE ${ENET_LIBRARY})
+target_link_libraries(tomaten_server ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
+
 target_link_libraries(tomaten_master PRIVATE ZLIB::ZLIB)
 target_link_libraries(tomaten_master PRIVATE ${ENET_LIBRARY})
-target_link_libraries(tomaten_server ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
 target_link_libraries(tomaten_master ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
