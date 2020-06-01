@@ -75,6 +75,16 @@ find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
 
+if(CURL_FOUND)
+    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
+endif()
+
+if(SDL2_FOUND)
+    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
+    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image")
+    list(APPEND GOSAUR_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
+endif()
+
 ################ Files ################
 
 include_directories(src/shared src/engine src/fpsgame)
@@ -201,7 +211,9 @@ else()
     # Server doesn't need more libs linked on UNIX
 endif()
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} CURL::libcurl SDL2::SDL2-static SDL2::SDL2_image SDL2::SDL2_mixer ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+
+message(STATUS ${GOSAUR_LINKING_LIBRARIES_CLIENT})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_LIBRARIES_CLIENT} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
 target_link_libraries(tomaten_server PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
 target_link_libraries(tomaten_master PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 
