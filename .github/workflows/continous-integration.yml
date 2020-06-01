@@ -12,7 +12,7 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-osx
+          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-osx
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
         run: |
@@ -30,7 +30,7 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-windows
+          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-windows
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
       - name: Setup MSBuild
@@ -53,7 +53,7 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-linux
+          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-linux
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
       - name: Build for Ubuntu
