@@ -426,7 +426,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
     LOCALPARAM(sundir, sunlightdir);
 
     vec sundiskparams;
-    sundiskparams.y = -(1 - 0.015f * atmosundisksize);
+    sundiskparams.y = -(1 - 0.01f * atmosundisksize);
     sundiskparams.x = 1/(1 + sundiskparams.y);
     sundiskparams.y *= sundiskparams.x;
     sundiskparams.z = atmosundiskbright;
