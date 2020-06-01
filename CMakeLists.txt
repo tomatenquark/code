@@ -61,30 +61,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BUILD_CXX_RELEASE_FLAG
 message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: ${CMAKE_BUILD_TYPE}, compiler: ${CMAKE_CXX_COMPILER_ID})")
 
 
+############### Dependencies ##########
 
-# --- Conan --- #
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
-                 "${CMAKE_BINARY_DIR}/conan.cmake")
-endif()
+include(cmake/FindENet.cmake)
 
-# Include Conan CMake wrapper
-include(${CMAKE_BINARY_DIR}/conan.cmake)
-
-# Make sure we have a recent Conan version
-conan_check(VERSION 1.21.0 REQUIRED)
-
-# Install Bincrafters Conan repository if not already installed
-conan_add_remote(NAME bincrafters INDEX 1
-        URL https://api.bintray.com/conan/bincrafters/public-conan)
-
-# Execute `conan install ...` for the packages in conanfile.txt
-conan_cmake_run(CONANFILE conanfile.txt
-        BASIC_SETUP # CMAKE_TARGETS
-        BUILD outdated
-        UPDATE
-        )
+find_package(ZLIB REQUIRED)
+find_package(ENet)
 
 ################ Files ################
 
@@ -195,7 +177,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 # enet.lib;zdll.lib;opengl32.lib;SDL2.lib;SDL2_image.lib;ws2_32.lib;SDL2_mixer.lib;winmm.lib;dbghelp.lib;kernel32.lib;user32.lib
-
+# curl;enet;SDL2_image;sdl2_mixer;SDL2;SDL2main;jpeg;png16;mpg123;mad;vorbisfile;vorbisenc;vorbis;z;iconv;ogg
 
 if(WIN32)
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "opengl32" "ws2_32" "dbghelp" "winmm" "kernel32" "user32")
@@ -209,9 +191,14 @@ else()
     # Server doesn't need more libs linked on UNIX
 endif()
 
-target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
-target_link_libraries(tomaten_server ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
-target_link_libraries(tomaten_master ${CONAN_LIBS} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
+
+target_link_libraries(${CMAKE_PROJECT_NAME} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+target_link_libraries(tomaten_server PRIVATE ZLIB::ZLIB)
+target_link_libraries(tomaten_server PRIVATE ${ENET_LIBRARY})
+target_link_libraries(tomaten_master PRIVATE ZLIB::ZLIB)
+target_link_libraries(tomaten_master PRIVATE ${ENET_LIBRARY})
+target_link_libraries(tomaten_server ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
+target_link_libraries(tomaten_master ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
 
