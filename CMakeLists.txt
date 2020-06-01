@@ -191,8 +191,11 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_TYPE}
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
-# enet.lib;zdll.lib;opengl32.lib;SDL2.lib;SDL2_image.lib;ws2_32.lib;SDL2_mixer.lib;winmm.lib;dbghelp.lib;kernel32.lib;user32.lib
-# curl;enet;SDL2_image;sdl2_mixer;SDL2;SDL2main;jpeg;png16;mpg123;mad;vorbisfile;vorbisenc;vorbis;z;iconv;ogg
+if(APPLE)
+    set(MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
+endif()
+
+############## Linking ###
 
 if(WIN32)
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "opengl32" "ws2_32" "dbghelp" "winmm" "kernel32" "user32")
