@@ -15,6 +15,7 @@ jobs:
           vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-osx
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+      - name: Build for OSX
         run: |
           mkdir build
           cd build
