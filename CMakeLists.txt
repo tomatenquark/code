@@ -89,7 +89,7 @@ include_directories(src/shared src/engine src/fpsgame)
 
 if(WIN32)
     set(GOTQ_APPLICATION_TYPE "WIN32")
-    set(GOTQ_ADDITIONAL_SOURCE_FILES "src/vcpp/tomatenquarkrc.rc")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
     set(GOTQ_APPLICATION_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "src/xcode/main.m" "src/xcode/Launcher.m")
