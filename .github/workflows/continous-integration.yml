@@ -34,11 +34,9 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          # Response file stored in source control, it provides the list of ports and triplet(s).
-          vcpkgArguments: '${{ env.vcpkgResponseFile }}'
-          # Location of the vcpkg as submodule of the repository.
+          vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-linux
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
-          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+          appendedCacheKey: afc18d71004a507de5de303f163a1f83f001e03a
       - name: Build for Ubuntu
         run: mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake && make
