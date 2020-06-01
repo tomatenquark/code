@@ -63,6 +63,7 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 
 ############### Dependencies ##########
 
+include(cmake/FindENet.cmake)
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
