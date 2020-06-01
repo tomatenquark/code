@@ -193,7 +193,10 @@ elseif(APPLE)
     enable_language(OBJC)
     list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
 else()
-    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL")
+    list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        list(APPEND GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT "stdc++fs")
+    endif()
     # Server doesn't need more libs linked on UNIX
 endif()
 
