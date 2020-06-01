@@ -493,7 +493,6 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
         gle::attribf( w,  w, w);
     }
 
-    gle::end();
     xtraverts += gle::end();
 }
 
