@@ -24,6 +24,8 @@ jobs:
         run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
+    env:
+      vcpkgResponseFile: cmake/triplets/linux-ci
     steps:
       - uses: actions/checkout@v2
         with:
@@ -33,11 +35,10 @@ jobs:
         uses: lukka/run-vcpkg@v3
         with:
           # Response file stored in source control, it provides the list of ports and triplet(s).
-          vcpkgArguments: 'zlib enet curl sdl2 sdl2-image sdl2-mixer'
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           # Location of the vcpkg as submodule of the repository.
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
-          # Since the cache must be invalidated when content of the response file changes, let's
-          # compute its hash and append this to the computed cache's key.
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for Ubuntu
         run: mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake && make
