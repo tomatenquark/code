@@ -92,13 +92,12 @@ if(WIN32)
     set(GOTQ_APPLICATION_TYPE "WIN32")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
-    set(GOTQ_APPLICATION_TYPE "")
+    set(GOTQ_APPLICATION_TYPE "MACOSX_BUNDLE")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/xcode/main.m" "cmake/xcode/Launcher.m")
 else()
     set(GOTQ_APPLICATION_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "")
 endif()
-
 
 add_executable(tomaten_master
         src/shared/crypto.cpp
@@ -110,8 +109,7 @@ add_executable(tomaten_master
 
 target_compile_definitions(tomaten_master PUBLIC STANDALONE)
 
-
-add_executable(tomaten_server ${GOTQ_APPLICATION_TYPE}
+add_executable(tomaten_server
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -123,7 +121,6 @@ add_executable(tomaten_server ${GOTQ_APPLICATION_TYPE}
 )
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
-
 
 add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_TYPE}
         src/shared/crypto.cpp
@@ -193,7 +190,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 if(APPLE)
-    set(MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
+    set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
 endif()
 
 ############## Linking ###
