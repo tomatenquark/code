@@ -68,11 +68,12 @@ include(cmake/FindENet.cmake)
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
-find_package(CURL CONFIG REQUIRED)
-find_package(SDL2 CONFIG REQUIRED)
+list(APPEND GOSAUR_LINKING_LIBRARIES_BASE "ZLIB::ZLIB" "${ENET_LIBRARY}")
 
-find_package(sdl2-image CONFIG REQUIRED)
-find_package(sdl2-mixer CONFIG REQUIRED)
+find_package(CURL CONFIG)
+find_package(SDL2 CONFIG)
+find_package(sdl2-image CONFIG)
+find_package(sdl2-mixer CONFIG)
 
 ################ Files ################
 
@@ -200,14 +201,9 @@ else()
     # Server doesn't need more libs linked on UNIX
 endif()
 
-
-
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} CURL::libcurl SDL2::SDL2-static SDL2::SDL2_image SDL2::SDL2_mixer ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
-target_link_libraries(tomaten_server PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
-target_link_libraries(tomaten_master PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
-
-# target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
-# target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} CURL::libcurl SDL2::SDL2-static SDL2::SDL2_image SDL2::SDL2_mixer ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+target_link_libraries(tomaten_server PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
+target_link_libraries(tomaten_master PRIVATE ${GOSAUR_LINKING_LIBRARIES_BASE} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 
 ################ Install targets ################
 set(GOSAUR_TARGET_DIR "${PROJECT_SOURCE_DIR}/bin_unix")
