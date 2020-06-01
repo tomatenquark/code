@@ -28,10 +28,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - name: Install C and C++ header files
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev libcurl4-openssl-dev
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          # Response file stored in source control, it provides the list of ports and triplet(s).
+          vcpkgArguments: 'zlib enet curl sdl2 sdl2-image sdl2-mixer'
+          # Location of the vcpkg as submodule of the repository.
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          # Since the cache must be invalidated when content of the response file changes, let's
+          # compute its hash and append this to the computed cache's key.
       - name: Build for Ubuntu
-        working-directory: ./src
-        run: make
+        run: mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake && make
