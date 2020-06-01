@@ -17,11 +17,24 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-windows
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows
-        working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 tomatenquark.sln
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          msbuild /property:Platform=x64 tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
     env:
@@ -37,6 +50,9 @@ jobs:
           vcpkgArguments: zlib enet sdl2 sdl2-image sdl2-mixer --triplet x64-linux
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
-          appendedCacheKey: afc18d71004a507de5de303f163a1f83f001e03a
       - name: Build for Ubuntu
-        run: mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake && make
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          make
