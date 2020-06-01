@@ -4,6 +4,8 @@ on: [push]
 jobs:
   build-macos:
     runs-on: macos-latest
+    env:
+      vcpkgResponseFile: ../cmake/triplets/osx-ci
     steps:
       - uses: actions/checkout@v2
         with:
@@ -12,9 +14,10 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-osx
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
         run: |
           mkdir build
@@ -23,6 +26,8 @@ jobs:
           xcodebuild clean -arch x86_64 build
   build-windows:
     runs-on: windows-latest
+    env:
+      vcpkgResponseFile: ../cmake/triplets/windows-ci
     steps:
       - uses: actions/checkout@v2
         with:
@@ -31,9 +36,10 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-windows
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows
@@ -45,7 +51,7 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     env:
-      vcpkgResponseFile: cmake/triplets/linux-ci
+      vcpkgResponseFile: ../cmake/triplets/linux-ci
     steps:
       - uses: actions/checkout@v2
         with:
@@ -54,9 +60,10 @@ jobs:
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
-          vcpkgArguments: zlib enet curl sdl2 sdl2-image sdl2-mixer --triplet x64-linux
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for Ubuntu
         run: |
           mkdir build
