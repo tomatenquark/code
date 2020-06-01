@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G XCode
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
           xcodebuild clean -arch x86_64 build
   build-windows:
     runs-on: windows-latest
@@ -46,7 +46,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
           msbuild /property:Platform=x64 tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
