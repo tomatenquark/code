@@ -80,7 +80,7 @@ include_directories(src/shared src/engine src/fpsgame)
 
 if(WIN32)
     set(GOSAUR_APPLICATION_TYPE "WIN32")
-    set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/vcpp/sauerbraten.rc")
+    set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
     set(GOSAUR_APPLICATION_TYPE "")
     set(GOSAUR_ADDITIONAL_SOURCE_FILES "src/xcode/main.m" "src/xcode/Launcher.m")
@@ -203,20 +203,9 @@ endif()
 
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} CURL::libcurl SDL2::SDL2-static SDL2::SDL2_image SDL2::SDL2_mixer ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${ENET_LIBRARY})
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE CURL::libcurl)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2-static)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_image)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_mixer)
-#target_link_libraries(${CMAKE_PROJECT_NAME} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_CLIENT})
+target_link_libraries(tomaten_server PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
+target_link_libraries(tomaten_master PRIVATE ZLIB::ZLIB ${ENET_LIBRARY} ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 
-target_link_libraries(tomaten_server PRIVATE ZLIB::ZLIB)
-target_link_libraries(tomaten_server PRIVATE ${ENET_LIBRARY})
-target_link_libraries(tomaten_server ${GOSAUR_LINKING_PLATFORM_SPECIFIC_SERVER})
-
-target_link_libraries(tomaten_master PRIVATE ZLIB::ZLIB)
-target_link_libraries(tomaten_master PRIVATE ${ENET_LIBRARY})
-target_link_libraries(tomaten_master ${GOSAUR_LINKING_PLATFORM_SPECIFIC_MASTER})
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${CONAN_LIBS} opengl32 ws2_32 dbghelp winmm kernel32 user32)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ENET::ENET SDL2_IMAGE::SDL2_image SDL2_MIXER::SDL2_MIXER ZLIB::ZLIB SDL2::SDL2 opengl32)
 
