@@ -63,8 +63,6 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 
 ############### Dependencies ##########
 
-include(cmake/FindENet.cmake)
-
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
@@ -81,8 +79,8 @@ endif()
 
 if(SDL2_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
-    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image")
-    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image") # SDL2_IMAGE_FOUND seems to be broken
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer") # SDL2_MIXER_FOUND seems to be broken
 endif()
 
 ################ Files ################
@@ -227,4 +225,8 @@ if(WIN32)
     endif()
 endif()
 
-install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server tomaten_master RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
+install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
+
+if(WIN32)
+    install(FILES *.dll DESTINATION ${GOTQ_TARGET_DIR})
+endif()
