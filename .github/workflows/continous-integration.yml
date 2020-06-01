@@ -64,6 +64,10 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+      - name: Install Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgl1-mesa-dev
       - name: Build for Ubuntu
         run: |
           mkdir build
