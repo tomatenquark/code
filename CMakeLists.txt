@@ -89,6 +89,9 @@ if(sdl2-mixer_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
 endif()
 
+include(cmake/FindSteam.cmake)
+find_package(Steam)
+
 ################ Files ################
 
 include_directories(src/shared src/engine src/fpsgame)
