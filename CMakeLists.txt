@@ -190,7 +190,15 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 if(APPLE)
-    set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
+    message(STATUS "${GOTQ_RESOURCES}")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
+    add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/Resources
+        $<TARGET_BUNDLE_CONTENT_DIR:${CMAKE_PROJECT_NAME}>/Resources
+    )
 endif()
 
 ############## Linking ###
