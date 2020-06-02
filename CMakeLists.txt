@@ -90,19 +90,17 @@ include_directories(src/shared src/engine src/fpsgame)
 
 if(WIN32)
     set(GOTQ_APPLICATION_CLIENT_TYPE "WIN32")
-    set(GOTQ_APPLICATION_STANDALONE_TYPE "WIN32")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
+    enable_language(OBJC)
     set(GOTQ_APPLICATION_CLIENT_TYPE "MACOSX_BUNDLE")
-    set(GOTQ_APPLICATION_STANDALONE_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/xcode/main.m" "cmake/xcode/Launcher.m")
 else()
     set(GOTQ_APPLICATION_CLIENT_TYPE "")
-    set(GOTQ_APPLICATION_STANDALONE_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "")
 endif()
 
-add_executable(tomaten_master ${GOTQ_APPLICATION_STANDALONE_TYPE}
+add_executable(tomaten_master
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -112,7 +110,7 @@ add_executable(tomaten_master ${GOTQ_APPLICATION_STANDALONE_TYPE}
 
 target_compile_definitions(tomaten_master PUBLIC STANDALONE)
 
-add_executable(tomaten_server ${GOTQ_APPLICATION_STANDALONE_TYPE}
+add_executable(tomaten_server
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -193,9 +191,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 if(APPLE)
-    message(STATUS "${GOTQ_RESOURCES}")
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist")
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xcode/tomatenquark.plist"
+    )
     add_custom_command(
         TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -211,7 +209,6 @@ if(WIN32)
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_SERVER "ws2_32" "winmm")
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_MASTER "ws2_32" "winmm")
 elseif(APPLE)
-    enable_language(OBJC)
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "-framework AudioUnit" "-framework OpenGL")
 else()
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
@@ -246,7 +243,7 @@ endif()
 
 if(WIN32)
     install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
-    install(FILES *.dll DESTINATION ${GOTQ_TARGET_DIR})
+    #install(FILES $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/*.dll DESTINATION ${GOTQ_TARGET_DIR})
 elseif(UNIX AND NOT APPLE)
     install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION ${GOTQ_TARGET_DIR} RENAME ${GOTQ_TARGET_UNIX_EXECUTABLE})
 endif()

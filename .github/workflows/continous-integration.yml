@@ -47,7 +47,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake
-          msbuild /property:Platform=x64 tomatenquark.sln
+          msbuild /property:Platform=x64 /t:tomatenquark tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
     env:
