@@ -1,6 +1,10 @@
 name: Continous integration for Tomatenquark
 on: [push]
 
+env:
+  GITCOMMITID: defb42686745b37708ded00e5b6405d73256e35f
+  GITURL: https://github.com/Fohlen/vcpkg.git
+
 jobs:
   build-macos:
     runs-on: macos-latest
@@ -16,7 +20,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ GITCOMMITID }}
+          vcpkgGitURL: ${{ GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
         run: |
@@ -38,7 +43,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ GITCOMMITID }}
+          vcpkgGitURL: ${{ GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
@@ -62,7 +68,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ GITCOMMITID }}
+          vcpkgGitURL: ${{ GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Install Ubuntu dependencies
         run: |
