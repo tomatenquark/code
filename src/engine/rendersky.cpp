@@ -468,7 +468,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
             vec spoke;
             spoke.orthogonal(sunlightdir);
             spoke.rescale(SQRT2*radius);
-            loopi(4) gle::attrib(vec(spoke).rotate(-2*M_PI*i/4.0f, sunlightdir).add(sunlightdir).mul(w));
+            for(int i = 0; i < int(4); ++i) gle::attrib(vec(spoke).rotate(-2*M_PI*i/4.0f, sunlightdir).add(sunlightdir).mul(w));
             xtraverts += gle::end();
         }
         return;
