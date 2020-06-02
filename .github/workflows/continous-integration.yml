@@ -5,7 +5,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     env:
-      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx-ci'
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,7 +27,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/windows-ci'
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/windows64'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -51,7 +51,7 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     env:
-      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/linux-ci'
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/linux64'
     steps:
       - uses: actions/checkout@v2
         with:

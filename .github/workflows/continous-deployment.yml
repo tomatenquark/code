@@ -8,7 +8,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     env:
-      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx-cd'
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,18 +36,46 @@ jobs:
           path: ./build/Release/tomatenquark_macos.zip
   build-windows:
     runs-on: windows-latest
+    env:
+      vcpkgResponseFile32: '${{ github.workspace }}/cmake/triplets/windows32'
+      vcpkgResponseFile64: '${{ github.workspace }}/cmake/triplets/windows64'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg 32 bit
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile32 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile32) }}
+      - name: Restore from cache and run vcpkg 64
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows 32
-        working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=Win32 /p:Configuration=Release tomatenquark.sln
-      - name: Build for Windows
-        working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 /p:Configuration=Release tomatenquark.sln
+        run: |
+          mkdir build32
+          cd build32
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -A Win32
+          msbuild /property:Platform=Win32 /t:tomatenquark /p:Configuration=Release tomatenquark.sln
+      - name: Build for Windows 64
+        run: |
+          mkdir build64
+          cd build64
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -A x64
+          msbuild /property:Platform=x64 /t:tomatenquark /p:Configuration=Release tomatenquark.sln
+      - name: Copy DLL files
+        run: |
+          cp build32/Release/* bin
+          cp build64/Release/* bin64
       - name: Archive Windows binaries
         run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat, .\server.bat, .\server-init.cfg -DestinationPath tomatenquark_windows.zip
       - uses: actions/upload-artifact@v1
