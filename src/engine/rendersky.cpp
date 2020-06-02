@@ -402,6 +402,7 @@ FVARR(atmohaze, 0, 0.1f, 1);
 bvec atmohazefadecolor(0xAE, 0xAC, 0xA9);
 HVARFR(atmohazefade, 0, 0xAEACA9, 0xFFFFFF,
 {
+    if(!atmohazefade) atmohazefade = 0xAEACA9;
     if(atmohazefade <= 255) atmohazefade |= (atmohazefade<<8) | (atmohazefade<<16);
     atmohazefadecolor = bvec((atmohazefade>>16)&0xFF, (atmohazefade>>8)&0xFF, atmohazefade&0xFF);
 });
