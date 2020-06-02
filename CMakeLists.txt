@@ -89,17 +89,20 @@ endif()
 include_directories(src/shared src/engine src/fpsgame)
 
 if(WIN32)
-    set(GOTQ_APPLICATION_TYPE "WIN32")
+    set(GOTQ_APPLICATION_CLIENT_TYPE "WIN32")
+    set(GOTQ_APPLICATION_STANDALONE_TYPE "WIN32")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/vcpp/tomatenquarkrc.rc")
 elseif(APPLE)
-    set(GOTQ_APPLICATION_TYPE "MACOSX_BUNDLE")
+    set(GOTQ_APPLICATION_CLIENT_TYPE "MACOSX_BUNDLE")
+    set(GOTQ_APPLICATION_STANDALONE_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "cmake/xcode/main.m" "cmake/xcode/Launcher.m")
 else()
-    set(GOTQ_APPLICATION_TYPE "")
+    set(GOTQ_APPLICATION_CLIENT_TYPE "")
+    set(GOTQ_APPLICATION_STANDALONE_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "")
 endif()
 
-add_executable(tomaten_master
+add_executable(tomaten_master ${GOTQ_APPLICATION_STANDALONE_TYPE}
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -109,7 +112,7 @@ add_executable(tomaten_master
 
 target_compile_definitions(tomaten_master PUBLIC STANDALONE)
 
-add_executable(tomaten_server
+add_executable(tomaten_server ${GOTQ_APPLICATION_STANDALONE_TYPE}
         src/shared/crypto.cpp
         src/shared/stream.cpp
         src/shared/tools.cpp
@@ -122,7 +125,7 @@ add_executable(tomaten_server
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
 
-add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_TYPE}
+add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_CLIENT_TYPE}
         src/shared/crypto.cpp
         src/shared/cube2font.c
         src/shared/geom.cpp
