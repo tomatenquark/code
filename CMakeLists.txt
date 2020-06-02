@@ -7,7 +7,6 @@ if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Build type not specified: Use Release by default.")
 endif()
 
-
 ################# Flags ################
 
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -122,6 +121,10 @@ add_executable(tomaten_server
 )
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
+
+if(WIN32)
+   set_target_properties(tomaten_master tomaten_server PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endif()
 
 add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_CLIENT_TYPE}
         src/shared/crypto.cpp
@@ -242,8 +245,7 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 if(WIN32)
-    install(TARGETS ${CMAKE_PROJECT_NAME} tomaten_server RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
-    #install(FILES $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/*.dll DESTINATION ${GOTQ_TARGET_DIR})
+    install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION ${GOTQ_TARGET_DIR})
 elseif(UNIX AND NOT APPLE)
     install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION ${GOTQ_TARGET_DIR} RENAME ${GOTQ_TARGET_UNIX_EXECUTABLE})
 endif()
