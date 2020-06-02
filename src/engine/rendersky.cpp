@@ -411,7 +411,7 @@ FVARR(atmoclarity, 0, 1, 10);
 FVARR(atmodensity, 1e-3f, 1, 1e3f);
 FVARR(atmoalpha, 0, 1, 1);
 
-static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
+static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int faces = 0x3F)
 {
     if(z1clip >= z2clip) return;
 
@@ -437,7 +437,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
     float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight;
     LOCALPARAMF(atmoradius, planetradius, atmoradius*atmoradius, atmoradius*atmoradius - planetradius*planetradius);
 
-    LOCALPARAMF(sampleoffset, max(0.15 + 0.75 * sunlightdir.z, 0.0));
+    LOCALPARAMF(sampleoffset, max(0.15f + 0.75f * sunlightdir.z, 0.0f));
 
     float gm = (1 - atmohaze)*0.2f + 0.75f;
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
@@ -457,30 +457,58 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
     float z1 = 2*w*(z1clip-0.5f), z2 = ceil(2*w*(z2clip-0.5f));
 
     gle::defvertex();
+
+    if(glaring)
+    {
+        float cutoff = sundiskparams.x/sundiskparams.y;
+        float radius = sqrt(cutoff*cutoff - 1);
+        if(sunlightdir.z*w + radius > z1 && sunlightdir.z*w - radius < z2)
+        {
+            gle::begin(GL_TRIANGLE_FAN);
+            vec spoke;
+            spoke.orthogonal(sunlightdir);
+            spoke.rescale(SQRT2*radius);
+            loopi(4) gle::attrib(vec(spoke).rotate(-2*M_PI*i/4.0f, sunlightdir).add(sunlightdir).mul(w));
+            xtraverts += gle::end();
+        }
+        return;
+    }
+
     gle::begin(GL_QUADS);
 
-    gle::attribf(-w, -w, z1);
-    gle::attribf(-w,  w, z1);
-    gle::attribf(-w,  w, z2);
-    gle::attribf(-w, -w, z2);
+    if(faces&0x01)
+    {
+        gle::attribf(-w, -w, z1);
+        gle::attribf(-w,  w, z1);
+        gle::attribf(-w,  w, z2);
+        gle::attribf(-w, -w, z2);
+    }
 
-    gle::attribf(w, -w, z2);
-    gle::attribf(w,  w, z2);
-    gle::attribf(w,  w, z1);
-    gle::attribf(w, -w, z1);
+    if(faces&0x02)
+    {
+        gle::attribf(w, -w, z2);
+        gle::attribf(w,  w, z2);
+        gle::attribf(w,  w, z1);
+        gle::attribf(w, -w, z1);
+    }
 
-    gle::attribf(-w, -w, z2);
-    gle::attribf( w, -w, z2);
-    gle::attribf( w, -w, z1);
-    gle::attribf(-w, -w, z1);
+    if(faces&0x04)
+    {
+        gle::attribf(-w, -w, z2);
+        gle::attribf( w, -w, z2);
+        gle::attribf( w, -w, z1);
+        gle::attribf(-w, -w, z1);
+    }
 
+    if(faces&0x08)
+    {
+        gle::attribf( w, w, z2);
+        gle::attribf(-w, w, z2);
+        gle::attribf(-w, w, z1);
+        gle::attribf( w, w, z1);
+    }
 
-    gle::attribf( w, w, z2);
-    gle::attribf(-w, w, z2);
-    gle::attribf(-w, w, z1);
-    gle::attribf( w, w, z1);
-
-    if(z1clip <= 0)
+    if(z1clip <= 0 && faces&0x10)
     {
         gle::attribf(-w, -w, -w);
         gle::attribf( w, -w, -w);
@@ -488,7 +516,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
         gle::attribf(-w,  w, -w);
     }
 
-    if(z2clip >= 1)
+    if(z2clip >= 1 && faces&0x20)
     {
         gle::attribf( w, -w, w);
         gle::attribf(-w, -w, w);
@@ -628,7 +656,7 @@ void drawskybox(int farplane, bool limited, bool force)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
 
-        drawatmosphere(farplane/2, skyclip, topclip);
+        drawatmosphere(farplane/2, skyclip, topclip, renderedskyfaces);
 
         if(atmoalpha < 1) glDisable(GL_BLEND);
     }
@@ -720,5 +748,10 @@ bool limitsky()
 bool shouldrenderskyenvmap()
 {
     return atmo != 0;
+}
+
+bool shouldclearskyboxglare()
+{
+    return atmo && (!skybox[0] || atmoalpha >= 1);
 }
 

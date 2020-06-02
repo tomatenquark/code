@@ -544,6 +544,7 @@ extern void setupsky();
 extern void drawskybox(int farplane, bool limited, bool force = false);
 extern bool limitsky();
 extern bool shouldrenderskyenvmap();
+extern bool shouldclearskyboxglare();
 
 // 3dgui
 extern void g3d_render();
