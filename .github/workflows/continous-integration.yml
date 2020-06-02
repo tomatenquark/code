@@ -20,8 +20,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: ${{ GITCOMMITID }}
-          vcpkgGitURL: ${{ GITURL }}
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
         run: |
@@ -43,8 +43,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: ${{ GITCOMMITID }}
-          vcpkgGitURL: ${{ GITURL }}
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
@@ -68,8 +68,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: ${{ GITCOMMITID }}
-          vcpkgGitURL: ${{ GITURL }}
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Install Ubuntu dependencies
         run: |
