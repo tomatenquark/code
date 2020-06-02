@@ -55,7 +55,7 @@ msbuild /property:Platform=x64 /t:tomatenquark tomatenquark.sln
 ```
 cd /path/to/code
 mkdir build && cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake .. -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
 xcodebuild -arch x86_64 build
 ```
 
