@@ -1,0 +1,8 @@
+zlib
+enet
+curl
+sdl2
+sdl2-image
+sdl2-mixer
+--triplet
+x86-windows

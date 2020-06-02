@@ -38,3 +38,7 @@ tomaten_client
 tomaten_server
 native_client
 native_server
+
+# Build folder
+build/
+

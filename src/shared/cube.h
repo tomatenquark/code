@@ -31,6 +31,7 @@
     #include <eh.h>
     #include <dbghelp.h>
     #include <intrin.h>
+    #include <cstdint>
   #endif
   #define ZLIB_DLL
 #endif

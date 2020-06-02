@@ -1,37 +1,83 @@
 name: Continous integration for Tomatenquark
 on: [push]
 
+env:
+  GITCOMMITID: defb42686745b37708ded00e5b6405d73256e35f
+  GITURL: https://github.com/Fohlen/vcpkg.git
+
 jobs:
   build-macos:
     runs-on: macos-latest
+    env:
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
-        working-directory: ./src/xcode
-        run: xcodebuild
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
+          xcodebuild clean -arch x86_64 build
   build-windows:
     runs-on: windows-latest
+    env:
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/windows64'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows
-        working-directory: ./src/vcpp
-        run: msbuild /p:PlatformToolset=v142 /property:Platform=x64 tomatenquark.sln
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake
+          msbuild /property:Platform=x64 /t:tomatenquark tomatenquark.sln
   build-ubuntu:
     runs-on: ubuntu-latest
+    env:
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/linux64'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - name: Install C and C++ header files
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+      - name: Install Ubuntu dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev libcurl4-openssl-dev
+          sudo apt-get install libgl1-mesa-dev
       - name: Build for Ubuntu
-        working-directory: ./src
-        run: make
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          make
