@@ -437,6 +437,8 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f)
     float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight;
     LOCALPARAMF(atmoradius, planetradius, atmoradius*atmoradius, atmoradius*atmoradius - planetradius*planetradius);
 
+    LOCALPARAMF(sampleoffset, max(0.15 + 0.75 * sunlightdir.z, 0.0));
+
     float gm = (1 - atmohaze)*0.2f + 0.75f;
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
 
