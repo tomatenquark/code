@@ -110,7 +110,7 @@ jobs:
           make
       - name: Archive Ubuntu binaries
         run: |
-          cp ./build64/tomaten_client bin_unix/linux_64_client
+          cp ./build64/tomatenquark bin_unix/linux_64_client
           cp ./build64/tomaten_server bin_unix/linux_64_server
           zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
       - uses: actions/upload-artifact@v1
