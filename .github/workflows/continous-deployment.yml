@@ -7,20 +7,33 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
+    env:
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx-cd'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
-        working-directory: ./src/xcode
-        run: xcodebuild -configuration Release -arch x86_64
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
+          xcodebuild clean -configuration Release -arch x86_64 build
       - name: Archive OSX App
         run: zip -r tomatenquark_macos.zip .
-        working-directory: ./src/xcode/build/Release
+        working-directory: build/Release
       - uses: actions/upload-artifact@v1
         with: 
           name: tomatenquark_macos
-          path: ./src/xcode/build/Release/tomatenquark_macos.zip
+          path: ./build/Release/tomatenquark_macos.zip
   build-windows:
     runs-on: windows-latest
     steps:
