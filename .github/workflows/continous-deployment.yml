@@ -84,21 +84,34 @@ jobs:
           path: ./tomatenquark_windows.zip
   build-ubuntu:
     runs-on: ubuntu-latest
+    env:
+      vcpkgResponseFile64: '${{ github.workspace }}/cmake/triplets/linux64'
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - name: Install C and C++ header files
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
+      - name: Install Ubuntu dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev libcurl4-openssl-dev
+          sudo apt-get install libgl1-mesa-dev
       - name: Build for Ubuntu
-        working-directory: ./src
-        run: make
+        run: |
+          mkdir build64
+          cd build64
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          make
       - name: Archive Ubuntu binaries
         run: |
-          cp ./src/tomaten_client bin_unix/linux_64_client
-          cp ./src/tomaten_server bin_unix/linux_64_server
+          cp ./build64/tomaten_client bin_unix/linux_64_client
+          cp ./build64/tomaten_server bin_unix/linux_64_server
           zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
       - uses: actions/upload-artifact@v1
         with: 
