@@ -410,7 +410,7 @@ bool soundsample::load(bool msg)
     if(chunk) return true;
     if(!name[0]) return false;
 
-    static const char * const exts[] = { "", ".wav", ".ogg" };
+    static const char * const exts[] = { "", ".wav", ".opus" };
     string filename;
     for(int i = 0; i < int(sizeof(exts)/sizeof(exts[0])); i++)
     {
