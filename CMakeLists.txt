@@ -72,6 +72,7 @@ find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
+find_package(Ogg CONFIG)
 
 if(CURL_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
@@ -79,8 +80,14 @@ endif()
 
 if(SDL2_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
-    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image") # SDL2_IMAGE_FOUND seems to be broken
-    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer") # SDL2_MIXER_FOUND seems to be broken
+endif()
+
+if(sdl2-image_FOUND)
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_image")
+endif()
+
+if(sdl2-mixer_FOUND)
+    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
 endif()
 
 ################ Files ################
