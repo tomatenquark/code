@@ -2,7 +2,7 @@ name: Continous integration for Tomatenquark
 on: [push]
 
 env:
-  GITCOMMITID: defb42686745b37708ded00e5b6405d73256e35f
+  GITCOMMITID: b9a5d4cd12d0a65a97500ef82a70e7fffa3608db
   GITURL: https://github.com/Fohlen/vcpkg.git
 
 jobs:
