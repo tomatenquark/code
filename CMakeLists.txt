@@ -72,6 +72,7 @@ find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
+find_package(Ogg CONFIG)
 
 if(CURL_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
