@@ -2,7 +2,7 @@ zlib
 enet
 curl
 sdl2
-sdl2-image
-sdl2-mixer
+sdl2-image[core,libjpeg-turbo]
+sdl2-mixer[core,mpg123,libvorbis]
 --triplet
 x64-windows
