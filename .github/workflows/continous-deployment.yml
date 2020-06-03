@@ -5,8 +5,7 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 env:
-  GITCOMMITID: b9a5d4cd12d0a65a97500ef82a70e7fffa3608db
-  GITURL: https://github.com/Fohlen/vcpkg.git
+  GITCOMMITID: 7027d93e776daf0107de86af64dfcbccab782140
 
 jobs:
   build-macos:
@@ -24,7 +23,6 @@ jobs:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
-          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
         run: |
@@ -55,7 +53,6 @@ jobs:
           vcpkgArguments: '@${{ env.vcpkgResponseFile32 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
-          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile32) }}
       - name: Restore from cache and run vcpkg 64
         uses: lukka/run-vcpkg@v3
@@ -63,7 +60,6 @@ jobs:
           vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
-          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
@@ -108,7 +104,6 @@ jobs:
           vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
-          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
       - name: Build for Ubuntu
         run: |
