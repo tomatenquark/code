@@ -4,6 +4,10 @@ on:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
+env:
+  GITCOMMITID: b9a5d4cd12d0a65a97500ef82a70e7fffa3608db
+  GITURL: https://github.com/Fohlen/vcpkg.git
+
 jobs:
   build-macos:
     runs-on: macos-latest
@@ -19,7 +23,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
       - name: Build for OSX
         run: |
@@ -49,14 +54,16 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile32 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile32) }}
       - name: Restore from cache and run vcpkg 64
         uses: lukka/run-vcpkg@v3
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
@@ -100,7 +107,8 @@ jobs:
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          vcpkgGitURL: ${{ env.GITURL }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
       - name: Build for Ubuntu
         run: |
