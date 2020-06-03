@@ -91,6 +91,10 @@ jobs:
         with:
           lfs: true
       - uses: lukka/get-cmake@latest
+      - name: Install Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libasound2-dev
       - name: Restore from cache and run vcpkg
         uses: lukka/run-vcpkg@v3
         with:
@@ -98,10 +102,6 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: afc18d71004a507de5de303f163a1f83f001e03a
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
-      - name: Install Ubuntu dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libgl1-mesa-dev
       - name: Build for Ubuntu
         run: |
           mkdir build64

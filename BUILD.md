@@ -14,7 +14,9 @@ You will need a recent version of [Visual Studio](https://visualstudio.microsoft
 
 ### Ubuntu
 
-In order for compilation to work you must have a version of `libgl` available. We recommend `libgl1-mesa-dev`. Go get it using `sudo apt-get install libgl1-mesa-dev`.
+In order for compilation to work you must have a version of `libgl` available. We recommend `libgl1-mesa-dev`.
+Additionally `libasound2-dev` may be needed for ALSA support.
+Go get those dependencies using `sudo apt-get install libgl1-mesa-dev libasound2-dev`.
 
 ### OSX
 
