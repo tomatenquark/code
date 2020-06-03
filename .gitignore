@@ -42,3 +42,6 @@ native_server
 # Build folder
 build/
 
+# Ban OSX files
+.DS_Store
+
