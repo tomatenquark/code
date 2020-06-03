@@ -3,6 +3,6 @@ enet
 curl
 sdl2
 sdl2-image[core,libjpeg-turbo]
-sdl2-mixer[core,mpg123,libvorbis]
+sdl2-mixer
 --triplet
 x64-osx
