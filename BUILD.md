@@ -37,8 +37,8 @@ In order to build the project follow these steps:
 Navigate to your `vcpkg` directory and install a triplet of your choosing:
 
 ```
-./vcpkg install @/path/to/code/cmake/triplets/linux64
-#.\vcpkg install @/path/to/code/cmake/triplets/windows64 # on windows
+./vcpkg install --recurse @/path/to/code/cmake/triplets/linux64
+#.\vcpkg install --recurse @/path/to/code/cmake/triplets/windows64 # on windows
 ```
 
 ### Platform-dependant compilation
