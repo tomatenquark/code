@@ -14,9 +14,15 @@ You will need a recent version of [Visual Studio](https://visualstudio.microsoft
 
 ### Ubuntu
 
-In order for compilation to work you must have a version of `libgl` available. We recommend `libgl1-mesa-dev`.
-Additionally `libasound2-dev` may be needed for ALSA support.
-Go get those dependencies using `sudo apt-get install libgl1-mesa-dev libasound2-dev`.
+In order for compilation to work you must have the following packages available:
+
+- `libgl`
+- `libvorbis`
+- `alsa`
+
+On Ubuntu you can get these dependencies via:
+
+`sudo apt-get install -y libgl1-mesa-dev libasound2-dev libvorbis-dev`
 
 ### OSX
 
