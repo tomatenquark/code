@@ -30,6 +30,7 @@ jobs:
           cd build
           cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
           xcodebuild clean -configuration Release -arch x86_64 build
+          xattr -cr Release/tomatenquark.app
       - name: Archive OSX App
         run: zip -r tomatenquark_macos.zip .
         working-directory: build/Release
