@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11] - 2020-04-06
+### Fixes
+- Include support for OGG and JPG which were previously not compiled
+- Add more fixes to the sky rendering
+
 ## [0.1.10] - 2020-02-06
 ### Changes
 - The project now uses CMake and vcpkg to build
@@ -1006,7 +1011,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/tomatenquark/code/compare/v0.1.10...0.1.11
 [0.1.10]: https://github.com/tomatenquark/code/compare/v0.1.9...0.1.10
 [0.1.9]: https://github.com/tomatenquark/code/compare/v0.1.8...0.1.9
 [0.1.8]: https://github.com/tomatenquark/code/compare/v0.1.7...0.1.8
