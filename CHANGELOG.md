@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.12] - 2020-06-06
+### Fixes
+- Added packaging fixes for OSX, Linux and Windows
+- Added some more rendering tweaks
+
 ## [0.1.11] - 2020-04-06
 ### Fixes
 - Include support for OGG and JPG which were previously not compiled
@@ -1011,7 +1016,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.11...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/tomatenquark/code/compare/v0.1.11...0.1.12
 [0.1.11]: https://github.com/tomatenquark/code/compare/v0.1.10...0.1.11
 [0.1.10]: https://github.com/tomatenquark/code/compare/v0.1.9...0.1.10
 [0.1.9]: https://github.com/tomatenquark/code/compare/v0.1.8...0.1.9
