@@ -388,7 +388,7 @@ void setupsky()
 VARFR(atmo, 0, 0, 1, preloadatmoshaders());
 FVARR(atmoplanetsize, 1e-3f, 1, 1e3f);
 FVARR(atmoheight, 1e-3f, 1, 1e3f);
-FVARR(atmobright, 0, 3, 16);
+FVARR(atmobright, 0, 4, 16);
 bvec atmosunlightcolor(0, 0, 0);
 HVARFR(atmosunlight, 0, 0, 0xFFFFFF,
 {
@@ -437,7 +437,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
                      ozone(3.426f, 8.298f, 0.356f);
     vec betar = vec(lambda).square().square().recip().mul(1.241e-30f * atmodensity),
         betam = vec(lambda).recip().square().mul(k).mul(1.350e-17f * atmohaze),
-        betao = vec(ozone).mul(0.06e-5f*atmoozone),
+        betao = vec(ozone).mul(0.05e-5f*atmoozone),
         betarm = vec(betar).add(betam).add(betao).div(sunlightdir.z);
     betar.div(betarm).mul(3/(16*M_PI));
     betam.div(betarm).mul((1-gm)*(1-gm)/(4*M_PI));
