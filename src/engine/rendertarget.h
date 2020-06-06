@@ -5,9 +5,10 @@ struct rendertarget
     int texw, texh, vieww, viewh;
     GLenum colorfmt, depthfmt;
     GLuint rendertex, renderfb, renderdb, blurtex, blurfb, blurdb;
-    int blursize;
+    int blursize, blurysize;
     float blursigma;
     float blurweights[MAXBLURRADIUS+1], bluroffsets[MAXBLURRADIUS+1];
+    float bluryweights[MAXBLURRADIUS+1], bluryoffsets[MAXBLURRADIUS+1];
 
     float scissorx1, scissory1, scissorx2, scissory2;
 #define BLURTILES 32
@@ -16,7 +17,7 @@ struct rendertarget
 
     bool initialized;
 
-    rendertarget() : texw(0), texh(0), vieww(0), viewh(0), colorfmt(GL_FALSE), depthfmt(GL_FALSE), rendertex(0), renderfb(0), renderdb(0), blurtex(0), blurfb(0), blurdb(0), blursize(0), blursigma(0), initialized(false)
+    rendertarget() : texw(0), texh(0), vieww(0), viewh(0), colorfmt(GL_FALSE), depthfmt(GL_FALSE), rendertex(0), renderfb(0), renderdb(0), blurtex(0), blurfb(0), blurdb(0), blursize(0), blurysize(0), blursigma(0), initialized(false)
     {
     }
 
@@ -57,7 +58,7 @@ struct rendertarget
         if(blurfb) { glDeleteFramebuffers_(1, &blurfb); blurfb = 0; }
         if(blurtex) { glDeleteTextures(1, &blurtex); blurtex = 0; }
         if(blurdb) { glDeleteRenderbuffers_(1, &blurdb); blurdb = 0; }
-        blursize = 0;
+        blursize = blurysize = 0;
         blursigma = 0.0f;
     }
 
@@ -212,14 +213,16 @@ struct rendertarget
         }
     }
 
-    void blur(int wantsblursize, float wantsblursigma, int x, int y, int w, int h, bool scissor)
+    void blur(int wantsblursize, float wantsblursigma, int wantsblurysize, int x, int y, int w, int h, bool scissor)
     {
         if(!blurtex) setupblur();
-        if(blursize!=wantsblursize || (wantsblursize && blursigma!=wantsblursigma))
+        if(blursize!=wantsblursize || blurysize != wantsblurysize || (wantsblursize && blursigma!=wantsblursigma))
         {
             setupblurkernel(wantsblursize, wantsblursigma, blurweights, bluroffsets);
+            if(wantsblurysize != wantsblursize) setupblurkernel(wantsblurysize, wantsblursigma, bluryweights, bluryoffsets);
             blursize = wantsblursize;
             blursigma = wantsblursigma;
+            blurysize = wantsblurysize;
         }
 
         glDisable(GL_DEPTH_TEST);
@@ -233,7 +236,8 @@ struct rendertarget
 
         for(int i = 0; i < int(2); i++)
         {
-            setblurshader(i, i ? texh : texw, blursize, blurweights, bluroffsets);
+            if(i && blurysize != blursize) setblurshader(i, texh, blurysize, bluryweights, bluryoffsets);
+            else setblurshader(i, i ? texh : texw, blursize, blurweights, bluroffsets);
 
             if(!swaptexs() || rtsharefb) glFramebufferTexture2D_(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, i ? rendertex : blurtex, 0);
             else glBindFramebuffer_(GL_FRAMEBUFFER, i ? renderfb : blurfb);
@@ -254,12 +258,12 @@ struct rendertarget
 
     virtual bool shouldrender() { return true; }
 
-    virtual void doblur(int blursize, float blursigma) 
+    virtual void doblur(int blursize, float blursigma, int blurysize)
     { 
         int sx, sy, sw, sh;
         bool scissoring = rtscissor && scissorblur(sx, sy, sw, sh) && sw > 0 && sh > 0;
         if(!scissoring) { sx = sy = 0; sw = vieww; sh = viewh; }
-        blur(blursize, blursigma, sx, sy, sw, sh, scissoring);
+        blur(blursize, blursigma, blurysize, sx, sy, sw, sh, scissoring);
     }
 
     virtual bool scissorrender(int &x, int &y, int &w, int &h)
@@ -307,7 +311,7 @@ struct rendertarget
     virtual bool screenrect() const { return false; }
     virtual bool filter() const { return true; }
 
-    void render(int w, int h, int blursize = 0, float blursigma = 0)
+    void render(int w, int h, int blursize = 0, float blursigma = 0, int blurysize = 0)
     {
         w = min(w, hwtexsize);
         h = min(h, hwtexsize);
@@ -323,7 +327,7 @@ struct rendertarget
         if(!filter())
         {
             if(blurtex) cleanupblur();
-            blursize = 0;
+            blursize = blurysize = 0;
         }
             
         if(!rendertex) setup(w, h);
@@ -377,7 +381,7 @@ struct rendertarget
         {
             initialized = true;
 
-            if(blursize) doblur(blursize, blursigma);
+            if(blursize) doblur(blursize, blursigma, blurysize ? blurysize : blursize);
         }
 
         glBindFramebuffer_(GL_FRAMEBUFFER, 0);
