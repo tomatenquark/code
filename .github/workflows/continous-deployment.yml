@@ -80,6 +80,7 @@ jobs:
         run: |
           cp build32/Release/* bin
           cp build64/Release/* bin64
+          dir vcpkg
           dir vcpkg\packages
           copy vcpkg\packages\libogg_x86-windows\bin\*.dll bin
           copy vcpkg\packages\libvorbis_x86-windows\bin\*.dll bin
