@@ -80,6 +80,10 @@ jobs:
         run: |
           cp build32/Release/* bin
           cp build64/Release/* bin64
+          cp vcpkg\buildtrees\libvorbis\x86-windows-rel\lib\*.dll bin
+          cp vcpkg\buildtrees\libvorbis\x64-windows-rel\lib\*.dll bin64
+          cp vcpkg\buildtrees\libogg\x86-windows-rel\*.dll bin
+          cp vcpkg\buildtrees\libogg\x64-windows-rel\*.dll bin64
       - name: Archive Windows binaries
         run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat, .\server.bat, .\server-init.cfg -DestinationPath tomatenquark_windows.zip
       - uses: actions/upload-artifact@v1
