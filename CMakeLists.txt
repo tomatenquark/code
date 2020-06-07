@@ -114,7 +114,7 @@ endif()
 
 if(STEAM_FOUND)
     include_directories("${STEAM_INCLUDE_DIR}")
-    set(GOTQ_ADDITIONAL_SOURCE_FILES "${GOTQ_ADDITIONAL_SOURCE_FILES}" "src/integration")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "${GOTQ_ADDITIONAL_SOURCE_FILES}")
 endif()
 
 add_executable(tomaten_master
@@ -139,6 +139,11 @@ add_executable(tomaten_server
 )
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
+if(STEAM_FOUND)
+    #target_sources(tomaten_server PUBLIC "src/integration/server.cpp")
+    target_include_directories(tomaten_server PUBLIC "src/integration")
+    target_compile_definitions(tomaten_server PUBLIC STEAM_ENABLED)
+endif()
 
 if(WIN32)
    set_target_properties(tomaten_master tomaten_server PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
@@ -210,6 +215,12 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_CLIENT_TYPE}
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
+
+if(STEAM_FOUND)
+    target_sources(${CMAKE_PROJECT_NAME} PUBLIC "src/integration/steamintegration.h")
+    target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/integration")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC STEAM_ENABLED)
+endif()
 
 if(APPLE)
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES

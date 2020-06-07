@@ -1,6 +1,10 @@
 // main.cpp: initialisation & main loop
 
 #include "engine.h"
+#include "integration.h"
+#ifdef STEAM_ENABLED
+#include "steamintegration.h"
+#endif
 
 extern void cleargamma();
 
@@ -1261,6 +1265,13 @@ int main(int argc, char **argv)
     identflags |= IDF_PERSIST;
 
     logoutf("init: mainloop");
+    game::integration *integration = NULL;
+#ifdef STEAM_ENABLED
+    game::steamintegration steam;
+    integration = &steam;
+#endif
+    logoutf("init: integrations");
+    integration->setup();
 
     if(execfile("once.cfg", false)) remove(findfile("once.cfg", "rb"));
 
