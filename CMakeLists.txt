@@ -98,7 +98,7 @@ endif()
 
 ################ Files ################
 
-include_directories(src/shared src/engine src/fpsgame)
+include_directories(src/shared src/engine src/fpsgame src/integration)
 
 if(WIN32)
     set(GOTQ_APPLICATION_CLIENT_TYPE "WIN32")
@@ -140,8 +140,6 @@ add_executable(tomaten_server
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
 if(STEAM_FOUND)
-    #target_sources(tomaten_server PUBLIC "src/integration/server.cpp")
-    target_include_directories(tomaten_server PUBLIC "src/integration")
     target_compile_definitions(tomaten_server PUBLIC STEAM_ENABLED)
 endif()
 
@@ -217,8 +215,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
 
 if(STEAM_FOUND)
-    target_sources(${CMAKE_PROJECT_NAME} PUBLIC "src/integration/steamintegration.h")
-    target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/integration")
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC STEAM_ENABLED)
 endif()
 
