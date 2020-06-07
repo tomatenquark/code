@@ -55,6 +55,7 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile32) }}
+          cleanAfterBuild: false
       - name: Restore from cache and run vcpkg 64
         uses: lukka/run-vcpkg@v3
         with:
@@ -62,6 +63,7 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
+          cleanAfterBuild: false
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows 32

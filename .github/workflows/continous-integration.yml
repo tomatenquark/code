@@ -43,10 +43,6 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
-      - name: TELL ME MORE VCPKG
-        run: |  
-          ls vcpkg
-          ls vcpkg/packages
       - name: Setup MSBuild
         uses: warrenbuckley/Setup-MSBuild@v1
       - name: Build for Windows
