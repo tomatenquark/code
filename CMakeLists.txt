@@ -63,6 +63,8 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 ############### Dependencies ##########
 
 include(cmake/FindENet.cmake)
+include(cmake/FindSteam.cmake)
+
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
@@ -72,6 +74,7 @@ find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
+find_package(Steam)
 
 if(CURL_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
@@ -89,8 +92,9 @@ if(sdl2-mixer_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
 endif()
 
-include(cmake/FindSteam.cmake)
-find_package(Steam)
+if(STEAM_FOUND)
+    list(APPEND GOTQ_LINKING_LIBRARIES_BASE "${STEAM_LIBRARY}")
+endif()
 
 ################ Files ################
 
@@ -106,6 +110,11 @@ elseif(APPLE)
 else()
     set(GOTQ_APPLICATION_CLIENT_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "")
+endif()
+
+if(STEAM_FOUND)
+    include_directories("${STEAM_INCLUDE_DIR}")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "${GOTQ_ADDITIONAL_SOURCE_FILES}" "src/integration")
 endif()
 
 add_executable(tomaten_master
