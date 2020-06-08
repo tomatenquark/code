@@ -1265,9 +1265,9 @@ int main(int argc, char **argv)
     identflags |= IDF_PERSIST;
 
     logoutf("init: mainloop");
-    game::clientintegration *integration = NULL;
+    integration::clientintegration *integration = NULL;
 #ifdef STEAM_ENABLED
-    game::steamclient steam;
+    integration::steamclient steam;
     integration = &steam;
 #endif
     logoutf("init: integrations");

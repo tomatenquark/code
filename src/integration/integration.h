@@ -1,4 +1,4 @@
-namespace game {
+namespace integration {
     struct clientintegration {
         virtual int setup() { return 0; }
 

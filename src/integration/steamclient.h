@@ -1,7 +1,7 @@
 #ifdef STEAM_ENABLED
 #include "steam_api.h"
 
-namespace game {
+namespace integration {
     struct steamclient: clientintegration {
         HAuthTicket authTicket = k_HAuthTicketInvalid;
         uint32 ticketLength;

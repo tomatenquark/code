@@ -1066,9 +1066,9 @@ bool setuplistenserver(bool dedicated)
     }
     if(lansock == ENET_SOCKET_NULL) conoutf(CON_WARN, "WARNING: could not create LAN server info socket");
     else enet_socket_set_option(lansock, ENET_SOCKOPT_NONBLOCK, 1);
-    game::serverintegration *integration;
+    integration::serverintegration *integration;
 #ifdef STEAM_ENABLED
-    game::steamserver steam;
+    integration::steamserver steam;
     integration = &steam;
 #endif
     integration->setup(address.host, address.port);
