@@ -428,7 +428,8 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     const float earthradius = 6371e3f, earthatmoheight = 8.4e3f;
     float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight, atmoratio = atmoradius/planetradius;
     float sundist = sqrt(sunlightdir.z*sunlightdir.z + atmoratio*atmoratio - 1) - sunlightdir.z;
-    LOCALPARAMF(opticaldepthoffset, atmoratio*atmoratio - 1, sundist + 1e-5);
+    // scales on input are 1 unit = 1 planet radius, on output 1 unit = 1 sundist
+    LOCALPARAMF(opticaldepthparams, atmoratio*atmoratio - 1, 1/(sundist + 1e-5f));
 
     float gm = clamp(0.95f - 0.2f*atmohaze, 0.0f, 1.0f);
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
@@ -448,7 +449,8 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     vec zenithextinction = vec(betarm).mul(-(atmoratio - 1)).exp();
     LOCALPARAM(betar, vec(betar).mul(zenithextinction));
     LOCALPARAM(betam, vec(betam).mul(zenithextinction));
-    LOCALPARAM(betarm, vec(betarm).div(M_LN2));
+    // further scale extinction distances output from opticaldepth that are in sundist units
+    LOCALPARAM(betarm, vec(betarm).mul(sundist/M_LN2));
 
     // calculate extinction(sundir)/extinction(zenith)
     vec sunextinction = vec(betarm).mul(-(sundist - (atmoratio - 1)) / 2).exp(); // divide by 2 to gamma encode
