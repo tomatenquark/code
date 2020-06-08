@@ -2,8 +2,8 @@
 #include "steam_api.h"
 
 namespace game {
-    struct steamintegration: integration {
-        ~steamintegration() {
+    struct steamclient: clientintegration {
+        ~steamclient() {
             SteamAPI_Shutdown();
         }
 
