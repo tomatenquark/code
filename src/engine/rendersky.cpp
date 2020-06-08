@@ -396,8 +396,8 @@ HVARFR(atmosunlight, 0, 0, 0xFFFFFF,
     atmosunlightcolor = bvec((atmosunlight>>16)&0xFF, (atmosunlight>>8)&0xFF, atmosunlight&0xFF);
 });
 FVARR(atmosunlightscale, 0, 1, 16);
-FVARR(atmosundisksize, 0, 15, 90);
-FVARR(atmosundiskcorona, 0, 0.15f, 1);
+FVARR(atmosundisksize, 0, 10, 90);
+FVARR(atmosundiskcorona, 0, 0.2f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 16);
 FVARR(atmodensity, 0, 1, 16);
