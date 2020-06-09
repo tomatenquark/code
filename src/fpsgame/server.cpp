@@ -2496,6 +2496,7 @@ namespace server
         }
 
         shouldstep = clients.length() > 0;
+        sintegration->update();
     }
 
     void forcespectator(clientinfo *ci)
