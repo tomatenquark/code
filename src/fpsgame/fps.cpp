@@ -1,4 +1,7 @@
 #include "game.h"
+#ifdef STEAM_ENABLED
+#include "steamclient.h"
+#endif
 
 namespace game
 {
@@ -590,6 +593,14 @@ namespace game
         player1 = spawnstate(new fpsent);
         filtertext(player1->name, "unnamed", false, false, MAXNAMELEN);
         players.add(player1);
+    }
+
+    void initintegration() {
+#ifdef STEAM_ENABLED
+        integration::steamclient steam;
+        cintegration = &steam;
+#endif
+        cintegration->setup();
     }
 
     VARP(showmodeinfo, 0, 1, 1);

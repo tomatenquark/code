@@ -1,9 +1,6 @@
 // main.cpp: initialisation & main loop
 
 #include "engine.h"
-#ifdef STEAM_ENABLED
-#include "steamclient.h"
-#endif
 
 extern void cleargamma();
 
@@ -93,7 +90,6 @@ VAR(desktoph, 1, 0, 0);
 int screenw = 0, screenh = 0;
 SDL_Window *screen = NULL;
 SDL_GLContext glcontext = NULL;
-integration::clientintegration *cintegration = NULL;
 
 #define SCR_MINW 320
 #define SCR_MINH 200
@@ -1265,12 +1261,8 @@ int main(int argc, char **argv)
     identflags |= IDF_PERSIST;
 
     logoutf("init: mainloop");
-#ifdef STEAM_ENABLED
-    integration::steamclient steam;
-    cintegration = &steam;
-#endif
+    game::initintegration();
     logoutf("init: integrations");
-    cintegration->setup();
 
     if(execfile("once.cfg", false)) remove(findfile("once.cfg", "rb"));
 

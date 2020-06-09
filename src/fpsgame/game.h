@@ -710,6 +710,7 @@ namespace game
         virtual bool aipursue(fpsent *d, ai::aistate &b) { return false; }
     };
 
+    extern integration::clientintegration *cintegration;
     extern clientmode *cmode;
     extern void setclientmode();
 
