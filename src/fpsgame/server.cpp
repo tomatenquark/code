@@ -3604,6 +3604,15 @@ namespace server
                 break;
             }
 
+            case N_TICKETTRY:
+            {
+                string ticket;
+                int steamID = getint(p);
+                int ticketLength = getint(p);
+                getstring(ticket, p, 512);
+                break;
+            }
+
             case N_PAUSEGAME:
             {
                 int val = getint(p);
