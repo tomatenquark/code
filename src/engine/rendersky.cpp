@@ -396,6 +396,12 @@ HVARFR(atmosunlight, 0, 0, 0xFFFFFF,
     atmosunlightcolor = bvec((atmosunlight>>16)&0xFF, (atmosunlight>>8)&0xFF, atmosunlight&0xFF);
 });
 FVARR(atmosunlightscale, 0, 1, 16);
+bvec atmosundiskcolor(0, 0, 0);
+HVARFR(atmosundisk, 0, 0, 0xFFFFFF,
+{
+    if(atmosundisk <= 255) atmosundisk |= (atmosundisk<<8) | (atmosundisk<<16);
+    atmosundiskcolor = bvec((atmosundisk>>16)&0xFF, (atmosundisk>>8)&0xFF, atmosundisk&0xFF);
+});
 FVARR(atmosundisksize, 0, 10, 90);
 FVARR(atmosundiskcorona, 0, 0.5f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
@@ -449,16 +455,16 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     // extinction in direction of sun
     vec sunextinction = vec(betarm).mul(-sundist).exp();
     // assume sunlight color is gamma encoded, so decode to linear light
-    vec suncolor = (atmosunlight ? atmosunlightcolor.tocolor().mul(atmosunlightscale) : sunlightcolor.tocolor().mul(sunlightscale)).square().mul(atmobright * 16);
-    suncolor.mul(sunextinction);
-    LOCALPARAM(betar, vec(betar).mul(suncolor));
-    LOCALPARAM(betam, vec(betam).mul(suncolor));
+    vec suncolor = atmosunlight ? atmosunlightcolor.tocolor().mul(atmosunlightscale) : sunlightcolor.tocolor().mul(sunlightscale);
+    vec sunscale = vec(suncolor).square().mul(atmobright * 16).mul(sunextinction);
+    LOCALPARAM(betar, vec(betar).mul(sunscale));
+    LOCALPARAM(betam, vec(betam).mul(sunscale));
     // further scale extinction distances output from opticaldepth that are in sundist units
     LOCALPARAM(betarm, vec(betarm).mul(sundist/M_LN2));
 
     // scale extinguished sunlight in ratio to extinction at zenith, then clamp to force saturation
-    vec zenithextinction = vec(betarm).mul(-(atmoratio - 1)).exp();
-    vec diskcolor = vec(suncolor).div(zenithextinction).mul(atmosundiskbright * 2 / (atmobright * 16)).min(1);
+    vec zenithextinction = vec(betarm).mul(-(sundist - (atmoratio - 1))).exp();
+    vec diskcolor = (atmosundisk ? atmosundiskcolor.tocolor() : suncolor).square().mul(zenithextinction).mul(atmosundiskbright * 2).min(1);
     LOCALPARAM(sunlight, vec4(diskcolor, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
