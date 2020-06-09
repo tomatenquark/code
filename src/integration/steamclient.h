@@ -31,6 +31,10 @@ namespace integration {
         int getticketlength() {
             return (int)ticketLength;
         }
+
+        int getsteamid() override {
+            return SteamUser()->GetSteamID().ConvertToUint64();
+        }
     };
 }
 #endif

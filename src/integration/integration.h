@@ -4,6 +4,7 @@ namespace integration {
 
         virtual void cancelticket() {}
         virtual void getticket(char* ticket) {};
+        virtual int getsteamid() { return 0; }
         virtual int getticketlength() { return 0; }
 
     };
