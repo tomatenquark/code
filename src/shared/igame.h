@@ -102,6 +102,7 @@ namespace game
 namespace server
 {
     extern void initintegration(int ip, int port);
+    extern void cleanupintegration();
     extern void *newclientinfo();
     extern void deleteclientinfo(void *ci);
     extern void serverinit();

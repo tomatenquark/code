@@ -770,11 +770,17 @@ namespace server
     integration::steamserver steamserverintegration;
 #endif
 
-    void initintegration(int port, int address) {
+    void initintegration(int port, int address)
+    {
 #ifdef STEAM_ENABLED
         sintegration = &steamserverintegration;
 #endif
         sintegration->setup(port, address);
+    }
+
+    void cleanupintegration()
+    {
+        sintegration->cleanup();
     }
 
     const char *modename(int n, const char *unknown)
@@ -2798,6 +2804,7 @@ namespace server
         // - Handle N_TICKETREQ properly
         // - Handle disconnects
         // - Proper shutdown of Steam server integration
+        return true;
     }
 
     bool answerchallenge(clientinfo *ci, uint id, char *val, const char *desc)
