@@ -2,9 +2,6 @@
 // runs dedicated or as client coroutine
 
 #include "engine.h"
-#ifdef STEAM_ENABLED
-#include "steamserver.h"
-#endif
 
 #define LOGSTRLEN 512
 
@@ -1066,11 +1063,7 @@ bool setuplistenserver(bool dedicated)
     }
     if(lansock == ENET_SOCKET_NULL) conoutf(CON_WARN, "WARNING: could not create LAN server info socket");
     else enet_socket_set_option(lansock, ENET_SOCKOPT_NONBLOCK, 1);
-#ifdef STEAM_ENABLED
-    integration::steamserver steam;
-    sintegration = &steam;
-#endif
-    sintegration->setup(address.host, address.port);
+    server::initintegration(address.host, address.port);
     return true;
 }
 

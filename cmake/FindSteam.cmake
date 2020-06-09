@@ -35,11 +35,7 @@ ELSEIF(APPLE)
 ELSE()
   SET(STEAM_LIBNAME steam_api)
   SET(STEAM_RUNTIMENAME libsteam_api.so)
-  IF(TARGET_X64)
-    SET(STEAM_PATHNAME redistributable_bin/linux64)
-  ELSE()
-    SET(STEAM_PATHNAME redistributable_bin/linux32)
-  ENDIF()
+  SET(STEAM_PATHNAME redistributable_bin/linux64)
 ENDIF()
 
 FIND_LIBRARY(STEAM_LIBRARY

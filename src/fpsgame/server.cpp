@@ -1,4 +1,7 @@
 #include "game.h"
+#ifdef STEAM_ENABLED
+#include "steamserver.h"
+#endif
 
 namespace game
 {
@@ -760,6 +763,18 @@ namespace server
             for(const int *p = msgsizes; *p >= 0; p += 2) sizetable[p[0]] = p[1];
         }
         return msg >= 0 && msg < NUMMSG ? sizetable[msg] : -1;
+    }
+
+    integration::serverintegration *sintegration = NULL;
+#ifdef STEAM_ENABLED
+    integration::steamserver steamserverintegration;
+#endif
+
+    void initintegration(int port, int address) {
+#ifdef STEAM_ENABLED
+        sintegration = &steamserverintegration;
+#endif
+        sintegration->setup(port, address);
     }
 
     const char *modename(int n, const char *unknown)
