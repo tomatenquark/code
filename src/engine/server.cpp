@@ -105,6 +105,7 @@ struct client                   // server side version of "dynent" type
 
 vector<client *> clients;
 
+integration::serverintegration *sintegration = NULL;
 ENetHost *serverhost = NULL;
 int laststatus = 0; 
 ENetSocket pongsock = ENET_SOCKET_NULL, lansock = ENET_SOCKET_NULL;
@@ -1065,12 +1066,11 @@ bool setuplistenserver(bool dedicated)
     }
     if(lansock == ENET_SOCKET_NULL) conoutf(CON_WARN, "WARNING: could not create LAN server info socket");
     else enet_socket_set_option(lansock, ENET_SOCKOPT_NONBLOCK, 1);
-    integration::serverintegration *integration;
 #ifdef STEAM_ENABLED
     integration::steamserver steam;
-    integration = &steam;
+    sintegration = &steam;
 #endif
-    integration->setup(address.host, address.port);
+    sintegration->setup(address.host, address.port);
     return true;
 }
 

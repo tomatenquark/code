@@ -603,6 +603,9 @@ namespace recorder
     extern void cleanup();
 }
 
+extern integration::clientintegration *cintegration;
+extern integration::serverintegration *sintegration;
+
 #endif
 
 #endif
