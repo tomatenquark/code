@@ -2786,6 +2786,20 @@ namespace server
         return false;
     }
 
+    bool answerticket(clientinfo *ci, int id, int length, const char *ticket)
+    {
+        server::sintegration->answerticket(id, length, ticket);
+        // TODO:
+        // - Set id to user ticket id
+        // - Update sintegration method
+        // - Callback for ValidateAuthTicketResponse_t
+        // - N_TICKETSUCCESS (or similiar) for confirmation
+        // - Add variable to demand N_TICKETREQ
+        // - Handle N_TICKETREQ properly
+        // - Handle disconnects
+        // - Proper shutdown of Steam server integration
+    }
+
     bool answerchallenge(clientinfo *ci, uint id, char *val, const char *desc)
     {
         if(ci->authreq != id || strcmp(ci->authdesc, desc)) 
@@ -3610,6 +3624,7 @@ namespace server
                 int steamID = getint(p);
                 int ticketLength = getint(p);
                 getstring(ticket, p, 512);
+                answerticket(ci, steamID, ticketLength, ticket);
                 break;
             }
 

@@ -12,6 +12,7 @@ namespace integration {
 
     struct serverintegration {
         virtual int setup(int unIP, int usGamePort) { return 0; }
+        virtual void answerticket(int steamid, int length, const char * ticket) {}
     };
 }
 
