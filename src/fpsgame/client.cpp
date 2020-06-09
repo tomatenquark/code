@@ -512,6 +512,16 @@ namespace game
 
     ICOMMAND(getservauth, "", (), result(servauth));
 
+    bool tryticket()
+    {
+        char ticket[512];
+        cintegration->getticket(ticket);
+        int ticketLength = cintegration->getticketlength();
+        addmsg(N_TICKETTRY, "ris", ticketLength, ticket);
+        return true;
+    }
+    ICOMMAND(ticket, "", (), tryticket());
+
     void togglespectator(int val, const char *who)
     {
         int i = who[0] ? parseplayer(who) : player1->clientnum;

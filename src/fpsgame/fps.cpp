@@ -15,6 +15,9 @@ namespace game
     fpsent *player1 = NULL;         // our client
     vector<fpsent *> players;       // other clients
     int savedammo[NUMGUNS];
+#ifdef STEAM_ENABLED
+    integration::steamclient steamintegration;
+#endif
 
     bool clientoption(const char *arg) { return false; }
 
@@ -597,8 +600,7 @@ namespace game
 
     void initintegration() {
 #ifdef STEAM_ENABLED
-        integration::steamclient steam;
-        cintegration = &steam;
+        cintegration = &steamintegration;
 #endif
         cintegration->setup();
     }

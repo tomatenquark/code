@@ -8,6 +8,7 @@ namespace integration {
         char * ticketBuffer;
 
         ~steamclient() {
+            // TODO: Add 'cleanupintegration' function because this throws issues
             SteamAPI_Shutdown();
         }
 
@@ -21,10 +22,10 @@ namespace integration {
             if ( authTicket != k_HAuthTicketInvalid ) SteamUser()->CancelAuthTicket( authTicket );
         }
 
-        char * getticket() {
+        void getticket(char * ticket)
+        {
             cancelticket();
-            authTicket = SteamUser()->GetAuthSessionTicket( ticketBuffer, 512, &ticketLength );
-            return ticketBuffer;
+            authTicket = SteamUser()->GetAuthSessionTicket( ticket, 512, &ticketLength );
         }
 
         int getticketlength() {

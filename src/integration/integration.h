@@ -3,7 +3,7 @@ namespace integration {
         virtual int setup() { return 0; }
 
         virtual void cancelticket() {}
-        virtual char * getticket() { return nullptr; }
+        virtual void getticket(char* ticket) {};
         virtual int getticketlength() { return 0; }
 
     };
