@@ -2,7 +2,6 @@
 // runs dedicated or as client coroutine
 
 #include "engine.h"
-#include "integration.h"
 #ifdef STEAM_ENABLED
 #include "steamserver.h"
 #endif

@@ -1,7 +1,6 @@
 // main.cpp: initialisation & main loop
 
 #include "engine.h"
-#include "integration.h"
 #ifdef STEAM_ENABLED
 #include "steamclient.h"
 #endif

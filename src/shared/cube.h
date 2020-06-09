@@ -68,6 +68,7 @@
 
 #include "iengine.h"
 #include "igame.h"
+#include "integration.h"
 
 #endif
 
