@@ -605,6 +605,10 @@ namespace game
         cintegration->setup();
     }
 
+    void cleanupintegration() {
+        cintegration->cleanup();
+    }
+
     VARP(showmodeinfo, 0, 1, 1);
 
     void startgame()

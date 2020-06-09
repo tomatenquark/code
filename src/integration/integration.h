@@ -1,6 +1,7 @@
 namespace integration {
     struct clientintegration {
         virtual int setup() { return 0; }
+        virtual void cleanup() {}
 
         virtual void cancelticket() {}
         virtual void getticket(char* ticket) {};

@@ -36,6 +36,7 @@ void quit()                     // normal exit
     localdisconnect();
     writecfg();
     cleanup();
+    game::cleanupintegration();
     exit(EXIT_SUCCESS);
 }
 
