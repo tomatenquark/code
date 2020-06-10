@@ -466,7 +466,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
 
     // scale extinguished sunlight in ratio to extinction at zenith, then clamp to force saturation
     vec zenithextinction = vec(betarm).mul(-(sundist - (atmoratio - 1))).exp();
-    vec diskcolor = (atmosundisk ? atmosundiskcolor.tocolor() : suncolor).square().mul(zenithextinction).mul(atmosundiskbright * 2).min(1);
+    vec diskcolor = (atmosundisk ? atmosundiskcolor.tocolor() : suncolor).square().mul(zenithextinction).mul(atmosundiskbright * 1.5f).min(1);
     LOCALPARAM(sunlight, vec4(diskcolor, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
