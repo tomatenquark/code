@@ -402,7 +402,7 @@ HVARFR(atmosundisk, 0, 0, 0xFFFFFF,
     if(atmosundisk <= 255) atmosundisk |= (atmosundisk<<8) | (atmosundisk<<16);
     atmosundiskcolor = bvec((atmosundisk>>16)&0xFF, (atmosundisk>>8)&0xFF, atmosundisk&0xFF);
 });
-FVARR(atmosundisksize, 0, 10, 90);
+FVARR(atmosundisksize, 0, 15, 90);
 FVARR(atmosundiskcorona, 0, 0.5f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 16);
@@ -470,8 +470,11 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     LOCALPARAM(sunlight, vec4(diskcolor, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
+    // convert from view cosine into mu^2 for limb darkening, where mu = sqrt(1 - sin^2) and sin^2 = 1 - cos^2, thus mu^2 = 1 - (1 - cos^2*scale)
+    // convert corona offset into scale for mu^2, where sin = (1-corona) and thus mu^2 = 1 - (1-corona^2) 
     float sundiskscale = sinf(0.5f*atmosundisksize*RAD);
-    if(sundiskscale > 0) LOCALPARAMF(sundiskparams, 1.0f/(sundiskscale*sundiskscale), 1.0f/max(atmosundiskcorona, 1e-3f));
+    float coronamu = 1 - (1-atmosundiskcorona)*(1-atmosundiskcorona);
+    if(sundiskscale > 0) LOCALPARAMF(sundiskparams, 1.0f/(sundiskscale*sundiskscale), 1.0f/max(coronamu, 1e-3f));
     else LOCALPARAMF(sundiskparams, 0, 0);
 
     float z1 = 2*w*(z1clip-0.5f), z2 = ceil(2*w*(z2clip-0.5f));
