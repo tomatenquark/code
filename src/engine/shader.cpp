@@ -543,6 +543,8 @@ void Shader::cleanup(bool invalid)
     owner = NULL;
 }
 
+bool Shader::isnull(const Shader *s) { return !s; }
+
 static void genattriblocs(Shader &s, const char *vs, const char *ps, Shader *reusevs, Shader *reuseps)
 {
     static int len = strlen("//:attrib");

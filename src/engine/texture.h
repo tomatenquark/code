@@ -171,7 +171,7 @@ struct Shader
     bool deferred() const { return (type&SHADER_DEFERRED)!=0; }
     bool loaded() const { return detailshader!=NULL; }
 
-    static inline bool isnull(const Shader *s) { return !s; }
+    static bool isnull(const Shader *s);
 
     bool isnull() const { return isnull(this); }
 
