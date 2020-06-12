@@ -440,7 +440,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     // Henyey-Greenstein approximation, 1/(4pi) * (1 - g^2)/(1 + g^2 - 2gcos)]^1.5
     // clamp values near 0 angle to avoid spotlight artifact inside sundisk
     float gm = max(0.95f - 0.2f*atmohaze, 0.65f);
-    LOCALPARAMF(mie, 1 + gm*gm, -2*gm,  1 - (1 - cosf(0.5f*atmosundisksize*RAD))*(1 - atmosundiskcorona));
+    LOCALPARAMF(mie, 1 + gm*gm, -2*gm, 1 - (1 - cosf(0.5f*atmosundisksize*(1 - atmosundiskcorona)*RAD)));
 
     static const vec lambda(680e-9f, 550e-9f, 450e-9f),
                      k(0.686f, 0.678f, 0.666f),
