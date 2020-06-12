@@ -598,12 +598,11 @@ void genwatertex(GLuint &tex, GLuint &fb, GLuint &db, bool refract = false)
     }
 
     if(!fb) glGenFramebuffers_(1, &fb);
-    glBindFramebuffer_(GL_FRAMEBUFFER, fb);
-
     int find = needsalpha ? 0 : 2;
     do
     {
         createtexture(tex, size, size, buf, 3, 1, colorfmt ? colorfmt : colorfmts[find]);
+        glBindFramebuffer_(GL_FRAMEBUFFER, fb);
         glFramebufferTexture2D_(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
         if(glCheckFramebufferStatus_(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_COMPLETE) break;
     }
