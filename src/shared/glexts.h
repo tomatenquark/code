@@ -62,10 +62,8 @@
 
 #define glCompressedTexImage3D_ glCompressedTexImage3D
 #define glCompressedTexImage2D_ glCompressedTexImage2D
-#define glCompressedTexImage1D_ glCompressedTexImage1D
 #define glCompressedTexSubImage3D_ glCompressedTexSubImage3D
 #define glCompressedTexSubImage2D_ glCompressedTexSubImage2D
-#define glCompressedTexSubImage1D_ glCompressedTexSubImage1D
 #define glGetCompressedTexImage_ glGetCompressedTexImage
 
 #define glDrawRangeElements_ glDrawRangeElements
@@ -81,10 +79,8 @@ extern PFNGLCOPYTEXSUBIMAGE3DPROC glCopyTexSubImage3D_;
 
 extern PFNGLCOMPRESSEDTEXIMAGE3DPROC    glCompressedTexImage3D_;
 extern PFNGLCOMPRESSEDTEXIMAGE2DPROC    glCompressedTexImage2D_;
-extern PFNGLCOMPRESSEDTEXIMAGE1DPROC    glCompressedTexImage1D_;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC glCompressedTexSubImage3D_;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC glCompressedTexSubImage2D_;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC glCompressedTexSubImage1D_;
 extern PFNGLGETCOMPRESSEDTEXIMAGEPROC   glGetCompressedTexImage_;
 
 extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements_;
