@@ -2569,15 +2569,16 @@ bool mpreplacetex(int oldtex, int newtex, bool insel, selinfo &sel, ucharbuf &bu
     return true;
 }
 
-void replace(bool insel)
-{
+ICOMMAND(replacetex, "iii", (int *oldtex, int *newtex, int *insel), {
+    if(noedit()) return;
+    mpreplacetex(*oldtex, *newtex, *insel!=0, sel, true);
+});
+
+ICOMMAND(replacelasttex, "i", (int *insel), {
     if(noedit()) return;
     if(reptex < 0) { conoutf(CON_ERROR, "can only replace after a texture edit"); return; }
-    mpreplacetex(reptex, lasttex, insel, sel, true);
-}
-
-ICOMMAND(replace, "", (), replace(false));
-ICOMMAND(replacesel, "", (), replace(true));
+    mpreplacetex(reptex, lasttex, *insel!=0, sel, true);
+});
 
 ////////// flip and rotate ///////////////
 uint dflip(uint face) { return face==F_EMPTY ? face : 0x88888888 - (((face&0xF0F0F0F0)>>4) | ((face&0x0F0F0F0F)<<4)); }
