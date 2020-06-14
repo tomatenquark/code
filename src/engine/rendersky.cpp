@@ -414,17 +414,8 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
 {
     if(z1clip >= z2clip) return;
 
-    if(sunlightdir.z >= 1.0f/256)
-    {
-        if(glaring) SETSHADER(atmosphereglare);
-        else SETSHADER(atmosphere);
-    }
-    else if(glaring) return;
-    else
-    {
-        SETSHADER(skyfog);
-        gle::colorf(0, 0, 0, atmoalpha);
-    }
+    if(glaring) SETSHADER(atmosphereglare);
+    else SETSHADER(atmosphere);
 
     matrix4 skymatrix = cammatrix, skyprojmatrix;
     skymatrix.settranslation(0, 0, 0);
@@ -461,7 +452,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     vec suncolor = atmosunlight ? atmosunlightcolor.tocolor().mul(atmosunlightscale) : sunlightcolor.tocolor().mul(sunlightscale);
     // assume sunlight color is gamma encoded, so decode to linear light, then apply extinction
     vec sunscale = vec(suncolor).square().mul(atmobright * 16).mul(sunextinction);
-    LOCALPARAM(sunweight, vec(sunweight).div(M_LN2).add(1e-5f));
+    LOCALPARAM(sunweight, vec(sunweight).div(M_LN2).add(1e-5f).min(127.0f));
     LOCALPARAM(sunlight, vec4(sunscale, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
