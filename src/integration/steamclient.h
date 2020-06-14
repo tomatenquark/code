@@ -134,7 +134,7 @@ namespace integration {
     CSteamAchievements*	g_SteamAchievements = NULL;
 
     struct steamclient: clientintegration {
-        //bool api_Initialized;
+        bool api_Initialized = false;
         HAuthTicket authTicket = k_HAuthTicketInvalid;
         uint32 ticketLength;
 
@@ -142,6 +142,7 @@ namespace integration {
             if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) ) return 1; // Replace with your App ID
             if ( !SteamAPI_Init() ) return 1;
             g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
+            api_Initialized = true;
             return 0;
         }
 
@@ -158,11 +159,13 @@ namespace integration {
 
         void cancelticket() override
         {
+            if (!api_Initialized) return;
             if ( authTicket != k_HAuthTicketInvalid ) SteamUser()->CancelAuthTicket( authTicket );
         }
 
         void getticket(char * ticket) override
         {
+            if (!api_Initialized) return;
             cancelticket();
             authTicket = SteamUser()->GetAuthSessionTicket( ticket, 1024, &ticketLength );
         }
@@ -174,13 +177,16 @@ namespace integration {
 
         int getsteamid() override
         {
+            if (!api_Initialized) return 0;
             return SteamUser()->GetSteamID().ConvertToUint64();
         }
 
         void setachievement(const char* achievement) override
         {
             if (g_SteamAchievements)
+            {
                 g_SteamAchievements->SetAchievement(achievement);
+            }
         }
 
     };
