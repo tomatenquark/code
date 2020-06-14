@@ -403,7 +403,7 @@ HVARFR(atmosundisk, 0, 0, 0xFFFFFF,
     atmosundiskcolor = bvec((atmosundisk>>16)&0xFF, (atmosundisk>>8)&0xFF, atmosundisk&0xFF);
 });
 FVARR(atmosundisksize, 0, 15, 90);
-FVARR(atmosundiskcorona, 0, 0.35f, 1);
+FVARR(atmosundiskcorona, 0, 0.4f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 16);
 FVARR(atmodensity, 0, 1, 16);
