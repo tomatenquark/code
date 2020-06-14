@@ -134,9 +134,13 @@ namespace integration {
     CSteamAchievements*	g_SteamAchievements = NULL;
 
     struct steamclient: clientintegration {
-        bool api_Initialized = false;
-        HAuthTicket authTicket = k_HAuthTicketInvalid;
+    private:
+        bool api_Initialized;
+        HAuthTicket authTicket;
         uint32 ticketLength;
+        uint64 mapID;
+    public:
+        steamclient();
 
         int setup() override {
             if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) ) return 1; // Replace with your App ID
@@ -189,6 +193,31 @@ namespace integration {
             }
         }
 
+        CCallResult< steamclient, CreateItemResult_t > m_GetItemCreateCallResult;
+
+        void OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure );
+
+        void createmapid() override
+        {
+            if (!api_Initialized) return;
+            SteamAPICall_t steamApiCall = SteamUGC()->CreateItem(SteamUtils()->GetAppID(), k_EWorkshopFileTypeCommunity);
+            m_GetItemCreateCallResult.Set( steamApiCall, this, &steamclient::OnGetItemCreateResult );
+        }
     };
+
+    steamclient::steamclient():
+        api_Initialized( false ),
+        authTicket( k_HAuthTicketInvalid ),
+        ticketLength( 0 ),
+        mapID( 0 )
+    {
+    }
+
+    void steamclient::OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure ) {
+        if (pParam->m_eResult == k_EResultOK) {
+            mapID = pParam->m_nPublishedFileId;
+            // check m_bUserNeedsToAcceptWorkshopLegalAgreement
+        }
+    }
 }
 #endif

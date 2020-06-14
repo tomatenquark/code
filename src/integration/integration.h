@@ -8,7 +8,11 @@ namespace integration {
         virtual void getticket(char* ticket) {};
         virtual int getsteamid() { return 0; }
         virtual int getticketlength() { return 0; }
+
         virtual void setachievement(const char* achievement) {}
+
+        virtual void createmapid() {}
+        virtual int getlastmapid() { return 0; }
     };
 
     struct serverintegration {

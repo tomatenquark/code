@@ -2253,5 +2253,7 @@ namespace game
             conoutf(CON_WARN, "map \f8%s.ogz \f~has been renamed to \f8%s.ogz", moldname, mnewname);
     }
     COMMAND(renamemap, "ss");
+
+    ICOMMAND(createmapid, "", (), if(cintegration) cintegration->createmapid());
 }
 
