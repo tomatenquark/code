@@ -432,9 +432,9 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     LOCALPARAM(skymatrix, skyprojmatrix);
 
     // optical depth scales for 3 different shells of atmosphere - air, haze, ozone
-    const float earthradius = 6371e3f, earthatmoheight = 8.4e3f, earthmieheight = 1.25e3, earthozoneheight = 2*earthatmoheight;
+    const float earthradius = 6371e3f, earthairheight = 8.4e3f, earthhazeheight = 1.25e3f, earthozoneheight = earthairheight + 15e3f;
     float planetradius = earthradius*atmoplanetsize;
-    vec atmoshells = vec(earthatmoheight, earthmieheight, earthozoneheight).mul(atmoheight).add(planetradius).square().sub(planetradius*planetradius);
+    vec atmoshells = vec(earthairheight, earthhazeheight, earthozoneheight).mul(atmoheight).add(planetradius).square().sub(planetradius*planetradius);
     LOCALPARAM(opticaldepthparams, vec4(atmoshells, planetradius));
 
     // Henyey-Greenstein approximation, 1/(4pi) * (1 - g^2)/(1 + g^2 - 2gcos)]^1.5
