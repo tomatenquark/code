@@ -22,7 +22,8 @@ namespace integration {
         bool answerticket(int id, int length, const char * ticket) override
         {
             CSteamID steamId = CSteamID{ (uint64)id };
-            return SteamGameServer()->BeginAuthSession( ticket, length, steamId ) == k_EBeginAuthSessionResultOK;
+            EBeginAuthSessionResult authSessionResult = SteamGameServer()->BeginAuthSession( ticket, length, steamId );
+            return authSessionResult != k_EBeginAuthSessionResultInvalidTicket;
         }
     };
 }

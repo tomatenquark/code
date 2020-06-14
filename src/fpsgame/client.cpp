@@ -514,7 +514,7 @@ namespace game
 
     bool tryticket()
     {
-        char ticket[512];
+        char ticket[1024];
         cintegration->getticket(ticket);
         int ticketLength = cintegration->getticketlength();
         if (!ticketLength) return false;

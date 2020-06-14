@@ -2496,7 +2496,7 @@ namespace server
         }
 
         shouldstep = clients.length() > 0;
-        sintegration->update();
+        if (sintegration != NULL) sintegration->update();
     }
 
     void forcespectator(clientinfo *ci)
@@ -3631,7 +3631,7 @@ namespace server
                 string ticket;
                 int steamID = getint(p);
                 int ticketLength = getint(p);
-                getstring(ticket, p, 512);
+                getstring(ticket, p, 1024);
                 answerticket(ci, steamID, ticketLength, ticket);
                 break;
             }

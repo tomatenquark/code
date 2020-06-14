@@ -25,7 +25,7 @@ namespace integration {
         void getticket(char * ticket) override
         {
             cancelticket();
-            authTicket = SteamUser()->GetAuthSessionTicket( ticket, 512, &ticketLength );
+            authTicket = SteamUser()->GetAuthSessionTicket( ticket, 1024, &ticketLength );
         }
 
         int getticketlength() override
