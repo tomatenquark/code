@@ -432,7 +432,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
     LOCALPARAM(skymatrix, skyprojmatrix);
 
     // optical depth scales for 3 different shells of atmosphere - air, haze, ozone
-    const float earthradius = 6371e3f, earthairheight = 8.4e3f, earthhazeheight = 1.25e3f, earthozoneheight = earthairheight + 15e3f;
+    const float earthradius = 6371e3f, earthairheight = 8.4e3f, earthhazeheight = 1.25e3f, earthozoneheight = 50e3f;
     float planetradius = earthradius*atmoplanetsize;
     vec atmoshells = vec(earthairheight, earthhazeheight, earthozoneheight).mul(atmoheight).add(planetradius).square().sub(planetradius*planetradius);
     LOCALPARAM(opticaldepthparams, vec4(atmoshells, planetradius));
@@ -448,7 +448,7 @@ static void drawatmosphere(int w, float z1clip = 0.0f, float z2clip = 1.0f, int 
                      ozone(3.426f, 8.298f, 0.356f);
     vec betar = vec(lambda).square().square().recip().mul(1.241e-30f * atmodensity),
         betam = vec(lambda).recip().square().mul(k).mul(9.072e-17f * atmohaze),
-        betao = vec(ozone).mul(0.06e-5f*atmoozone);
+        betao = vec(ozone).mul(2e-7f*atmoozone);
     LOCALPARAM(betarayleigh, vec(betar).div(M_LN2));
     LOCALPARAM(betamie, vec(betam).div(M_LN2));
     LOCALPARAM(betaozone, vec(betao).div(M_LN2));
