@@ -288,6 +288,7 @@ namespace game
     void edittoggled(bool on)
     {
         addmsg(N_EDITMODE, "ri", on ? 1 : 0);
+        if(on && cintegration) cintegration->setachievement("ACH_EDIT_ENTER");
         if(player1->state==CS_DEAD) deathstate(player1, true);
         else if(player1->state==CS_EDITING && player1->editstate==CS_DEAD) showscores(false);
         disablezoom();

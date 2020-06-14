@@ -2,12 +2,13 @@ namespace integration {
     struct clientintegration {
         virtual int setup() { return 0; }
         virtual void cleanup() {}
+        virtual void update() {}
 
         virtual void cancelticket() {}
         virtual void getticket(char* ticket) {};
         virtual int getsteamid() { return 0; }
         virtual int getticketlength() { return 0; }
-
+        virtual void setachievement(const char* achievement) {}
     };
 
     struct serverintegration {

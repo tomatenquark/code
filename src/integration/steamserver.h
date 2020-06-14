@@ -5,7 +5,7 @@ namespace integration {
     struct steamserver: serverintegration {
         int setup(int ip, int port) override
         {
-            if ( !SteamGameServer_Init(ip, port + 4, port, port + 3, eServerModeInvalid, "") ) return 1;
+            if ( !SteamGameServer_Init(ip, port + 4, port, port + 3, eServerModeInvalid, "1") ) return 1;
             return 0;
         }
 

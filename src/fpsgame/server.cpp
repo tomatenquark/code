@@ -780,7 +780,7 @@ namespace server
 
     void cleanupintegration()
     {
-        sintegration->cleanup();
+        if (sintegration != NULL) sintegration->cleanup();
     }
 
     const char *modename(int n, const char *unknown)

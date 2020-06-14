@@ -1315,6 +1315,7 @@ int main(int argc, char **argv)
         recomputecamera();
         updateparticles();
         updatesounds();
+        game::updateintegration();
 
         if(minimized) continue;
 

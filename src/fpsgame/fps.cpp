@@ -606,7 +606,11 @@ namespace game
     }
 
     void cleanupintegration() {
-        cintegration->cleanup();
+        if (cintegration) cintegration->cleanup();
+    }
+
+    void updateintegration() {
+        if (cintegration) cintegration->update();
     }
 
     VARP(showmodeinfo, 0, 1, 1);
