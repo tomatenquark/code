@@ -16,8 +16,6 @@ struct hideandseekclientmode : clientmode
 
 #define ishider(ci) (strcmp(ci->team, TEAM_HIDE) == 0 && ci->state != CS_SPECTATOR ? true : false)
     
-    void setup() {}
-
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, float size_factor) {
         float scale = calcradarscale();
         vec dir = d->o;
@@ -131,10 +129,6 @@ struct hideandseekclientmode : clientmode
         putint(p, -1);
     }
 
-    void entergame(clientinfo *ci) { }
-
-    void leavegame(clientinfo *ci, bool disconnecting) {}
-
     void cleanup() {
         loopv(clients) {
             copystring(clients[i]->team, rand() & 1 ? "evil" : "good", MAXTEAMLEN+1);
@@ -168,10 +162,6 @@ struct hideandseekclientmode : clientmode
             if (finished()) startintermission();
         }
     }
-
-    void intermission() { }
-
-    void spawned(fpsent *d) { }
 
     bool canspawn(clientinfo *ci, bool connecting) { return true; }
 
