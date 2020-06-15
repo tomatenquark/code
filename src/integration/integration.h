@@ -12,7 +12,6 @@ namespace integration {
         virtual void setachievement(const char* achievement) {}
 
         virtual void createmapid() {}
-        virtual int getlastmapid() { return 0; }
     };
 
     struct serverintegration {
