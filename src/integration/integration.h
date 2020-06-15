@@ -1,3 +1,6 @@
+// Some things need to be defined without namespace
+extern int mapid;
+
 namespace integration {
     struct clientintegration {
         virtual int setup() { return 0; }
@@ -22,4 +25,3 @@ namespace integration {
         virtual bool answerticket(int steamid, int length, const char * ticket) { return false; }
     };
 }
-

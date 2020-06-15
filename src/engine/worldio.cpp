@@ -1087,8 +1087,8 @@ bool load_world(const char *mname, const char *cname)        // still supports a
             case ID_VAR:
             {
                 int val = f->getlil<int>();
-                if(exists && id->minval <= id->maxval) setvar(name, val);
-                if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
+                bool clamp = strcmp(name, "mapid") != 0;
+                if(exists && id->minval <= id->maxval) setvar(name, val, true, clamp);if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
                 break;
             }
  

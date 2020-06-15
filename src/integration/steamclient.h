@@ -138,7 +138,6 @@ namespace integration {
         bool api_Initialized;
         HAuthTicket authTicket;
         uint32 ticketLength;
-        uint64 mapID;
     public:
         steamclient();
 
@@ -208,15 +207,14 @@ namespace integration {
     steamclient::steamclient():
         api_Initialized( false ),
         authTicket( k_HAuthTicketInvalid ),
-        ticketLength( 0 ),
-        mapID( 0 )
+        ticketLength( 0 )
     {
     }
 
     void steamclient::OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure ) {
         if (pParam->m_eResult == k_EResultOK) {
-            mapID = pParam->m_nPublishedFileId;
-            // check m_bUserNeedsToAcceptWorkshopLegalAgreement
+            setvar("mapid", pParam->m_nPublishedFileId, true, false);
+            // TODO: Check m_bUserNeedsToAcceptWorkshopLegalAgreement
         }
     }
 }
