@@ -1,6 +1,3 @@
-// Some things need to be defined without namespace
-extern int mapid;
-
 namespace integration {
     struct clientintegration {
         virtual int setup() { return 0; }
