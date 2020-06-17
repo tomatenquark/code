@@ -202,6 +202,17 @@ namespace integration {
             SteamAPICall_t steamApiCall = SteamUGC()->CreateItem(SteamUtils()->GetAppID(), k_EWorkshopFileTypeCommunity);
             m_GetItemCreateCallResult.Set( steamApiCall, this, &steamclient::OnGetItemCreateResult );
         }
+
+        void updatemapbyid(const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) override
+        {
+            if (!api_Initialized) return;
+            UGCUpdateHandle_t updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), mapid);
+            SteamUGC()->SetItemTitle( updateHandle, title );
+            SteamUGC()->SetItemContent( updateHandle, content );
+            if (desc != NULL) SteamUGC()->SetItemDescription( updateHandle, desc );
+            if (preview != NULL) SteamUGC()->SetItemPreview( updateHandle, preview );
+            SteamUGC()->SubmitItemUpdate( updateHandle, NULL );
+        }
     };
 
     steamclient::steamclient():
