@@ -469,8 +469,12 @@ struct fpsstate
         }
         else if(m_regencapture)
         {
-            armourtype = A_GREEN;
-            armour = 0;
+            extern int regenbluearmour;
+            if(regenbluearmour)
+            {
+                armourtype = A_BLUE;
+                armour = 25;
+            }
             gunselect = GUN_PISTOL;
             ammo[GUN_PISTOL] = 40;
             ammo[GUN_GL] = 1;
