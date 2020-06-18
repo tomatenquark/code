@@ -247,6 +247,16 @@ namespace game
             int team = 0;
             if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
             renderplayer(d, getplayermodelinfo(d), team, 1, mainpass);
+
+            vec dir = vec(d->o).sub(camera1->o);
+            float dist = dir.magnitude();
+            dir.div(dist);
+            if(raycube(camera1->o, dir, dist, 0) < dist)
+            {
+                d->info[0] = '\0';
+                continue;
+            }
+
             copystring(d->info, colorname(d));
             if(d->state!=CS_DEAD)
             {
