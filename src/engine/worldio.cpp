@@ -1277,9 +1277,31 @@ bool load_world(const char *mname, const char *cname)        // still supports a
 
 void savecurrentmap() { save_world(game::getclientmap()); }
 void savemap(char *mname) { save_world(mname); }
+void saveworkshopmap(char *mname) {
+    if (!mapid || !strlen(mname)) return;
+    // Create workshop item folder if not exists
+    string workshopfolder, mapname;
+    formatstring(workshopfolder, "packages/%i", mapid);
+    int dirlen = strlen(workshopfolder);
+    if(workshopfolder[dirlen] != '/' && workshopfolder[dirlen] != '\\' && dirlen+1 < (int)sizeof(workshopfolder)) { workshopfolder[dirlen++] = '/'; workshopfolder[dirlen] = '\0'; }
+    const char *dir = findfile(workshopfolder, "w");
+    if(!fileexists(dir, "w")) createdir(dir);
+    // Save map to folder
+    formatstring(mapname, "%i/%s.ogz", mapid, mname);
+    save_world(mapname);
+}
+
+void uploadworldtoworkshop() {
+    if (!mapid || !strlen(game::getclientmap())) return;
+    string workshopfolder;
+    formatstring(workshopfolder, "%spackages/%i", homedir, mapid);
+    game::uploadmaptoworkshop(mapid, game::getclientmap(), workshopfolder, maptitle, NULL);
+}
 
 COMMAND(savemap, "s");
 COMMAND(savecurrentmap, "");
+COMMAND(saveworkshopmap, "s");
+COMMAND(uploadworldtoworkshop, "");
 
 void writeobj(char *name)
 {

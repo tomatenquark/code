@@ -613,6 +613,10 @@ namespace game
         cintegration->update();
     }
 
+    void uploadmaptoworkshop(int id, const char* title, const char* content, const char* desc, const char* preview) {
+        cintegration->updatemapbyid(id, title, content, desc, preview);
+    }
+
     VARP(showmodeinfo, 0, 1, 1);
 
     void startgame()
