@@ -2873,6 +2873,13 @@ ICOMMAND(loopfiles, "rsse", (ident *id, char *dir, char *ext, uint *body),
     if(files.length()) poparg(*id);
 });
 
+void loopdirs()
+{
+    vector<char *> folders;
+    listdirs(homedir, folders);
+}
+COMMAND(loopdirs, "");
+
 void findfile_(char *name)
 { 
     string fname;

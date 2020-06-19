@@ -3,21 +3,9 @@
 #include <algorithm>
 #include <array>
 #include <vector>
-#include <sstream>
 #include <map>
-#ifdef __linux__ 
-#include <experimental/filesystem>
-#else
-#include <filesystem>
-#endif
 
 #include "assetbundler.h"
-
-#ifdef __linux__ 
-namespace fs = std::experimental::filesystem;
-#else
-namespace fs = std::filesystem;
-#endif
 
 namespace download {
     // Writes data from stream to disk

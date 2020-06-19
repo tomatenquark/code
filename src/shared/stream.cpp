@@ -544,6 +544,24 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
     else return false;
 }
 
+bool listdirs(const char *dir, vector<char *> &folders)
+{
+    for (const auto& entry: fs::directory_iterator(dir))
+    {
+        if (fs::is_directory(entry))
+        {
+            string folder;
+            formatstring(folder, "%s", entry.path().filename().string().c_str());
+            folders.add(folder);
+        }
+    }
+    loopv(folders)
+    {
+        char *folder = folders[i];
+        conoutf("%s", folder);
+    }
+}
+
 int listfiles(const char *dir, const char *ext, vector<char *> &files)
 {
     string dirname;
