@@ -10,7 +10,7 @@ namespace game
     // Variables used for downloading
     static char servercontent[MAXTRANS];
     string serverdir = "";
-    integration::clientintegration * cintegration = NULL;
+    integration::clientintegration * cintegration;
 
     void getservercontent()
     {

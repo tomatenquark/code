@@ -102,7 +102,6 @@ struct client                   // server side version of "dynent" type
 
 vector<client *> clients;
 
-integration::serverintegration *sintegration = NULL;
 ENetHost *serverhost = NULL;
 int laststatus = 0; 
 ENetSocket pongsock = ENET_SOCKET_NULL, lansock = ENET_SOCKET_NULL;

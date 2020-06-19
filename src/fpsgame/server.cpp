@@ -765,7 +765,7 @@ namespace server
         return msg >= 0 && msg < NUMMSG ? sizetable[msg] : -1;
     }
 
-    integration::serverintegration *sintegration = NULL;
+    integration::serverintegration *sintegration;
 #ifdef STEAM_ENABLED
     integration::steamserver steamserverintegration;
 #endif
