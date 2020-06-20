@@ -558,15 +558,8 @@ bool listdirs(const char *dir, vector<char *> &folders)
     {
         if (fs::is_directory(entry))
         {
-            string folder;
-            formatstring(folder, "%s", entry.path().filename().string().c_str());
-            folders.add(folder);
+            folders.add(strdup(entry.path().filename().string().c_str()));
         }
-    }
-    loopv(folders)
-    {
-        char *folder = folders[i];
-        conoutf("%s", folder);
     }
     return true;
 }

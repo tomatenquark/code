@@ -2873,12 +2873,36 @@ ICOMMAND(loopfiles, "rsse", (ident *id, char *dir, char *ext, uint *body),
     if(files.length()) poparg(*id);
 });
 
-void loopdirs()
+void loopdirs(ident *id, uint *body, char* dir)
 {
+    if(id->type!=ID_ALIAS) return;
+    identstack stack;
     vector<char *> folders;
-    listdirs(homedir, folders);
+    listdirs(dir, folders);
+    loopv(folders)
+    {
+        char *folder = folders[i];
+        if(i)
+        {
+            if(id->valtype == VAL_STR) delete[] id->val.s;
+            else id->valtype = VAL_STR;
+            id->val.s = folder;
+        }
+        else
+        {
+            tagval t;
+            t.setstr(folder);
+            pusharg(*id, t, stack);
+            id->flags &= ~IDF_UNKNOWN;
+        }
+        execute(body);
+    }
+    if(folders.length()) poparg(*id);
 }
-COMMAND(loopdirs, "");
+
+ICOMMAND(loophomedir, "re", (ident *id, uint *body), {
+    loopdirs(id, body, homedir);
+});
 
 void findfile_(char *name)
 { 
