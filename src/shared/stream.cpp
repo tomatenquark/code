@@ -1,8 +1,10 @@
 #include "cube.h"
 
 #if defined(__clang__) || defined(_MSC_VER)
+#include <filesystem>
 namespace fs = std::filesystem;
 #else
+#include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #endif
 
