@@ -601,8 +601,11 @@ namespace game
     void initintegration() {
 #ifdef STEAM_ENABLED
         cintegration = &steamintegration;
-#endif
         cintegration->setup();
+        cintegration->getappdir(extensiondir);
+#else
+        cintegration->setup();
+#endif
     }
 
     void cleanupintegration() {

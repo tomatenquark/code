@@ -160,6 +160,15 @@ namespace integration {
             SteamAPI_RunCallbacks();
         }
 
+        void getappdir(char *installdir) override
+        {
+            if (!api_Initialized) return;
+            string pdir;
+            int folderLength;
+            SteamApps()->GetAppInstallDir( SteamUtils()->GetAppID(), pdir, folderLength );
+            copystring(installdir, pdir, folderLength);
+        }
+
         void cancelticket() override
         {
             if (!api_Initialized) return;

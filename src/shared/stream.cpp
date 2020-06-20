@@ -266,7 +266,7 @@ done:
 #include <dirent.h>
 #endif
 
-string homedir = "";
+string homedir = "", extensiondir = "";
 struct packagedir
 {
     char *dir, *filter;
@@ -430,6 +430,12 @@ const char *sethomedir(const char *dir)
     if(!subhomedir(pdir, sizeof(pdir), dir) || !fixpackagedir(pdir)) return NULL;
     copystring(homedir, pdir);
     return homedir;
+}
+
+const char *setextensiondir(const char *dir)
+{
+    copystring(extensiondir, dir);
+    return extensiondir;
 }
 
 const char *addpackagedir(const char *dir)

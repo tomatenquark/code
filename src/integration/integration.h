@@ -3,6 +3,7 @@ namespace integration {
         virtual int setup() { return 0; }
         virtual void cleanup() {}
         virtual void update() {}
+        virtual void getappdir(char *installdir) {};
 
         virtual void cancelticket() {}
         virtual void getticket(char* ticket) {};

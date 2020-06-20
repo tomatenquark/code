@@ -2900,9 +2900,17 @@ void loopdirs(ident *id, uint *body, char* dir)
     if(folders.length()) poparg(*id);
 }
 
-ICOMMAND(loophomedir, "re", (ident *id, uint *body), {
-    loopdirs(id, body, homedir);
+ICOMMAND(loophomedirpackages, "re", (ident *id, uint *body), {
+    string packagesdir;
+    formatstring(packagesdir, "%spackages", homedir);
+    loopdirs(id, body, packagesdir);
 });
+
+ICOMMAND(loopextensiondirpackages, "re", (ident *id, uint *body), {
+    string packagesdir;
+    formatstring(packagesdir, "%spackages", extensiondir);
+    loopdirs(id, body, packagesdir);
+})
 
 void findfile_(char *name)
 { 
