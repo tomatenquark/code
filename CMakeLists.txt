@@ -242,6 +242,8 @@ else()
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "stdc++fs")
+        list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_SERVER "stdc++fs")
+        list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_MASTER "stdc++fs")
     endif()
     # Server doesn't need more libs linked on UNIX
 endif()
