@@ -11,16 +11,12 @@
 #include <thread>
 #include <chrono>
 #include <regex>
-#ifdef __GNUC__
-#include <experimental/filesystem>
-#else
+#if defined(__clang__) || defined(_MSC_VER)
 #include <filesystem>
-#endif
-
-#ifdef __GNUC__
-namespace fs = std::experimental::filesystem;
-#else
 namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 #endif
 
 #include <curl/curl.h>

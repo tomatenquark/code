@@ -560,6 +560,7 @@ bool listdirs(const char *dir, vector<char *> &folders)
         char *folder = folders[i];
         conoutf("%s", folder);
     }
+    return true;
 }
 
 int listfiles(const char *dir, const char *ext, vector<char *> &files)
