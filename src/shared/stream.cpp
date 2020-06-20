@@ -1,5 +1,11 @@
 #include "cube.h"
 
+#if defined(__clang__) || defined(_MSC_VER)
+namespace fs = std::filesystem;
+#else
+namespace fs = std::experimental::filesystem;
+#endif
+
 ///////////////////////////// console ////////////////////////
 
 void conoutf(const char *fmt, ...)
