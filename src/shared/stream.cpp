@@ -494,6 +494,11 @@ const char *findfile(const char *filename, const char *mode)
             return s;
         }
     }
+    if(strlen(extensiondir))
+    {
+        formatstring(s, "%s%s", extensiondir, filename);
+        if(fileexists(s, mode)) return s;
+    }
     if(mode[0]=='w' || mode[0]=='a') return filename;
     loopv(packagedirs)
     {
@@ -583,6 +588,11 @@ int listfiles(const char *dir, const char *ext, vector<char *> &files)
     if(homedir[0])
     {
         formatstring(s, "%s%s", homedir, dirname);
+        if(listdir(s, false, ext, files)) dirs++;
+    }
+    if(strlen(extensiondir))
+    {
+        formatstring(s, "%s%s", extensiondir, dirname);
         if(listdir(s, false, ext, files)) dirs++;
     }
     loopv(packagedirs)
