@@ -747,7 +747,7 @@ bool mmcollide(physent *d, const vec &dir, octaentities &oc)               // co
 
         vec center, radius;
         float rejectradius = m->collisionbox(center, radius);
-        if(d->o.reject(vec(e.o).add(center), d->radius + rejectradius)) continue;
+        if(d->o.reject(e.o, d->radius + rejectradius)) continue;
 
         float yaw = e.attr1;
         switch(d->collidetype)
