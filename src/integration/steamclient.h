@@ -2,6 +2,14 @@
 #include "steam_api.h"
 #include "achievements.h"
 
+#if defined(__clang__) || defined(_MSC_VER)
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+
 namespace integration {
     struct CSteamAchievements
     {
@@ -166,7 +174,12 @@ namespace integration {
             string pdir;
             int folderLength;
             SteamApps()->GetAppInstallDir( SteamUtils()->GetAppID(), pdir, folderLength );
-            copystring(installdir, pdir, folderLength);
+            fs::path workshopdir(pdir);
+            workshopdir = workshopdir.parent_path().parent_path();
+            workshopdir.append( "workshop" );
+            workshopdir.append( "content" );
+            workshopdir.append( std::to_string(SteamUtils()->GetAppID()) );
+            copystring(installdir, workshopdir.c_str() , workshopdir.string().length() );
         }
 
         void cancelticket() override
