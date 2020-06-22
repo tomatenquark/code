@@ -179,7 +179,7 @@ namespace integration {
             workshopdir.append( "workshop" );
             workshopdir.append( "content" );
             workshopdir.append( std::to_string(SteamUtils()->GetAppID()) );
-            copystring(installdir, workshopdir.c_str() , workshopdir.string().length() );
+            copystring(installdir, workshopdir.string().c_str() , workshopdir.string().length() );
         }
 
         void cancelticket() override

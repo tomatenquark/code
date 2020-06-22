@@ -9,7 +9,6 @@ IF(STEAM_LIBRARY AND STEAM_INCLUDE_DIR)
   SET(Steam_FIND_QUIETLY TRUE)
 ENDIF()
 
-
 FIND_PATH(STEAM_INCLUDE_DIR
   steam_api.h
   PATH_SUFFIXES steam
@@ -17,16 +16,14 @@ FIND_PATH(STEAM_INCLUDE_DIR
   $ENV{STEAM_DIR}/public
 )
 
-IF(WIN32)
-  IF(TARGET_X64)
-    SET(STEAM_LIBNAME steam_api64)
-    SET(STEAM_RUNTIMENAME steam_api64.dll)
-    SET(STEAM_PATHNAME redistributable_bin/win64)
-  ELSE()
-    SET(STEAM_LIBNAME steam_api)
-    SET(STEAM_RUNTIMENAME steam_api.dll)
-    SET(STEAM_PATHNAME redistributable_bin)
-  ENDIF()
+IF(WIN64)
+	SET(STEAM_LIBNAME steam_api64)
+	SET(STEAM_RUNTIMENAME steam_api64.dll)
+	SET(STEAM_PATHNAME redistributable_bin/win64)
+ELSEIF(WIN32)
+	SET(STEAM_LIBNAME steam_api)
+	SET(STEAM_RUNTIMENAME steam_api.dll)
+	SET(STEAM_PATHNAME redistributable_bin)
 ELSEIF(APPLE)
   # universal binary
   SET(STEAM_LIBNAME steam_api)
