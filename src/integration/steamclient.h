@@ -273,6 +273,12 @@ namespace integration {
             {
                 *downloads[pParam->m_nPublishedFileId] = pParam->m_eResult;
                 downloads.erase(pParam->m_nPublishedFileId);
+                if (pParam->m_eResult == k_EResultOK)
+                {
+                    uint64 workShopSize;
+                    uint32 folderSize, timestamp;
+                    SteamUGC()->GetItemInstallInfo( pParam->m_nPublishedFileId, &workShopSize, extensiondir, folderSize, &timestamp );
+                }
             }
         }
     }

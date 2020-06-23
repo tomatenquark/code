@@ -2295,7 +2295,7 @@ void writecfg(const char *name)
     loopv(ids)
     {
         ident &id = *ids[i];
-        if(escapeid(id)[0] == '_') break; // do not persist prefixed elements
+        //if(escapeid(id)[0] == '_') break; // do not persist prefixed elements
         if(id.type==ID_ALIAS && id.flags&IDF_PERSIST && !(id.flags&IDF_OVERRIDDEN)) switch(id.valtype)
         {
         case VAL_STR:

@@ -926,6 +926,7 @@ namespace game
         clearclients(false);
         if(cleanup)
         {
+            if (cintegration) cintegration->getappdir(extensiondir);
             nextmode = gamemode = INT_MAX;
             clientmap[0] = '\0';
         }
