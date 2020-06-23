@@ -1,13 +1,17 @@
 #include "game.h"
+#include <thread>
 
 namespace game
 {
     VARP(minradarscale, 0, 384, 10000);
     VARP(maxradarscale, 1, 1024, 10000);
     VARP(radarteammates, 0, 1, 1);
-    VARP(downloadmaps, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
-    VAR(servercontent, 0, 0, 0); // Variables used for downloading
+    // Variables used for downloading
+    VARP(downloadmaps, 0, 1, 1);
+    VAR(servercontent, 0, 0, 0);
+    VARP(downloadtimeout, 0, 50, 100);
+    // Client side integration of Steam (and potentially Discord or other platforms)
     integration::clientintegration * cintegration;
 
     float calcradarscale()
@@ -1066,21 +1070,21 @@ namespace game
             for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && !m_edit && downloadmaps && servercontent)
+        if(multiplayer(false) && !m_edit && downloadmaps && servercontent && cintegration)
         {
-            /*conoutf(CON_INFO, "downloading map %s", name);
-            int status = DOWNLOAD_PROGRESS;
-            int total = 1;
-            int current = 0;
-            renderbackground("downloading map... (esc to abort)");
-            while (status == DOWNLOAD_PROGRESS) {
-                if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
-                float percentage = (float(current)/float(total));
-                defformatstring(download_text, "downloading map... %d%%", int(percentage*100));
-                renderprogress(percentage, download_text);
+            conoutf(CON_INFO, "downloading map %s", name);
+            int status = 0;
+            bool download_started = cintegration->downloadmap(servercontent, &status);
+            if (download_started) renderbackground("downloading map... (esc to abort)");
+            else status = 2; // See https://partner.steamgames.com/doc/api/steam_api#EResult
+            int iterations = 0;
+            while (status < 2 && iterations < downloadtimeout)
+            {
+                if(interceptkey(SDLK_ESCAPE)) status = 2;
                 sendmessages();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }*/
+                iterations++;
+            }
         }
 
         gamemode = mode;

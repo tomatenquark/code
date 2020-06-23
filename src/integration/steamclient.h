@@ -2,6 +2,7 @@
 #include "steam_api.h"
 #include "achievements.h"
 
+#include <map>
 #if defined(__clang__) || defined(_MSC_VER)
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -143,6 +144,7 @@ namespace integration {
 
     struct steamclient: clientintegration {
     private:
+        std::map<int, int*> downloads;
         bool api_Initialized;
         HAuthTicket authTicket;
         uint32 ticketLength;
@@ -235,12 +237,24 @@ namespace integration {
             if (preview != NULL) SteamUGC()->SetItemPreview( updateHandle, preview );
             SteamUGC()->SubmitItemUpdate( updateHandle, NULL );
         }
+
+        STEAM_CALLBACK( steamclient, OnDownloadItemResultReceived, DownloadItemResult_t,
+                        m_CallbackDownloadItemResultReceived );
+
+        bool downloadmap(int id, int *status) override
+        {
+            if (!api_Initialized) return false;
+            bool download = SteamUGC()->DownloadItem(id, true);
+            downloads[id] = status;
+            return download;
+        }
     };
 
     steamclient::steamclient():
         api_Initialized( false ),
         authTicket( k_HAuthTicketInvalid ),
-        ticketLength( 0 )
+        ticketLength( 0 ),
+        m_CallbackDownloadItemResultReceived( this, &steamclient::OnDownloadItemResultReceived )
     {
     }
 
@@ -248,6 +262,18 @@ namespace integration {
         if (pParam->m_eResult == k_EResultOK) {
             setvar("mapid", pParam->m_nPublishedFileId, true, false);
             // TODO: Check m_bUserNeedsToAcceptWorkshopLegalAgreement
+        }
+    }
+
+    void steamclient::OnDownloadItemResultReceived ( DownloadItemResult_t *pParam )
+    {
+        if ( pParam->m_unAppID == SteamUtils()->GetAppID() )
+        {
+            if (downloads.find(pParam->m_nPublishedFileId) != downloads.end())
+            {
+                *downloads[pParam->m_nPublishedFileId] = pParam->m_eResult;
+                downloads.erase(pParam->m_nPublishedFileId);
+            }
         }
     }
 }
