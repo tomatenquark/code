@@ -1389,7 +1389,11 @@ namespace game
                 conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(t), text);
                 break;
             }
-                
+
+            case N_SERVERCONTENT:
+                setvar("servercontent", getint(p), false);
+                break;
+
             case N_MAPCHANGE:
                 getstring(text, p);
                 changemapserv(text, getint(p));
