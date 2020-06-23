@@ -7,16 +7,8 @@ namespace game
     VARP(radarteammates, 0, 1, 1);
     VARP(downloadmaps, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
-    // Variables used for downloading
-    static char servercontent[MAXTRANS];
-    string serverdir = "";
+    VAR(servercontent, 0, 0, 0); // Variables used for downloading
     integration::clientintegration * cintegration;
-
-    void getservercontent()
-    {
-        conoutf("%s", servercontent);
-    }
-    COMMAND(getservercontent, "");
 
     float calcradarscale()
     {
@@ -537,14 +529,6 @@ namespace game
     int gamemode = INT_MAX, nextmode = INT_MAX;
     string clientmap = "";
 
-    void format_servercontent(char* content) {
-        if (strstr(content, "http://")) memmove(&content[0], &content[7], strlen(content) - 6);
-        if (strstr(content, "https://")) memmove(&content[0], &content[8], strlen(content) - 7);
-        // Replace characters that would be invalid on Windows FS
-        for (int i = 0; i < strlen(content); i++) if (content[i] == '.') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
-        for (int i = 0; i < strlen(content); i++) if (content[i] == ':') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
-    }
-
     void setmode(int mode)
     {
         if(multiplayer(false) && !m_mp(mode))
@@ -936,8 +920,6 @@ namespace game
         gamepaused = false;
         gamespeed = 100;
         clearclients(false);
-        copystring(servercontent, "");
-        if (strlen(serverdir)) removepackagedir(serverdir);
         if(cleanup)
         {
             nextmode = gamemode = INT_MAX;
@@ -1084,16 +1066,12 @@ namespace game
             for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
+        if(multiplayer(false) && !m_edit && downloadmaps && servercontent)
         {
-            conoutf(CON_INFO, "downloading map %s", name);
+            /*conoutf(CON_INFO, "downloading map %s", name);
             int status = DOWNLOAD_PROGRESS;
             int total = 1;
             int current = 0;
-            copystring(serverdir, servercontent);
-            format_servercontent(serverdir);
-            prependstring(serverdir, homedir);
-            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status, &current, &total);
             renderbackground("downloading map... (esc to abort)");
             while (status == DOWNLOAD_PROGRESS) {
                 if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
@@ -1102,8 +1080,7 @@ namespace game
                 renderprogress(percentage, download_text);
                 sendmessages();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
+            }*/
         }
 
         gamemode = mode;
@@ -1412,11 +1389,6 @@ namespace game
                 conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(t), text);
                 break;
             }
-
-            case N_SERVERCONTENT:
-                getstring(text, p);
-                strcpy(servercontent, text);
-                break;
                 
             case N_MAPCHANGE:
                 getstring(text, p);
