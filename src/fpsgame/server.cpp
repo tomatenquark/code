@@ -1877,7 +1877,7 @@ namespace server
     int welcomepacket(packetbuf &p, clientinfo *ci)
     {
         putint(p, N_WELCOME);
-        if (servercontent) putint(p, N_SERVERCONTENT); putint(p, servercontent);
+        if (servercontent > 0) putint(p, N_SERVERCONTENT); putint(p, servercontent);
         putint(p, N_MAPCHANGE);
         sendstring(smapname, p);
         putint(p, gamemode);
