@@ -496,7 +496,11 @@ const char *findfile(const char *filename, const char *mode)
     }
     if(strlen(extensiondir))
     {
-        formatstring(s, "%s%s", extensiondir, filename);
+        if (strstr(filename, "packages")) {
+            formatstring(s, "%s%s", extensiondir, strreplace(filename, "packages", ""));
+        } else {
+            formatstring(s, "%s%s", extensiondir, filename);
+        }
         if(fileexists(s, mode)) return s;
     }
     if(mode[0]=='w' || mode[0]=='a') return filename;

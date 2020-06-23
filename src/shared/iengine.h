@@ -170,6 +170,7 @@ extern int clampvar(ident *id, int i, int minval, int maxval);
 extern float clampfvar(ident *id, float f, float minval, float maxval);
 extern void loopiter(ident *id, identstack &stack, const tagval &v);
 extern void loopend(ident *id, identstack &stack);
+extern char *strreplace(const char *s, const char *oldval, const char *newval);
 
 #define loopstart(id, stack) if((id)->type != ID_ALIAS) return; identstack stack;
 static inline void loopiter(ident *id, identstack &stack, int i) { tagval v; v.setint(i); loopiter(id, stack, v); }
