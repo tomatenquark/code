@@ -1877,7 +1877,6 @@ namespace server
     int welcomepacket(packetbuf &p, clientinfo *ci)
     {
         putint(p, N_WELCOME);
-        if (servercontent > 0) putint(p, N_SERVERCONTENT); putint(p, servercontent);
         putint(p, N_MAPCHANGE);
         sendstring(smapname, p);
         putint(p, gamemode);
@@ -2591,7 +2590,7 @@ namespace server
 
     void sendservinfo(clientinfo *ci)
     {
-        sendf(ci->clientnum, 1, "ri5ss", N_SERVINFO, ci->clientnum, PROTOCOL_VERSION, ci->sessionid, serverpass[0] ? 1 : 0, serverdesc, serverauth);
+        sendf(ci->clientnum, 1, "ri6ss", N_SERVINFO, ci->clientnum, PROTOCOL_VERSION, ci->sessionid, serverpass[0] ? 1 : 0, servercontent, serverdesc, serverauth);
     }
 
     void noclients()
