@@ -2,6 +2,7 @@
 #include "steam_api.h"
 #include "achievements.h"
 
+#include <string>
 #include <map>
 #if defined(__clang__) || defined(_MSC_VER)
 #include <filesystem>
