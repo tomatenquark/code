@@ -2907,9 +2907,7 @@ ICOMMAND(loophomedirpackages, "re", (ident *id, uint *body), {
 });
 
 ICOMMAND(loopextensiondirpackages, "re", (ident *id, uint *body), {
-    string packagesdir;
-    formatstring(packagesdir, "%spackages", extensiondir);
-    loopdirs(id, body, packagesdir);
+    loopdirs(id, body, extensiondir);
 })
 
 void findfile_(char *name)
@@ -3174,7 +3172,8 @@ ICOMMAND(strlen, "s", (char *s), intret(strlen(s)));
 ICOMMAND(strcode, "si", (char *s, int *i), intret(*i > 0 ? (memchr(s, 0, *i) ? 0 : uchar(s[*i])) : uchar(s[0])));
 ICOMMAND(codestr, "i", (int *i), { char *s = newstring(1); s[0] = char(*i); s[1] = '\0'; stringret(s); });
 ICOMMAND(struni, "si", (char *s, int *i), intret(*i > 0 ? (memchr(s, 0, *i) ? 0 : cube2uni(s[*i])) : cube2uni(s[0])));
-ICOMMAND(unistr, "i", (int *i), { char *s = newstring(1); s[0] = uni2cube(*i); s[1] = '\0'; stringret(s); }); 
+ICOMMAND(unistr, "i", (int *i), { char *s = newstring(1); s[0] = uni2cube(*i); s[1] = '\0'; stringret(s); });
+ICOMMAND(isnumber, "s", (char *s), { bool numeric = true; for (int i = 0; i < strlen(s); i++) if (numeric) numeric = isdigit(s[i]); intret(numeric); })
 
 #define STRMAPCOMMAND(name, map) \
     ICOMMAND(name, "s", (char *s), \
