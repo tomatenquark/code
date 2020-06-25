@@ -515,8 +515,9 @@ namespace game
         cintegration->getticket(ticket);
         int ticketLength = cintegration->getticketlength();
         if (!ticketLength) return false;
-        int steamid = cintegration->getsteamid();
-        addmsg(N_TICKETTRY, "riis", steamid, ticketLength, ticket);
+        string steamid;
+        cintegration->getsteamid(steamid);
+        addmsg(N_TICKETTRY, "risis", strlen(steamid), steamid, ticketLength, ticket);
         return true;
     }
     ICOMMAND(ticket, "", (), tryticket());

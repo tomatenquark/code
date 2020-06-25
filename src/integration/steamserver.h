@@ -1,6 +1,8 @@
 #ifdef STEAM_ENABLED
 #include "steam_gameserver.h"
 
+#include <string>
+
 namespace integration {
     struct steamserver: serverintegration {
         int setup(int ip, int port) override
@@ -25,9 +27,10 @@ namespace integration {
             SteamGameServer_RunCallbacks();
         }
 
-        bool answerticket(int id, int length, const char * ticket) override
+        bool answerticket(char* id, int length, const char * ticket) override
         {
-            CSteamID steamId = CSteamID{ (uint64)id };
+            uint64 value = std::stoull( id );
+            CSteamID steamId = CSteamID{ value };
             EBeginAuthSessionResult authSessionResult = SteamGameServer()->BeginAuthSession( ticket, length, steamId );
             return authSessionResult != k_EBeginAuthSessionResultInvalidTicket;
         }

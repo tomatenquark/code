@@ -7,7 +7,7 @@ namespace integration {
 
         virtual void cancelticket() {}
         virtual void getticket(char* ticket) {};
-        virtual int getsteamid() { return 0; }
+        virtual void getsteamid(char* id) {};
         virtual int getticketlength() { return 0; }
 
         virtual void setachievement(const char* achievement) {}
@@ -22,6 +22,6 @@ namespace integration {
         virtual void cleanup() {}
         virtual void update() {}
 
-        virtual bool answerticket(int steamid, int length, const char * ticket) { return false; }
+        virtual bool answerticket(char* steamid, int length, const char * ticket) { return false; }
     };
 }

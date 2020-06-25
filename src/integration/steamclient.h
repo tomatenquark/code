@@ -203,10 +203,11 @@ namespace integration {
             return (int)ticketLength;
         }
 
-        int getsteamid() override
+        void getsteamid(char* id) override
         {
-            if (!api_Initialized) return 0;
-            return SteamUser()->GetSteamID().ConvertToUint64();
+            if (!api_Initialized) return;
+            std::string userid = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
+            copystring(id, userid.c_str(), userid.length() + 1);
         }
 
         void setachievement(const char* achievement) override
