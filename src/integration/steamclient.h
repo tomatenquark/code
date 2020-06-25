@@ -239,6 +239,7 @@ namespace integration {
             if (desc != NULL) SteamUGC()->SetItemDescription( updateHandle, desc );
             if (preview != NULL) SteamUGC()->SetItemPreview( updateHandle, preview );
             SteamUGC()->SubmitItemUpdate( updateHandle, NULL );
+            conoutf("Submitted item update for ID: %s", id);
         }
 
         STEAM_CALLBACK( steamclient, OnDownloadItemResultReceived, DownloadItemResult_t,
@@ -249,6 +250,7 @@ namespace integration {
             if (!api_Initialized) return false;
             uint64 mid = std::stoull(id);
             bool download = SteamUGC()->DownloadItem(mid, true);
+            conoutf("Started download for collection ID: %s", id);
             downloads[mid] = status;
             return download;
         }
@@ -266,6 +268,7 @@ namespace integration {
         if (pParam->m_eResult == k_EResultOK) {
             std::string mid = std::to_string(pParam->m_nPublishedFileId);
             copystring(mapid, mid.c_str(), mid.length() + 1);
+            conoutf("Successfully created map ID: %s", mapid);
             // TODO: Check m_bUserNeedsToAcceptWorkshopLegalAgreement
         }
     }
@@ -283,6 +286,8 @@ namespace integration {
                     uint64 workShopSize;
                     uint32 folderSize, timestamp;
                     SteamUGC()->GetItemInstallInfo( pParam->m_nPublishedFileId, &workShopSize, extensiondir, folderSize, &timestamp );
+                    conoutf("Finished download for collection ID: %s", std::to_string(pParam->m_nPublishedFileId).c_str());
+                    conoutf("Using content directory: %s", extensiondir);
                 }
             }
         }
