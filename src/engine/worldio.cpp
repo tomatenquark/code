@@ -1295,7 +1295,9 @@ void uploadworldtoworkshop() {
     if (!mapid || !strlen(game::getclientmap())) return;
     string workshopfolder;
     formatstring(workshopfolder, "%spackages/%i", homedir, mapid);
-    game::uploadmaptoworkshop(mapid, game::getclientmap(), workshopfolder, maptitle, NULL);
+    string preview;
+    formatstring(preview, "%spackages/%i/%i.jpg", homedir, mapid, mapid);
+    game::uploadmaptoworkshop(mapid, game::getclientmap(), workshopfolder, maptitle, (fileexists(preview, "r") ? preview : NULL));
 }
 
 COMMAND(savemap, "s");
