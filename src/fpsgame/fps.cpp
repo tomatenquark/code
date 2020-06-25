@@ -299,7 +299,11 @@ namespace game
         loopv(players)
         {
             const fpsent *o = players[i];
-            if(o != p && (o->state != CS_ALIVE || isteam(o->team, p->team))) continue;
+            if(o == p)
+            {
+                if(o->state != CS_ALIVE && lastmillis - o->lastpain > 3000) continue;
+            }
+            else if(o->state != CS_ALIVE || isteam(o->team, p->team)) continue;
 
             vec dir = vec(o->o).sub(e.o);
             float dist = dir.squaredlen();
