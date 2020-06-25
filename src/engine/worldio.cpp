@@ -1290,19 +1290,20 @@ void saveworkshopmap(char *mname) {
     save_world(mapname);
 }
 
-void uploadworldtoworkshop() {
-    if (!strlen(mapid) || !strlen(game::getclientmap())) return;
+void uploadmaptoworkshop(const char* title) {
+    if (!strlen(mapid) || !strlen(title)) return;
     string workshopfolder;
     formatstring(workshopfolder, "%spackages/%s", homedir, mapid);
     string preview;
     formatstring(preview, "%spackages/%s/%s.jpg", homedir, mapid, mapid);
-    game::uploadmaptoworkshop(mapid, game::getclientmap(), workshopfolder, maptitle, (fileexists(preview, "r") ? preview : NULL));
+    game::uploadmaptoworkshop(mapid, title, workshopfolder, maptitle, (fileexists(preview, "r") ? preview : NULL));
 }
 
 COMMAND(savemap, "s");
 COMMAND(savecurrentmap, "");
 COMMAND(saveworkshopmap, "s");
-COMMAND(uploadworldtoworkshop, "");
+ICOMMAND(uploadcurrentmaptoworkshop, "", (), { uploadmaptoworkshop(game::getclientmap()); });
+COMMAND(uploadmaptoworkshop, "s");
 
 void writeobj(char *name)
 {

@@ -2906,7 +2906,7 @@ ICOMMAND(loophomedirpackages, "re", (ident *id, uint *body), {
     loopdirs(id, body, packagesdir);
 });
 
-ICOMMAND(loopextensiondirpackages, "re", (ident *id, uint *body), {
+ICOMMAND(loopextensiondir, "re", (ident *id, uint *body), {
     loopdirs(id, body, extensiondir);
 })
 
