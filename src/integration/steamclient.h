@@ -145,7 +145,7 @@ namespace integration {
 
     struct steamclient: clientintegration {
     private:
-        std::map<int, int*> downloads;
+        std::map<uint64, int*> downloads;
         bool api_Initialized;
         HAuthTicket authTicket;
         uint32 ticketLength;
@@ -244,11 +244,12 @@ namespace integration {
         STEAM_CALLBACK( steamclient, OnDownloadItemResultReceived, DownloadItemResult_t,
                         m_CallbackDownloadItemResultReceived );
 
-        bool downloadmap(int id, int *status) override
+        bool downloadmap(const char* id, int *status) override
         {
             if (!api_Initialized) return false;
-            bool download = SteamUGC()->DownloadItem(id, true);
-            downloads[id] = status;
+            uint64 mid = std::stoull(id);
+            bool download = SteamUGC()->DownloadItem(mid, true);
+            downloads[mid] = status;
             return download;
         }
     };

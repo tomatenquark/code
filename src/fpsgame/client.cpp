@@ -9,7 +9,6 @@ namespace game
     FVARP(minimapalpha, 0, 1, 1);
     // Variables used for downloading
     VARP(downloadmaps, 0, 1, 1);
-    VAR(servercontent, 0, 0, 0);
     VARP(downloadtimeout, 0, 50, 100);
     // Client side integration of Steam (and potentially Discord or other platforms)
     integration::clientintegration * cintegration;
@@ -131,7 +130,7 @@ namespace game
 
     bool connected = false, remote = false, demoplayback = false, gamepaused = false;
     int sessionid = 0, mastermode = MM_OPEN, gamespeed = 100;
-    string servinfo = "", servauth = "", connectpass = "";
+    string servercontent = "", servinfo = "", servauth = "", connectpass = "";
 
     VARP(deadpush, 1, 2, 20);
 
@@ -1072,7 +1071,7 @@ namespace game
             for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && !m_edit && downloadmaps && servercontent && cintegration)
+        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent) && cintegration)
         {
             conoutf(CON_INFO, "downloading map %s", name);
             int status = 0;
@@ -1318,7 +1317,7 @@ namespace game
                 sessionid = getint(p);
                 player1->clientnum = mycn;      // we are now connected
                 if(getint(p) > 0) conoutf("this server is password protected");
-                servercontent = getint(p);
+                getstring(servercontent, p, sizeof(servercontent));
                 getstring(servinfo, p, sizeof(servinfo));
                 getstring(servauth, p, sizeof(servauth));
                 sendintro();

@@ -652,7 +652,7 @@ namespace server
     SVAR(serverdesc, "");
     SVAR(serverpass, "");
     SVAR(adminpass, "");
-    VAR(servercontent, 0, 0, INT_MAX);
+    SVAR(servercontent, "");
     VARF(publicserver, 0, 0, 2, {
 		switch(publicserver)
 		{
@@ -2590,7 +2590,7 @@ namespace server
 
     void sendservinfo(clientinfo *ci)
     {
-        sendf(ci->clientnum, 1, "ri6ss", N_SERVINFO, ci->clientnum, PROTOCOL_VERSION, ci->sessionid, serverpass[0] ? 1 : 0, servercontent, serverdesc, serverauth);
+        sendf(ci->clientnum, 1, "ri5sss", N_SERVINFO, ci->clientnum, PROTOCOL_VERSION, ci->sessionid, serverpass[0] ? 1 : 0, servercontent, serverdesc, serverauth);
     }
 
     void noclients()
