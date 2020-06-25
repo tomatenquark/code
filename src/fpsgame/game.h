@@ -870,6 +870,13 @@ namespace server
     extern int msgsizelookup(int msg);
     extern bool serveroption(const char *arg);
     extern bool delayspawn(int type);
+    // server info
+    extern char* getservermodt();
+    extern char* getserverdesc();
+    extern char* getservermap();
+    extern int getservermaxclients();
+    extern int getservernumbots();
+    extern int getservermode();
 }
 
 #endif

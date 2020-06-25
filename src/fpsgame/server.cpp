@@ -3790,5 +3790,13 @@ namespace server
     }
 
     #include "aiman.h"
+
+    // Information needed for server browser
+    char* getservermodt() { return servermotd; }
+    char* getserverdesc() { return serverdesc; }
+    char* getservermap() { return smapname; }
+    int getservermaxclients() { return maxclients; }
+    int getservernumbots() { return bots.alen; }
+    int getservermode() { return gamemode; }
 }
 

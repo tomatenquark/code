@@ -16,6 +16,12 @@ namespace integration {
 
         void update() override
         {
+            SteamGameServer()->SetGameDescription(server::getservermodt());
+            SteamGameServer()->SetServerName(server::getserverdesc());
+            SteamGameServer()->SetMapName(server::getservermap());
+            SteamGameServer()->SetMaxPlayerCount(server::getservermaxclients());
+            SteamGameServer()->SetBotPlayerCount(server::getservernumbots());
+            SteamGameServer()->SetKeyValue("mode", server::modename(server::getservermode()));
             SteamGameServer_RunCallbacks();
         }
 
