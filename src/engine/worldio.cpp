@@ -1087,8 +1087,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
             case ID_VAR:
             {
                 int val = f->getlil<int>();
-                bool clamp = strcmp(name, "mapid") != 0;
-                if(exists && id->minval <= id->maxval) setvar(name, val, true, clamp);if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
+                if(exists && id->minval <= id->maxval) setvar(name, val);if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
                 break;
             }
  
@@ -1278,25 +1277,25 @@ bool load_world(const char *mname, const char *cname)        // still supports a
 void savecurrentmap() { save_world(game::getclientmap()); }
 void savemap(char *mname) { save_world(mname); }
 void saveworkshopmap(char *mname) {
-    if (!mapid || !strlen(mname)) return;
+    if (!strlen(mapid) || !strlen(mname)) return;
     // Create workshop item folder if not exists
     string workshopfolder, mapname;
-    formatstring(workshopfolder, "packages/%i", mapid);
+    formatstring(workshopfolder, "packages/%s", mapid);
     int dirlen = strlen(workshopfolder);
     if(workshopfolder[dirlen] != '/' && workshopfolder[dirlen] != '\\' && dirlen+1 < (int)sizeof(workshopfolder)) { workshopfolder[dirlen++] = '/'; workshopfolder[dirlen] = '\0'; }
     const char *dir = findfile(workshopfolder, "w");
     if(!fileexists(dir, "w")) createdir(dir);
     // Save map to folder
-    formatstring(mapname, "%i/%s.ogz", mapid, mname);
+    formatstring(mapname, "%s/%s.ogz", mapid, mname);
     save_world(mapname);
 }
 
 void uploadworldtoworkshop() {
-    if (!mapid || !strlen(game::getclientmap())) return;
+    if (!strlen(mapid) || !strlen(game::getclientmap())) return;
     string workshopfolder;
-    formatstring(workshopfolder, "%spackages/%i", homedir, mapid);
+    formatstring(workshopfolder, "%spackages/%s", homedir, mapid);
     string preview;
-    formatstring(preview, "%spackages/%i/%i.jpg", homedir, mapid, mapid);
+    formatstring(preview, "%spackages/%s/%s.jpg", homedir, mapid, mapid);
     game::uploadmaptoworkshop(mapid, game::getclientmap(), workshopfolder, maptitle, (fileexists(preview, "r") ? preview : NULL));
 }
 

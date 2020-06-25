@@ -616,7 +616,7 @@ namespace game
         cintegration->update();
     }
 
-    void uploadmaptoworkshop(int id, const char* title, const char* content, const char* desc, const char* preview) {
+    void uploadmaptoworkshop(const char* id, const char* title, const char* content, const char* desc, const char* preview) {
         cintegration->updatemapbyid(id, title, content, desc, preview);
     }
 

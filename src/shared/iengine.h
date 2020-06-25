@@ -226,7 +226,7 @@ static inline bool insideworld(const ivec &o)
 }
 
 // world
-extern int mapid;
+extern char* mapid;
 extern bool emptymap(int factor, bool force, const char *mname = "", bool usecfg = true);
 extern bool enlargemap(bool force);
 extern int findentity(int type, int index = 0, int attr1 = -1, int attr2 = -1);

@@ -13,7 +13,7 @@ namespace integration {
         virtual void setachievement(const char* achievement) {}
 
         virtual void createmapid() {}
-        virtual void updatemapbyid(int id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) {}
+        virtual void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) {}
         virtual bool downloadmap(int id, int *status) { return false; }
     };
 

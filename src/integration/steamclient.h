@@ -229,10 +229,11 @@ namespace integration {
             m_GetItemCreateCallResult.Set( steamApiCall, this, &steamclient::OnGetItemCreateResult );
         }
 
-        void updatemapbyid(int id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) override
+        void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) override
         {
             if (!api_Initialized) return;
-            UGCUpdateHandle_t updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), id);
+            uint64 mid = std::stoull(id);
+            UGCUpdateHandle_t updateHandle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), mid);
             SteamUGC()->SetItemTitle( updateHandle, title );
             SteamUGC()->SetItemContent( updateHandle, content );
             if (desc != NULL) SteamUGC()->SetItemDescription( updateHandle, desc );
@@ -262,7 +263,8 @@ namespace integration {
 
     void steamclient::OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure ) {
         if (pParam->m_eResult == k_EResultOK) {
-            setvar("mapid", pParam->m_nPublishedFileId, true, false);
+            std::string mid = std::to_string(pParam->m_nPublishedFileId);
+            copystring(mapid, mid.c_str(), mid.length() + 1);
             // TODO: Check m_bUserNeedsToAcceptWorkshopLegalAgreement
         }
     }

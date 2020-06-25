@@ -54,7 +54,7 @@ namespace game
     extern void initintegration();
     extern void cleanupintegration();
     extern void updateintegration();
-    extern void uploadmaptoworkshop(int id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL);
+    extern void uploadmaptoworkshop(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL);
     extern void physicstrigger(physent *d, bool local, int floorlevel, int waterlevel, int material = 0);
     extern void bounced(physent *d, const vec &surface);
     extern void edittrigger(const selinfo &sel, int op, int arg1 = 0, int arg2 = 0, int arg3 = 0, const VSlot *vs = NULL);

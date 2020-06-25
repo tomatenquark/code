@@ -2233,6 +2233,6 @@ namespace game
     }
     COMMAND(renamemap, "ss");
 
-    ICOMMAND(createmapid, "", (), if(m_edit && !mapid && cintegration) cintegration->createmapid());
+    ICOMMAND(createmapid, "", (), if(m_edit && !strlen(mapid) && cintegration) cintegration->createmapid());
 }
 
