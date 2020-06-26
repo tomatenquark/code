@@ -269,7 +269,13 @@ namespace integration {
             std::string mid = std::to_string(pParam->m_nPublishedFileId);
             copystring(mapid, mid.c_str(), mid.length() + 1);
             conoutf("Successfully created map ID: %s", mapid);
-            // TODO: Check m_bUserNeedsToAcceptWorkshopLegalAgreement
+            if (identexists("mapidcreated")) execute("mapidcreated");
+            if (pParam->m_bUserNeedsToAcceptWorkshopLegalAgreement)
+            {
+                string legalurl;
+                formatstring(legalurl, "steam://url/CommunityFilePage/%s", mid.c_str());
+                SteamFriends()->ActivateGameOverlayToWebPage(legalurl);
+            }
         }
     }
 
