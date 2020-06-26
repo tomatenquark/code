@@ -934,9 +934,10 @@ namespace game
         gamepaused = false;
         gamespeed = 100;
         clearclients(false);
+        if (cintegration) cintegration->getappdir(extensiondir);
+        if (cintegration) cintegration->cancelticket();
         if(cleanup)
         {
-            if (cintegration) cintegration->getappdir(extensiondir);
             nextmode = gamemode = INT_MAX;
             clientmap[0] = '\0';
         }

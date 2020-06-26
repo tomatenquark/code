@@ -217,11 +217,11 @@ namespace server
     struct clientinfo
     {
         int clientnum, ownernum, connectmillis, sessionid, overflow;
-        string name, team, mapvote;
+        string name, team, mapvote, userid;
         int playermodel;
         int modevote;
         int privilege;
-        bool connected, local, timesync;
+        bool connected, local, timesync, authenticated;
         int gameoffset, lastevent, pushed, exceeded;
         gamestate state;
         vector<gameevent *> events;
@@ -661,6 +661,7 @@ namespace server
 			case 2: mastermask = MM_COOPSERV; break;
 		}
 	});
+    VAR(serverprotection, 0, 0, 2);
     SVAR(servermotd, "");
 
     struct teamkillkick
@@ -2465,6 +2466,7 @@ namespace server
 
         while(bannedips.length() && bannedips[0].expire-totalmillis <= 0) bannedips.remove(0);
         loopv(connects) if(totalmillis-connects[i]->connectmillis>15000) disconnect_client(connects[i]->clientnum, DISC_TIMEOUT);
+        //loopv(clients) if(totalmillis-clients[i]->connectmillis>15000 && !clients[i]->authenticated) disconnect_client(clients[i]->clientnum, DISC_PRIVATE);
 
         if(nextexceeded && gamemillis > nextexceeded && (!m_timed || gamemillis < gamelimit))
         {
@@ -2645,6 +2647,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
+            if(strlen(ci->userid)) sintegration->endsession(ci->userid);
         }
         else connects.removeobj(ci);
     }
@@ -2791,17 +2794,17 @@ namespace server
 
     bool answerticket(clientinfo *ci, char* id, int length, int *ticket)
     {
-        server::sintegration->answerticket(id, length, ticket);
+        bool request = server::sintegration->answerticket(id, length, ticket);
+        copystring(ci->userid, id);
+        return request;
         // TODO:
-        // - Set id to user ticket id
-        // - Update sintegration method
-        // - Callback for ValidateAuthTicketResponse_t
-        // - N_TICKETSUCCESS (or similiar) for confirmation
-        // - Add variable to demand N_TICKETREQ
+        // - N_TICKETSUCCESS (or similiar) for confirmation?
         // - Handle N_TICKETREQ properly
-        // - Handle disconnects
-        // - Proper shutdown of Steam server integration
-        return true;
+    }
+
+    void setauthenticated(const char* id, bool authenticated)
+    {
+        loopv(clients) if (!strcmp(clients[i]->userid, id)) clients[i]->authenticated = authenticated;
     }
 
     bool answerchallenge(clientinfo *ci, uint id, char *val, const char *desc)
@@ -3624,13 +3627,15 @@ namespace server
 
             case N_TICKETTRY:
             {
+                if (!serverprotection) break;
                 string steamid;
                 getstring(steamid, p, sizeof(steamid));
                 int ticketLength = getint(p);
                 int ticket[ticketLength];
                 for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
                 for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
-                answerticket(ci, steamid, ticketLength, ticket);
+                bool tryconnect = answerticket(ci, steamid, ticketLength, ticket);
+                if (!tryconnect && serverprotection) disconnect_client(ci->clientnum, DISC_PRIVATE);
                 break;
             }
 
@@ -3800,5 +3805,5 @@ namespace server
     int getservermaxclients() { return maxclients; }
     int getservernumbots() { return bots.alen; }
     int getservermode() { return gamemode; }
+    int getserverprotection() { return serverprotection; }
 }
-

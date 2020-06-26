@@ -23,5 +23,6 @@ namespace integration {
         virtual void update() {}
 
         virtual bool answerticket(char* steamid, int length, int* ticket) { return false; }
+        virtual void endsession(char* steamid) {}
     };
 }

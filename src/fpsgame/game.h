@@ -877,6 +877,9 @@ namespace server
     extern int getservermaxclients();
     extern int getservernumbots();
     extern int getservermode();
+    // authentication
+    extern int getserverprotection();
+    extern void setauthenticated(const char* id, bool authenticated = true);
 }
 
 #endif

@@ -5,11 +5,16 @@
 
 namespace integration {
     struct steamserver: serverintegration {
+    private:
         bool api_initialized = false;
+
+    public:
+        steamserver();
 
         void setup(int ip, int port) override
         {
-            api_initialized = SteamGameServer_Init(ip, port + 4, port, port + 3, eServerModeInvalid, "1");
+            api_initialized = SteamGameServer_Init(ip, port + 4, port, port + 3,
+                                                   static_cast<EServerMode>(server::getserverprotection() + 1), "1");
         }
 
         void cleanup() override
@@ -35,8 +40,34 @@ namespace integration {
             uint64 value = std::stoull( id );
             CSteamID steamId = CSteamID{ value };
             EBeginAuthSessionResult authSessionResult = SteamGameServer()->BeginAuthSession( ticket, length, steamId );
-            return authSessionResult != k_EBeginAuthSessionResultInvalidTicket;
+            bool valid = authSessionResult == k_EBeginAuthSessionResultOK;
+            if (valid) server::setauthenticated(id);
+            return valid;
         }
+
+        void endsession(char* steamid) override
+        {
+            if (!api_initialized) return;
+            uint64 value = std::stoull( steamid );
+            CSteamID steamId = CSteamID{ value };
+            SteamGameServer()->EndAuthSession( steamId );
+        }
+
+        STEAM_CALLBACK( steamserver, OnValidateAuthTicketResponseReceived, ValidateAuthTicketResponse_t,
+                        m_CallbackValidateAuthTicketResponseReceived );
     };
+
+    steamserver::steamserver():
+        m_CallbackValidateAuthTicketResponseReceived( this, &steamserver::OnValidateAuthTicketResponseReceived )
+    {
+
+    }
+
+    void steamserver::OnValidateAuthTicketResponseReceived(ValidateAuthTicketResponse_t *pParam) {
+        if (pParam->m_eAuthSessionResponse == k_EAuthSessionResponseOK)
+        {
+            server::setauthenticated(std::to_string(pParam->m_SteamID.ConvertToUint64()).c_str(), false);
+        }
+    }
 }
 #endif
