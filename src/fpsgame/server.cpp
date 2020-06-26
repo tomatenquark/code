@@ -2789,7 +2789,7 @@ namespace server
         return false;
     }
 
-    bool answerticket(clientinfo *ci, char* id, int length, const char *ticket)
+    bool answerticket(clientinfo *ci, char* id, int length, int *ticket)
     {
         server::sintegration->answerticket(id, length, ticket);
         // TODO:
@@ -3624,11 +3624,12 @@ namespace server
 
             case N_TICKETTRY:
             {
-                string ticket, steamid;
-                int idlength = getint(p);
-                getstring(steamid, p, idlength);
+                string steamid;
+                getstring(steamid, p, sizeof(steamid));
                 int ticketLength = getint(p);
-                getstring(ticket, p, 1024);
+                int ticket[ticketLength];
+                for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
+                for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
                 answerticket(ci, steamid, ticketLength, ticket);
                 break;
             }

@@ -191,7 +191,7 @@ namespace integration {
             if ( authTicket != k_HAuthTicketInvalid ) SteamUser()->CancelAuthTicket( authTicket );
         }
 
-        void getticket(char * ticket) override
+        void getticket(int * ticket) override
         {
             if (!api_Initialized) return;
             cancelticket();

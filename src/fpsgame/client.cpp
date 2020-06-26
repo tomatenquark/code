@@ -510,13 +510,14 @@ namespace game
 
     bool tryticket()
     {
-        char ticket[1024];
+        int ticket[1024];
         cintegration->getticket(ticket);
         int ticketLength = cintegration->getticketlength();
         if (!ticketLength) return false;
         string steamid;
         cintegration->getsteamid(steamid);
-        addmsg(N_TICKETTRY, "risis", strlen(steamid), steamid, ticketLength, ticket);
+        for(int i = 0; i < ticketLength; i++) conoutf("%d", ticket[i]);
+        addmsg(N_TICKETTRY, "rsx", steamid, ticketLength, ticket);
         return true;
     }
     ICOMMAND(ticket, "", (), tryticket());
@@ -866,6 +867,15 @@ namespace game
                     int n = isdigit(*fmt) ? *fmt++-'0' : 1;
                     for(int i = 0; i < int(n); i++) putfloat(p, (float)va_arg(args, double));
                     numf += n;
+                    break;
+                }
+                case 'x':
+                {
+                    int n = va_arg(args, int);
+                    int* arr = va_arg(args, int *);
+                    putint(p, n);
+                    for (int i = 0; i < n; i++) putint(p, arr[i]);
+                    numi += n + 1;
                     break;
                 }
                 case 's': sendstring(va_arg(args, const char *), p); nums++; break;

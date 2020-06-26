@@ -6,7 +6,7 @@ namespace integration {
         virtual void getappdir(char *installdir) {};
 
         virtual void cancelticket() {}
-        virtual void getticket(char* ticket) {};
+        virtual void getticket(int* ticket) {};
         virtual void getsteamid(char* id) {};
         virtual int getticketlength() { return 0; }
 
@@ -18,10 +18,10 @@ namespace integration {
     };
 
     struct serverintegration {
-        virtual int setup(int unIP, int usGamePort) { return 0; }
+        virtual void setup(int unIP, int usGamePort) { }
         virtual void cleanup() {}
         virtual void update() {}
 
-        virtual bool answerticket(char* steamid, int length, const char * ticket) { return false; }
+        virtual bool answerticket(char* steamid, int length, int* ticket) { return false; }
     };
 }
