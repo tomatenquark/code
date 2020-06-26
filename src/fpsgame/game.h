@@ -874,6 +874,7 @@ namespace server
     extern char* getservermodt();
     extern char* getserverdesc();
     extern char* getservermap();
+    extern char* getserverpass();
     extern int getservermaxclients();
     extern int getservernumbots();
     extern int getservermode();

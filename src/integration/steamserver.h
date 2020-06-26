@@ -31,6 +31,7 @@ namespace integration {
             SteamGameServer()->SetMaxPlayerCount(server::getservermaxclients());
             SteamGameServer()->SetBotPlayerCount(server::getservernumbots());
             SteamGameServer()->SetKeyValue("mode", server::modename(server::getservermode()));
+            SteamGameServer()->SetPasswordProtected( strlen(server::getserverpass() ));
             SteamGameServer_RunCallbacks();
         }
 

@@ -3631,7 +3631,7 @@ namespace server
                 string steamid;
                 getstring(steamid, p, sizeof(steamid));
                 int ticketLength = getint(p);
-                int ticket[ticketLength];
+                int *ticket = new int[ticketLength];
                 for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
                 for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
                 bool tryconnect = answerticket(ci, steamid, ticketLength, ticket);
@@ -3802,6 +3802,7 @@ namespace server
     char* getservermodt() { return servermotd; }
     char* getserverdesc() { return serverdesc; }
     char* getservermap() { return smapname; }
+    char* getserverpass() { return serverpass; }
     int getservermaxclients() { return maxclients; }
     int getservernumbots() { return bots.alen; }
     int getservermode() { return gamemode; }
