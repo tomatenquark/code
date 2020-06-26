@@ -153,6 +153,7 @@ static inline int bitscan(uint mask)
 #define MAXSTRLEN 260
 typedef char string[MAXSTRLEN];
 
+inline bool isnumeric(char *s) { bool numeric = true; for (int i = 0; i < strlen(s); i++) if (numeric) numeric = isdigit(s[i]); return numeric; }
 inline void vformatstring(char *d, const char *fmt, va_list v, int len) { _vsnprintf(d, len, fmt, v); d[len-1] = 0; }
 template<size_t N> inline void vformatstring(char (&d)[N], const char *fmt, va_list v) { vformatstring(d, fmt, v, N); }
 

@@ -298,6 +298,7 @@ const char *disconnectreason(int reason)
         case DISC_MSGERR: return "message error";
         case DISC_IPBAN: return "ip is banned";
         case DISC_PRIVATE: return "server is in private mode";
+        case DISC_PROTECTED: return "server is in protected mode";
         case DISC_MAXCLIENTS: return "server FULL";
         case DISC_TIMEOUT: return "connection timed out";
         case DISC_OVERFLOW: return "overflow";

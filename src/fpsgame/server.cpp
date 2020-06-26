@@ -2466,7 +2466,7 @@ namespace server
 
         while(bannedips.length() && bannedips[0].expire-totalmillis <= 0) bannedips.remove(0);
         loopv(connects) if(totalmillis-connects[i]->connectmillis>15000) disconnect_client(connects[i]->clientnum, DISC_TIMEOUT);
-        //loopv(clients) if(totalmillis-clients[i]->connectmillis>15000 && !clients[i]->authenticated) disconnect_client(clients[i]->clientnum, DISC_PRIVATE);
+        loopv(clients) if(totalmillis-clients[i]->connectmillis>5000 && !clients[i]->authenticated) disconnect_client(clients[i]->clientnum, DISC_PROTECTED);
 
         if(nextexceeded && gamemillis > nextexceeded && (!m_timed || gamemillis < gamelimit))
         {
@@ -2647,7 +2647,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
-            if(strlen(ci->userid)) sintegration->endsession(ci->userid);
+            if(isnumeric(ci->userid)) sintegration->endsession(ci->userid);
         }
         else connects.removeobj(ci);
     }
@@ -3635,7 +3635,7 @@ namespace server
                 for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
                 for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
                 bool tryconnect = answerticket(ci, steamid, ticketLength, ticket);
-                if (!tryconnect && serverprotection) disconnect_client(ci->clientnum, DISC_PRIVATE);
+                if (!tryconnect && serverprotection) disconnect_client(ci->clientnum, DISC_PROTECTED);
                 break;
             }
 
