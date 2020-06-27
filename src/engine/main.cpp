@@ -1118,7 +1118,7 @@ int main(int argc, char **argv)
     setlogfile(NULL);
 
     int dedicated = 0;
-    char *load = NULL, *initscript = NULL;
+    char *load = NULL, *initscript = NULL, *connect = NULL, *connectpass = NULL;
 
     initing = INIT_RESET;
     // set home dir first
@@ -1166,6 +1166,10 @@ int main(int argc, char **argv)
             case 'x': initscript = &argv[i][2]; break;
             case 'e': setextensiondir(&argv[i][2]); break;
             default: if(!serveroption(argv[i])) gameargs.add(argv[i]); break;
+        }
+        else if (argv[i][0]=='+') {
+            if (strstr(argv[i], "connect")) connect = argv[i+1]; i++; break;
+            if (strstr(argv[i], "password")) connectpass = argv[i+1]; i++; break;
         }
         else gameargs.add(argv[i]);
     }
@@ -1263,6 +1267,14 @@ int main(int argc, char **argv)
     logoutf("init: integrations");
 
     if(execfile("once.cfg", false)) remove(findfile("once.cfg", "rb"));
+
+    if(connect)
+    {
+        char *delimiter = strchr(connect, ':');
+        string addr;
+        copystring(addr, connect, strlen(connect) - strlen(delimiter) + 1);
+        connectserv(addr, (int) strtol(delimiter + 1, (char **)NULL, 10), connectpass);
+    }
 
     if(load)
     {
