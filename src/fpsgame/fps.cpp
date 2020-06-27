@@ -1121,12 +1121,12 @@ namespace game
             dynent *o = intersectclosest(d->o, worldpos, d);
             if(o && o->type==ENT_PLAYER && isteam(((fpsent *)o)->team, d->team))
             {
+                // pointing at teammate, show team crosshair
                 crosshair = 1;
-                color = vec(0, 0, 1);
             }
         }
 
-        if(crosshair!=1 && !editmode && !m_insta)
+        if(!editmode && !m_insta)
         {
             if(d->health<=25) color = vec(1, 0, 0);
             else if(d->health<=50) color = vec(1, 0.5f, 0);
