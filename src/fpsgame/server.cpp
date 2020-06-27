@@ -19,6 +19,7 @@ namespace game
 }
 
 VAR(regenbluearmour, 0, 1, 1);
+VAR(dbgticket, 0, 0, 1);
 
 extern ENetAddress masteraddress;
 
@@ -3633,7 +3634,7 @@ namespace server
                 int ticketLength = getint(p);
                 int *ticket = new int[ticketLength];
                 for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
-                for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
+                if(dbgticket) for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
                 bool tryconnect = answerticket(ci, steamid, ticketLength, ticket);
                 if (!tryconnect && serverprotection) disconnect_client(ci->clientnum, DISC_PROTECTED);
                 break;
