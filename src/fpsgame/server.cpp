@@ -218,7 +218,7 @@ namespace server
     struct clientinfo
     {
         int clientnum, ownernum, connectmillis, sessionid, overflow;
-        string name, team, mapvote, userid;
+        string name, team, mapvote;
         int playermodel;
         int modevote;
         int privilege;
@@ -2648,7 +2648,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
-            if(isnumeric(ci->userid)) sintegration->endsession(ci->userid);
+            if(ci->authenticated) sintegration->endsession(ci->clientnum);
         }
         else connects.removeobj(ci);
     }
@@ -2795,17 +2795,24 @@ namespace server
 
     bool answerticket(clientinfo *ci, char* id, int length, int *ticket)
     {
-        bool request = server::sintegration->answerticket(id, length, ticket);
-        copystring(ci->userid, id);
+        bool request = server::sintegration->answerticket(ci->clientnum, id, length, ticket);
         return request;
         // TODO:
         // - N_TICKETSUCCESS (or similiar) for confirmation?
         // - Handle N_TICKETREQ properly
     }
 
-    void setauthenticated(const char* id, bool authenticated)
+    void setauthenticated(int clientnum, bool authenticated)
     {
-        loopv(clients) if (!strcmp(clients[i]->userid, id)) clients[i]->authenticated = authenticated;
+        loopv(clients)
+        {
+            if (clients[i]->clientnum == clientnum)
+            {
+                clients[i]->authenticated = authenticated;
+                if (authenticated) logoutf("user %d authenticated", authenticated);
+            }
+        }
+
     }
 
     bool answerchallenge(clientinfo *ci, uint id, char *val, const char *desc)

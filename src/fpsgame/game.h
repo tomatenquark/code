@@ -880,7 +880,7 @@ namespace server
     extern int getservermode();
     // authentication
     extern int getserverprotection();
-    extern void setauthenticated(const char* id, bool authenticated = true);
+    extern void setauthenticated(int clientnum, bool authenticated = true);
 }
 
 #endif

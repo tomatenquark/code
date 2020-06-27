@@ -2,11 +2,13 @@
 #include "steam_gameserver.h"
 
 #include <string>
+#include <map>
 
 namespace integration {
     struct steamserver: serverintegration {
     private:
         bool api_initialized = false;
+        std::map<int, uint64> citosteamid;
 
     public:
         steamserver();
@@ -35,23 +37,24 @@ namespace integration {
             SteamGameServer_RunCallbacks();
         }
 
-        bool answerticket(char* id, int length, int * ticket) override
+        bool answerticket(int clientnum, char* id, int length, int * ticket) override
         {
             if (!api_initialized) return false;
             uint64 value = std::stoull( id );
             CSteamID steamId = CSteamID{ value };
             EBeginAuthSessionResult authSessionResult = SteamGameServer()->BeginAuthSession( ticket, length, steamId );
             bool valid = authSessionResult == k_EBeginAuthSessionResultOK;
-            if (valid) server::setauthenticated(id);
+            citosteamid[clientnum] = value;
+            if (valid) server::setauthenticated(clientnum);
             return valid;
         }
 
-        void endsession(char* steamid) override
+        void endsession(int clientnum) override
         {
             if (!api_initialized) return;
-            uint64 value = std::stoull( steamid );
-            CSteamID steamId = CSteamID{ value };
+            CSteamID steamId = CSteamID{ citosteamid[clientnum] };
             SteamGameServer()->EndAuthSession( steamId );
+            citosteamid.erase(clientnum);
         }
 
         STEAM_CALLBACK( steamserver, OnValidateAuthTicketResponseReceived, ValidateAuthTicketResponse_t,
@@ -67,7 +70,13 @@ namespace integration {
     void steamserver::OnValidateAuthTicketResponseReceived(ValidateAuthTicketResponse_t *pParam) {
         if (pParam->m_eAuthSessionResponse == k_EAuthSessionResponseOK)
         {
-            server::setauthenticated(std::to_string(pParam->m_SteamID.ConvertToUint64()).c_str(), false);
+            for (auto it: citosteamid)
+            {
+                if (it.second == pParam->m_SteamID.ConvertToUint64())
+                {
+                    server::setauthenticated(it.first, false);
+                }
+            }
         }
     }
 }
