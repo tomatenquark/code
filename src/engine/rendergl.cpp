@@ -2073,6 +2073,7 @@ FVARP(crosshairsize, 0, 15, 50);
 VARP(cursorsize, 0, 30, 50);
 VARP(crosshairfx, 0, 1, 1);
 VARP(crosshaircolors, 0, 1, 1);
+VARP(crosshairforceadditive, 0, 0, 1);
 
 #define MAXCROSSHAIRS 4
 static Texture *crosshairs[MAXCROSSHAIRS] = { NULL, NULL, NULL, NULL };
@@ -2144,8 +2145,13 @@ void drawcrosshair(int w, int h)
         }
         chsize = crosshairsize*w/900.0f;
     }
-    if(crosshair->type&Texture::ALPHA) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    else glBlendFunc(GL_ONE, GL_ONE);
+    if (crosshairforceadditive) {
+        glBlendFunc(GL_ONE, GL_ONE);
+    } else if (crosshair->type&Texture::ALPHA) {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    } else {
+        glBlendFunc(GL_ONE, GL_ONE);
+    }
     float x = cx*w - (windowhit ? 0 : chsize/2.0f);
     float y = cy*h - (windowhit ? 0 : chsize/2.0f);
     glBindTexture(GL_TEXTURE_2D, crosshair->id);
