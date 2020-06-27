@@ -242,9 +242,6 @@ namespace integration {
             conoutf("Submitted item update for ID: %s", id);
         }
 
-        STEAM_CALLBACK( steamclient, OnDownloadItemResultReceived, DownloadItemResult_t,
-                        m_CallbackDownloadItemResultReceived );
-
         bool downloadmap(const char* id, int *status) override
         {
             if (!api_Initialized) return false;
@@ -254,13 +251,20 @@ namespace integration {
             downloads[mid] = status;
             return download;
         }
+
+        STEAM_CALLBACK( steamclient, OnDownloadItemResultReceived, DownloadItemResult_t,
+                        m_CallbackDownloadItemResultReceived );
+
+        STEAM_CALLBACK( steamclient, OnGameServerChangeRequested, GameServerChangeRequested_t,
+                m_CallbackGameServerChangeRequested );
     };
 
     steamclient::steamclient():
         api_Initialized( false ),
         authTicket( k_HAuthTicketInvalid ),
         ticketLength( 0 ),
-        m_CallbackDownloadItemResultReceived( this, &steamclient::OnDownloadItemResultReceived )
+        m_CallbackDownloadItemResultReceived( this, &steamclient::OnDownloadItemResultReceived ),
+        m_CallbackGameServerChangeRequested( this, &steamclient::OnGameServerChangeRequested )
     {
     }
 
@@ -298,5 +302,12 @@ namespace integration {
             }
         }
     }
+
+    void steamclient::OnGameServerChangeRequested(GameServerChangeRequested_t *pParam) {
+        std::string addr(pParam->m_rgchServer);
+        int port = std::stoi(addr.substr(addr.find(':') + 1));
+        connectserv(addr.substr(0, addr.find(':')).c_str(), port, strlen(pParam->m_rgchPassword) ? pParam->m_rgchPassword : "");
+    }
+
 }
 #endif

@@ -392,7 +392,6 @@ extern void writeservercfg();
 // client
 extern void localdisconnect(bool cleanup = true);
 extern void localservertoclient(int chan, ENetPacket *packet);
-extern void connectserv(const char *servername, int port, const char *serverpassword);
 extern void abortconnect();
 extern void clientkeepalive();
 

@@ -461,6 +461,7 @@ extern int getservermtu();
 extern int getnumclients();
 extern uint getclientip(int n);
 extern void localconnect();
+extern void connectserv(const char *servername, int port, const char *serverpassword);
 extern const char *disconnectreason(int reason);
 extern void disconnect_client(int n, int reason);
 extern void kicknonlocalclients(int reason = DISC_NONE);
