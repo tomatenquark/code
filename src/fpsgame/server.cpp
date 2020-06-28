@@ -2648,7 +2648,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
-            if(serverprotection) sintegration->endsession(ci->clientnum);
+            if(serverprotection && sintegration) sintegration->endsession(ci->clientnum);
         }
         else connects.removeobj(ci);
     }
