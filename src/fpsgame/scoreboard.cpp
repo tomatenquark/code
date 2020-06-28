@@ -163,8 +163,10 @@ namespace game
         g.spring();
         g.text(server::modename(gamemode), 0xFFFF80);
         g.separator();
+        string mapname;
         const char *mname = getclientmap();
-        g.text(mname[0] ? mname : "[new map]", 0xFFFF80);
+        formatmapname(mname, mapname);
+        g.text(strlen(mname) ? mapname : "[new map]", 0xFFFF80);
         extern int gamespeed;
         if(gamespeed != 100) { g.separator(); g.textf("%d.%02dx", 0xFFFF80, NULL, gamespeed/100, gamespeed%100); }
         if(m_timed && mname[0] && (maplimit >= 0 || intermission))

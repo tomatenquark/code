@@ -16,6 +16,15 @@ void validmapname(char *dst, const char *src, const char *prefix = NULL, const c
     else if(dst != alt) copystring(dst, alt, maxlen);
 }
 
+void formatmapname(const char *mname, char *output)
+{
+    if (strlen(mname)) {
+        const char *slash = strpbrk(mname, "/\\");
+        if (slash) copystring(output, slash+1, MAXSTRLEN); return;
+    }
+    copystring(output, mname, MAXSTRLEN);
+}
+
 void fixmapname(char *name)
 {
     validmapname(name, name, NULL, "");
@@ -1025,7 +1034,9 @@ bool load_world(const char *mname, const char *cname)        // still supports a
     resetmap();
 
     Texture *mapshot = textureload(picname, 3, true, false);
-    renderbackground("loading...", mapshot, mname, game::getmapinfo());
+    string mapname;
+    formatmapname(mname, mapname);
+    renderbackground("loading...", mapshot, mapname, game::getmapinfo());
 
     game::loadingmap(cname ? cname : mname);
 
