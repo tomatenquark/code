@@ -204,6 +204,7 @@ namespace game
 
     VARP(autoauth, 0, 1, 1);
     VARP(autoticket, 0, 1, 1);
+    VAR(dbgticket, 0, 0, 1);
 
     void addauthkey(const char *name, const char *key, const char *desc)
     {
@@ -508,21 +509,6 @@ namespace game
     ICOMMAND(dauth, "s", (char *desc), if(desc[0]) tryauth(desc));
 
     ICOMMAND(getservauth, "", (), result(servauth));
-
-    VAR(dbgticket, 0, 0, 1);
-    bool tryticket()
-    {
-        int ticket[1024];
-        cintegration->getticket(ticket);
-        int ticketLength = cintegration->getticketlength();
-        if (!ticketLength) return false;
-        string steamid;
-        cintegration->getsteamid(steamid);
-        if (dbgticket) for(int i = 0; i < ticketLength; i++) conoutf("%d", ticket[i]);
-        addmsg(N_TICKETTRY, "rsx", steamid, ticketLength, ticket);
-        return true;
-    }
-    ICOMMAND(ticket, "", (), tryticket());
 
     void togglespectator(int val, const char *who)
     {
@@ -2018,6 +2004,7 @@ namespace game
                     sendstring(steamid, p);
                     putint(p, ticketLength);
                     for (int i = 0; i < ticketLength; i++) putint(p, ticket[i]);
+                    if (dbgticket) for(int i = 0; i < ticketLength; i++) conoutf("%d", ticket[i]);
                     sendclientpacket(p.finalize(), 1);
                 }
                 break;

@@ -3003,6 +3003,7 @@ namespace server
                     int ticketLength = getint(p);
                     int *ticket = new int[ticketLength];
                     for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
+                    if(dbgticket) for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
                     if(!answerticket(ci, steamid, ticketLength, ticket))
                     {
                         disconnect_client(sender, ci->connectticket);
@@ -3651,18 +3652,6 @@ namespace server
                 uint id = (uint)getint(p);
                 getstring(ans, p, sizeof(ans));
                 answerchallenge(ci, id, ans, desc);
-                break;
-            }
-
-            case N_TICKETTRY:
-            {
-                string steamid;
-                getstring(steamid, p, sizeof(steamid));
-                int ticketLength = getint(p);
-                int *ticket = new int[ticketLength];
-                for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
-                if(dbgticket) for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
-                answerticket(ci, steamid, ticketLength, ticket);
                 break;
             }
 
