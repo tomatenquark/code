@@ -2965,7 +2965,7 @@ namespace server
                         {
                             case DISC_LOCAL: disconnect_client(sender, disc); return;
                             case DISC_PROTECTED:
-                                if (serverauth[0] && strcmp(serverauth, authdesc)) break;
+                                if (serverauth[0] && strcmp(serverauth, authdesc)) continue;
                                 if (!autoticket || !tryticket(ci)) {
                                     disconnect_client(sender, disc); return;
                                 } else {
