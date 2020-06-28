@@ -203,6 +203,7 @@ namespace game
     }
 
     VARP(autoauth, 0, 1, 1);
+    VARP(autoticket, 0, 1, 1);
 
     void addauthkey(const char *name, const char *key, const char *desc)
     {
@@ -1147,6 +1148,7 @@ namespace game
             sendstring("", p);
             sendstring("", p);
         }
+        putint(p, (autoticket && cintegration));
         sendclientpacket(p.finalize(), 1);
     }
 
@@ -2000,6 +2002,25 @@ namespace game
                 }
                 break;
             }
+
+            case N_REQTICKET:
+                if (cintegration && autoticket)
+                {
+                    int ticket[1024];
+                    cintegration->getticket(ticket);
+                    int ticketLength = cintegration->getticketlength();
+                    if (!ticketLength) break;
+                    string steamid;
+                    cintegration->getsteamid(steamid);
+
+                    packetbuf p(MAXTRANS, ENET_PACKET_FLAG_RELIABLE);
+                    putint(p, N_TICKETTRY);
+                    sendstring(steamid, p);
+                    putint(p, ticketLength);
+                    for (int i = 0; i < ticketLength; i++) putint(p, ticket[i]);
+                    sendclientpacket(p.finalize(), 1);
+                }
+                break;
 
             case N_INITAI:
             {

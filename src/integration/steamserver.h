@@ -45,13 +45,13 @@ namespace integration {
             EBeginAuthSessionResult authSessionResult = SteamGameServer()->BeginAuthSession( ticket, length, steamId );
             bool valid = authSessionResult == k_EBeginAuthSessionResultOK;
             citosteamid[clientnum] = value;
-            if (valid) server::setauthenticated(clientnum);
             return valid;
         }
 
         void endsession(int clientnum) override
         {
             if (!api_initialized) return;
+            if (citosteamid.find(clientnum) == citosteamid.end()) return;
             CSteamID steamId = CSteamID{ citosteamid[clientnum] };
             SteamGameServer()->EndAuthSession( steamId );
             citosteamid.erase(clientnum);
@@ -74,7 +74,7 @@ namespace integration {
             {
                 if (it.second == pParam->m_SteamID.ConvertToUint64())
                 {
-                    server::setauthenticated(it.first, false);
+                    disconnect_client(it.first, DISC_PROTECTED);
                 }
             }
         }
