@@ -1081,6 +1081,9 @@ namespace game
             while (status < 2 && iterations < downloadtimeout)
             {
                 if(interceptkey(SDLK_ESCAPE)) status = 2;
+                float progress = (float(iterations)/float(downloadtimeout));
+                defformatstring(download_text, "downloading map... %d%%", int(progress*100));
+                renderprogress(progress, download_text);
                 sendmessages();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 iterations++;
