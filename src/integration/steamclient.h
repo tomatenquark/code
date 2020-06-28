@@ -296,8 +296,8 @@ namespace integration {
                     uint64 workShopSize;
                     uint32 folderSize, timestamp;
                     SteamUGC()->GetItemInstallInfo( pParam->m_nPublishedFileId, &workShopSize, extensiondir, folderSize, &timestamp );
-                    conoutf("Finished download for collection ID: %s", std::to_string(pParam->m_nPublishedFileId).c_str());
-                    conoutf("Using content directory: %s", extensiondir);
+                    conoutf(CON_DEBUG, "Finished download for collection ID: %s", std::to_string(pParam->m_nPublishedFileId).c_str());
+                    conoutf(CON_DEBUG, "Using content directory: %s", extensiondir);
                 }
             }
         }

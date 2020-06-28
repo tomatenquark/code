@@ -1317,7 +1317,6 @@ namespace game
                 sessionid = getint(p);
                 player1->clientnum = mycn;      // we are now connected
                 if(getint(p) > 0) conoutf("this server is password protected");
-                getstring(servercontent, p, sizeof(servercontent));
                 getstring(servinfo, p, sizeof(servinfo));
                 getstring(servauth, p, sizeof(servauth));
                 sendintro();
@@ -1395,6 +1394,11 @@ namespace game
                 conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(t), text);
                 break;
             }
+
+            case N_SERVERCONTENT:
+                getstring(servercontent, p, sizeof(servercontent));
+                conoutf(CON_DEBUG, "Using collection %s", servercontent);
+                break;
 
             case N_MAPCHANGE:
                 getstring(text, p);
