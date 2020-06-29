@@ -2900,6 +2900,42 @@ void loopdirs(ident *id, uint *body, char* dir)
     if(folders.length()) poparg(*id);
 }
 
+void loopextensionfiles (ident *id, char *dir, char *ext, uint *body)
+{
+    if(id->type!=ID_ALIAS) return;
+    identstack stack;
+    vector<char *> files;
+    defformatstring(extdir, "%s/%s", extensiondir, dir);
+    listextensionfiles(extdir, ext, files);
+    loopvrev(files)
+    {
+        char *file = files[i];
+        bool redundant = false;
+        for(int j = 0; j < int(i); j++) if(!strcmp(files[j], file)) { redundant = true; break; }
+        if(redundant) delete[] files.removeunordered(i);
+    }
+    loopv(files)
+    {
+        char *file = files[i];
+        if(i)
+        {
+            if(id->valtype == VAL_STR) delete[] id->val.s;
+            else id->valtype = VAL_STR;
+            id->val.s = file;
+        }
+        else
+        {
+            tagval t;
+            t.setstr(file);
+            pusharg(*id, t, stack);
+            id->flags &= ~IDF_UNKNOWN;
+        }
+        execute(body);
+    }
+    if(files.length()) poparg(*id);
+}
+COMMAND(loopextensionfiles, "rsse");
+
 ICOMMAND(loophomedirpackages, "re", (ident *id, uint *body), {
     string packagesdir;
     formatstring(packagesdir, "%spackages", homedir);

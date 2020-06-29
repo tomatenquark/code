@@ -567,7 +567,7 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
     else return false;
 }
 
-bool listdirs(const char *dir, vector<char *> &folders)
+void listdirs(const char *dir, vector<char *> &folders)
 {
     for (const auto& entry: fs::directory_iterator(dir))
     {
@@ -576,7 +576,17 @@ bool listdirs(const char *dir, vector<char *> &folders)
             folders.add(strdup(entry.path().filename().string().c_str()));
         }
     }
-    return true;
+}
+
+void listextensionfiles(const char *dir, const char *ext, vector<char *> &files)
+{
+    for (const auto& entry: fs::directory_iterator(dir))
+    {
+        if (fs::is_regular_file(entry) && entry.path().has_extension() && !strcmp(entry.path().extension().string().c_str(), ext))
+        {
+            files.add(strdup(entry.path().filename().string().c_str()));
+        }
+    }
 }
 
 int listfiles(const char *dir, const char *ext, vector<char *> &files)
