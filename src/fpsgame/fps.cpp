@@ -294,25 +294,26 @@ namespace game
     float ratespawn(dynent *d, const extentity &e)
     {
         fpsent *p = (fpsent *)d;
-        float maxrange = m_noitems && (!cmode || m_ctf_only) ? 160.0f : 400.0f;
+        vec loc = vec(e.o).addz(p->eyeheight);
+        float maxrange = !m_noitems ? 400.0f : cmode ? 300.0f : 160.0f;
         float minplayerdist = maxrange;
         loopv(players)
         {
             const fpsent *o = players[i];
             if(o == p)
             {
-                if(o->state != CS_ALIVE && lastmillis - o->lastpain > 3000) continue;
+                if(m_noitems || (o->state != CS_ALIVE && lastmillis - o->lastpain > 3000)) continue;
             }
             else if(o->state != CS_ALIVE || isteam(o->team, p->team)) continue;
 
-            vec dir = vec(o->o).sub(e.o);
+            vec dir = vec(o->o).sub(loc);
             float dist = dir.squaredlen();
             if(dist >= minplayerdist*minplayerdist) continue;
             dist = sqrtf(dist);
             dir.mul(1/dist);
 
             // scale actual distance if not in line of sight
-            if(raycube(e.o, dir, dist) < dist) dist *= 1.5f;
+            if(raycube(loc, dir, dist) < dist) dist *= 1.5f;
             minplayerdist = min(minplayerdist, dist);
         }
         float rating = 1.0f - proximityscore(minplayerdist, 80.0f, maxrange);
