@@ -1152,6 +1152,26 @@ namespace game
 #endif
     }
 
+    int maxsoundradius(int n)
+    {
+        switch(n)
+        {
+            case S_JUMP:
+            case S_LAND:
+            case S_WEAPLOAD:
+            case S_ITEMAMMO:
+            case S_ITEMHEALTH:
+            case S_ITEMARMOUR:
+            case S_ITEMPUP:
+            case S_ITEMSPAWN:
+            case S_NOAMMO:
+            case S_PUPOUT:
+                return 340;
+            default:
+                return 500;
+        }
+    }
+
     bool serverinfostartcolumn(g3d_gui *g, int i)
     {
         static const char * const names[] = { "ping ", "players ", "mode ", "map ", "time ", "master ", "host ", "port ", "description " };
