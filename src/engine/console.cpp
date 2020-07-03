@@ -16,12 +16,22 @@ VARFP(maxcon, 10, 200, MAXCONLINES, { while(conlines.length() > maxcon) delete[]
 
 #define CONSTRLEN 512
 
-VARP(contags, 0, 1, 1);
+VARP(contags, 0, 3, 3);
 
 void conline(int type, const char *sf)        // add a line to the console buffer
 {
-    int prev = conlines.empty() || !contags ? 0 : conlines.added().type;
-    char *buf = type&CON_TAG_MASK && type == prev ? conlines.pop().line : (conlines.length() >= maxcon ? conlines.remove().line : newstring("", CONSTRLEN-1));
+    char *buf = NULL;
+    if(type&CON_TAG_MASK) for(int i = conlines.length()-1; i >= max(conlines.length()-contags, 0); i--)
+    {
+        int prev = conlines.removing(i).type;
+        if(!(prev&CON_TAG_MASK)) break;
+        if(type == prev)
+        {
+            buf = conlines.remove(i).line;
+            break;
+        }
+    }
+    if(!buf) buf = conlines.length() >= maxcon ? conlines.remove().line : newstring("", CONSTRLEN-1);
     cline &cl = conlines.add();
     cl.line = buf;
     cl.type = type;
