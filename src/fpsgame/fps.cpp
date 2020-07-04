@@ -295,7 +295,7 @@ namespace game
     {
         fpsent *p = (fpsent *)d;
         vec loc = vec(e.o).addz(p->eyeheight);
-        float maxrange = !m_noitems ? 400.0f : (cmode ? 300.0f : 160.0f);
+        float maxrange = !m_noitems ? 400.0f : (cmode ? 300.0f : 110.0f);
         float minplayerdist = maxrange;
         loopv(players)
         {
