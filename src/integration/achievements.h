@@ -14,4 +14,5 @@ struct Achievement_t
 enum EAchievements
 {
     ACH_EDIT_ENTER = 0,
+    ACH_EDIT_FLOATSPEED = 1,
 };

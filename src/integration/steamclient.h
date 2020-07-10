@@ -138,6 +138,7 @@ namespace integration {
     Achievement_t g_Achievements[] =
             {
                     _ACH_ID( ACH_EDIT_ENTER, "How do you fly?" ),
+                    _ACH_ID( ACH_EDIT_FLOATSPEED, "Starship surprise" ),
             };
 
     // Global access to Achievements object

@@ -1636,6 +1636,7 @@ void modifyvelocity(physent *pl, bool local, bool water, bool floating, int curt
     {
         if(floating)
         {
+            if (floatspeed > 100) game::setachievement("ACH_EDIT_FLOATSPEED");
             if(pl==player) d.mul(floatspeed/100.0f);
         }
         else if(!water && allowmove) d.mul((pl->move && !pl->strafe ? 1.3f : 1.0f) * (pl->physstate < PHYS_SLOPE ? 1.3f : 1.0f));

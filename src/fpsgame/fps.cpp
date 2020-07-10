@@ -617,6 +617,11 @@ namespace game
         cintegration->update();
     }
 
+    void setachievement(const char* achievement)
+    {
+        cintegration->setachievement(achievement);
+    }
+
     void uploadmaptoworkshop(const char* id, const char* title, const char* content, const char* desc, const char* preview) {
         cintegration->updatemapbyid(id, title, content, desc, preview);
     }
