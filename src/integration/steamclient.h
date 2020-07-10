@@ -218,6 +218,22 @@ namespace integration {
             }
         }
 
+        void setstat(const char* stat, int value) override {
+            if (g_SteamAchievements)
+            {
+                SteamUserStats()->SetStat(stat, value);
+            }
+        }
+
+        void incrementstat(const char* stat, int increment) override {
+            if (g_SteamAchievements)
+            {
+                int value;
+                SteamUserStats()->GetStat(stat, &value);
+                SteamUserStats()->SetStat(stat, value + increment);
+            }
+        }
+
         CCallResult< steamclient, CreateItemResult_t > m_GetItemCreateCallResult;
 
         void OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure );
