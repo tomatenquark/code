@@ -152,26 +152,26 @@ namespace integration {
     public:
         steamclient();
 
-        int setup() override {
-            if ( SteamAPI_RestartAppIfNecessary( k_uAppIdInvalid ) ) return 1; // Replace with your App ID
-            if ( !SteamAPI_Init() ) return 1;
+        int setup() {
+            if ( SteamAPI_RestartAppIfNecessary( SteamUtils()->GetAppID() ) ) return 0;
+            if ( !SteamAPI_Init() ) return 0;
             g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
             api_Initialized = true;
-            return 0;
+            return 1;
         }
 
-        void cleanup() override
+        void cleanup()
         {
             SteamAPI_Shutdown();
             //if (g_SteamAchievements) delete g_SteamAchievements;
         }
 
-        void update() override
+        void update()
         {
             SteamAPI_RunCallbacks();
         }
 
-        void getappdir(char *installdir) override
+        void getappdir(char *installdir)
         {
             if (!api_Initialized) return;
             string pdir;
@@ -185,32 +185,32 @@ namespace integration {
             copystring(installdir, workshopdir.string().c_str() , strlen(workshopdir.string().c_str()) + 1 );
         }
 
-        void cancelticket() override
+        void cancelticket()
         {
             if (!api_Initialized) return;
             if ( authTicket != k_HAuthTicketInvalid ) SteamUser()->CancelAuthTicket( authTicket );
         }
 
-        void getticket(int * ticket) override
+        void getticket(int * ticket)
         {
             if (!api_Initialized) return;
             cancelticket();
             authTicket = SteamUser()->GetAuthSessionTicket( ticket, 1024, &ticketLength );
         }
 
-        int getticketlength() override
+        int getticketlength()
         {
             return (int)ticketLength;
         }
 
-        void getsteamid(char* id) override
+        void getsteamid(char* id)
         {
             if (!api_Initialized) return;
             std::string userid = std::to_string(SteamUser()->GetSteamID().ConvertToUint64());
             copystring(id, userid.c_str(), userid.length() + 1);
         }
 
-        void setachievement(const char* achievement) override
+        void setachievement(const char* achievement)
         {
             if (g_SteamAchievements)
             {
@@ -222,14 +222,14 @@ namespace integration {
 
         void OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure );
 
-        void createmapid() override
+        void createmapid()
         {
             if (!api_Initialized) return;
             SteamAPICall_t steamApiCall = SteamUGC()->CreateItem(SteamUtils()->GetAppID(), k_EWorkshopFileTypeCommunity);
             m_GetItemCreateCallResult.Set( steamApiCall, this, &steamclient::OnGetItemCreateResult );
         }
 
-        void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) override
+        void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL)
         {
             if (!api_Initialized) return;
             uint64 mid = std::stoull(id);
@@ -242,7 +242,7 @@ namespace integration {
             conoutf("Submitted item update for ID: %s", id);
         }
 
-        bool downloadmap(const char* id, int *status) override
+        bool downloadmap(const char* id, int *status)
         {
             if (!api_Initialized) return false;
             uint64 mid = std::stoull(id);

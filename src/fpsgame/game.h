@@ -718,6 +718,7 @@ namespace game
     extern int gamemode, nextmode;
     extern string clientmap;
     extern bool intermission;
+    extern bool hasintegration;
     extern int maptime, maprealtime, maplimit;
     extern fpsent *player1;
     extern vector<fpsent *> players, clients;

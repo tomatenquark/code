@@ -1,20 +1,20 @@
 namespace integration {
     struct clientintegration {
-        virtual int setup() { return 0; }
-        virtual void cleanup() {}
-        virtual void update() {}
-        virtual void getappdir(char *installdir) {};
+        int setup() { return 0; }
+        void cleanup() {}
+        void update() {}
+        void getappdir(char *installdir) {};
 
-        virtual void cancelticket() {}
-        virtual void getticket(int* ticket) {};
-        virtual void getsteamid(char* id) {};
-        virtual int getticketlength() { return 0; }
+        void cancelticket() {}
+        void getticket(int* ticket) {};
+        void getsteamid(char* id) {};
+        int getticketlength() { return 0; }
 
-        virtual void setachievement(const char* achievement) {}
+        void setachievement(const char* achievement) {}
 
-        virtual void createmapid() {}
-        virtual void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) {}
-        virtual bool downloadmap(const char* id, int *status) { return false; }
+        void createmapid() {}
+        void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) {}
+        bool downloadmap(const char* id, int *status) { return false; }
     };
 
     struct serverintegration {

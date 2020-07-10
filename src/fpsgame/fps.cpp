@@ -6,6 +6,7 @@
 namespace game
 {
     bool intermission = false;
+    bool hasintegration = false;
     int maptime = 0, maprealtime = 0, maplimit = -1;
     int respawnent = -1;
     int lasthit = 0, lastspawnattempt = 0;
@@ -601,10 +602,10 @@ namespace game
     void initintegration() {
 #ifdef STEAM_ENABLED
         cintegration = &steamintegration;
-        cintegration->setup();
+        hasintegration = cintegration->setup();
         cintegration->getappdir(extensiondir);
 #else
-        cintegration->setup();
+        hasintegration = cintegration->setup();
 #endif
     }
 

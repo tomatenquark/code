@@ -285,7 +285,7 @@ namespace game
     void edittoggled(bool on)
     {
         addmsg(N_EDITMODE, "ri", on ? 1 : 0);
-        if(on && cintegration) cintegration->setachievement("ACH_EDIT_ENTER");
+        if(on) cintegration->setachievement("ACH_EDIT_ENTER");
         if(player1->state==CS_DEAD) deathstate(player1, true);
         else if(player1->state==CS_EDITING && player1->editstate==CS_DEAD) showscores(false);
         disablezoom();
@@ -789,6 +789,9 @@ namespace game
         else if(*numargs < 0) intret(gamepaused ? 1 : 0);
         else printvar(id, gamepaused ? 1 : 0); 
     });
+    ICOMMAND(integration, "", (), {
+        intret((int) hasintegration);
+    });
 
     bool ispaused() { return gamepaused; }
 
@@ -922,8 +925,8 @@ namespace game
         gamepaused = false;
         gamespeed = 100;
         clearclients(false);
-        if (cintegration) cintegration->getappdir(extensiondir);
-        if (cintegration) cintegration->cancelticket();
+        cintegration->getappdir(extensiondir);
+        cintegration->cancelticket();
         if(cleanup)
         {
             nextmode = gamemode = INT_MAX;
@@ -1070,7 +1073,7 @@ namespace game
             for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent) && cintegration)
+        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent) && hasintegration)
         {
             conoutf(CON_INFO, "downloading map %s", name);
             int status = 0;
@@ -1137,7 +1140,7 @@ namespace game
             sendstring("", p);
             sendstring("", p);
         }
-        putint(p, (autoticket && cintegration));
+        putint(p, (autoticket && hasintegration));
         sendclientpacket(p.finalize(), 1);
     }
 
@@ -1997,7 +2000,7 @@ namespace game
             }
 
             case N_REQTICKET:
-                if (cintegration && autoticket)
+                if (autoticket && hasintegration)
                 {
                     int ticket[1024];
                     cintegration->getticket(ticket);
@@ -2259,6 +2262,6 @@ namespace game
     }
     COMMAND(renamemap, "ss");
 
-    ICOMMAND(createmapid, "", (), if(m_edit && !strlen(mapid) && cintegration) cintegration->createmapid());
+    ICOMMAND(createmapid, "", (), if(m_edit && !strlen(mapid) && hasintegration) cintegration->createmapid());
 }
 
