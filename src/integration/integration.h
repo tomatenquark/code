@@ -18,11 +18,11 @@ namespace integration {
     };
 
     struct serverintegration {
-        virtual void setup(int unIP, int usGamePort) { }
-        virtual void cleanup() {}
-        virtual void update() {}
+        void setup(int unIP, int usGamePort) { }
+        void cleanup() {}
+        void update() {}
 
-        virtual bool answerticket(int clientnum, char* steamid, int length, int* ticket) { return false; }
-        virtual void endsession(int clientnum) {}
+        bool answerticket(int clientnum, char* steamid, int length, int* ticket) { return false; }
+        void endsession(int clientnum) {}
     };
 }

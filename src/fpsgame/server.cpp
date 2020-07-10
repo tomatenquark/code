@@ -782,7 +782,7 @@ namespace server
 
     void cleanupintegration()
     {
-        if (sintegration != NULL) sintegration->cleanup();
+        sintegration->cleanup();
     }
 
     const char *modename(int n, const char *unknown)
@@ -2495,7 +2495,7 @@ namespace server
         }
 
         shouldstep = clients.length() > 0;
-        if (sintegration != NULL) sintegration->update();
+        sintegration->update();
     }
 
     void forcespectator(clientinfo *ci)
@@ -2648,7 +2648,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
-            if(serverprotection && sintegration) sintegration->endsession(ci->clientnum);
+            if(serverprotection) sintegration->endsession(ci->clientnum);
         }
         else connects.removeobj(ci);
     }
