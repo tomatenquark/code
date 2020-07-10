@@ -13,18 +13,18 @@ namespace integration {
     public:
         steamserver();
 
-        void setup(int ip, int port)
+        void setup(int ip, int port) override
         {
             api_initialized = SteamGameServer_Init(ip, port + 4, port, port + 3,
                                                    static_cast<EServerMode>(server::getserverprotection() + 1), "1");
         }
 
-        void cleanup()
+        void cleanup() override
         {
             SteamGameServer_Shutdown();
         }
 
-        void update()
+        void update() override
         {
             if (!api_initialized) return;
             SteamGameServer()->SetGameDescription(server::getservermodt());
@@ -37,7 +37,7 @@ namespace integration {
             SteamGameServer_RunCallbacks();
         }
 
-        bool answerticket(int clientnum, char* id, int length, int * ticket)
+        bool answerticket(int clientnum, char* id, int length, int * ticket) override
         {
             if (!api_initialized) return false;
             uint64 value = std::stoull( id );
@@ -48,7 +48,7 @@ namespace integration {
             return valid;
         }
 
-        void endsession(int clientnum)
+        void endsession(int clientnum) override
         {
             if (!api_initialized) return;
             if (citosteamid.find(clientnum) == citosteamid.end()) return;

@@ -767,7 +767,8 @@ namespace server
         return msg >= 0 && msg < NUMMSG ? sizetable[msg] : -1;
     }
 
-    integration::serverintegration *sintegration;
+    integration::dummy::server dummyserver;
+    integration::serverintegration *sintegration = &dummyserver;
 #ifdef STEAM_ENABLED
     integration::steamserver steamserverintegration;
 #endif
@@ -1879,7 +1880,11 @@ namespace server
     int welcomepacket(packetbuf &p, clientinfo *ci)
     {
         putint(p, N_WELCOME);
-        if(servercontent[0]) putint(p, N_SERVERCONTENT); sendstring(servercontent, p);
+        if(strlen(servercontent) > 0 && isnumeric(servercontent))
+        {
+            putint(p, N_SERVERCONTENT);
+            sendstring(servercontent, p);
+        }
         putint(p, N_MAPCHANGE);
         sendstring(smapname, p);
         putint(p, gamemode);
@@ -2796,12 +2801,8 @@ namespace server
 
     bool tryticket(clientinfo *ci)
     {
-        if(sintegration)
-        {
-            sendf(ci->clientnum, 1, "ri", N_REQTICKET);
-            return true;
-        }
-        return false;
+        sendf(ci->clientnum, 1, "ri", N_REQTICKET);
+        return true;
     }
 
     bool answerticket(clientinfo *ci, char* id, int length, int *ticket)
@@ -2957,7 +2958,6 @@ namespace server
                     getstring(password, p, sizeof(password));
                     getstring(authdesc, p, sizeof(authdesc));
                     getstring(authname, p, sizeof(authname));
-                    int autoticket = getint(p);
                     int disc = allowconnect(ci, password);
                     if(disc)
                     {
@@ -2966,7 +2966,7 @@ namespace server
                             case DISC_LOCAL: disconnect_client(sender, disc); return;
                             case DISC_PROTECTED:
                                 if (serverauth[0] && strcmp(serverauth, authdesc)) continue;
-                                if (!autoticket || !tryticket(ci)) {
+                                if (!tryticket(ci)) {
                                     disconnect_client(sender, disc); return;
                                 } else {
                                     ci->connectticket = disc; break;

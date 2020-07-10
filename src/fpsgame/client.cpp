@@ -11,7 +11,8 @@ namespace game
     VARP(downloadmaps, 0, 1, 1);
     VARP(downloadtimeout, 0, 50, 100);
     // Client side integration of Steam (and potentially Discord or other platforms)
-    integration::clientintegration * cintegration;
+    integration::dummy::client dummyclient;
+    integration::clientintegration * cintegration = &dummyclient;
 
     float calcradarscale()
     {
@@ -1140,7 +1141,6 @@ namespace game
             sendstring("", p);
             sendstring("", p);
         }
-        putint(p, (autoticket && hasintegration));
         sendclientpacket(p.finalize(), 1);
     }
 
