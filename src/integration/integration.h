@@ -11,6 +11,7 @@ namespace integration {
         virtual int getticketlength() { }
 
         virtual void setachievement(const char* achievement) {}
+        virtual int getstat(const char* stat) {}
         virtual void setstat(const char* stat, int value) {}
         virtual void incrementstat(const char* stat, int increment) {}
 
@@ -41,6 +42,7 @@ namespace integration {
             int getticketlength() override { return 0; }
 
             void setachievement(const char* achievement) override {}
+            int getstat(const char* stat) override { return 0; }
             void setstat(const char* stat, int value) override {}
             void incrementstat(const char* stat, int increment) override {}
 

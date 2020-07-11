@@ -626,6 +626,11 @@ namespace game
         cintegration->updatemapbyid(id, title, content, desc, preview);
     }
 
+    ICOMMAND(getstat, "s", (const char* stat), {
+        if (!strlen(stat)) return;
+        intret(cintegration->getstat(stat));
+    })
+
     VARP(showmodeinfo, 0, 1, 1);
 
     void startgame()
