@@ -1141,6 +1141,7 @@ namespace game
             sendstring("", p);
             sendstring("", p);
         }
+        putint(p, (autoticket && hasintegration));
         sendclientpacket(p.finalize(), 1);
     }
 

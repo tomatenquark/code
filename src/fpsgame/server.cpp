@@ -2958,6 +2958,7 @@ namespace server
                     getstring(password, p, sizeof(password));
                     getstring(authdesc, p, sizeof(authdesc));
                     getstring(authname, p, sizeof(authname));
+                    int autoticket = getint(p);
                     int disc = allowconnect(ci, password);
                     if(disc)
                     {
@@ -2966,7 +2967,7 @@ namespace server
                             case DISC_LOCAL: disconnect_client(sender, disc); return;
                             case DISC_PROTECTED:
                                 if (serverauth[0] && strcmp(serverauth, authdesc)) continue;
-                                if (!tryticket(ci)) {
+                                if (!autoticket || !tryticket(ci)) {
                                     disconnect_client(sender, disc); return;
                                 } else {
                                     ci->connectticket = disc; break;
