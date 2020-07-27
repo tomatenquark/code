@@ -62,8 +62,7 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 
 ############### Dependencies ##########
 
-include(cmake/FindENet.cmake)
-include(cmake/FindSteam.cmake)
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 find_package(ZLIB REQUIRED)
 find_package(ENet)
