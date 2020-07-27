@@ -179,8 +179,8 @@ namespace integration {
         void getappdir(char *installdir) override
         {
             if (!api_Initialized) return;
-            string pdir;
-            int folderLength;
+            string pdir = "";
+            int folderLength = 0;
             SteamApps()->GetAppInstallDir( SteamUtils()->GetAppID(), pdir, folderLength );
             fs::path workshopdir(pdir);
             workshopdir = workshopdir.parent_path().parent_path();

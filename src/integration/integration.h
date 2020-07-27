@@ -1,6 +1,6 @@
 namespace integration {
     struct clientintegration {
-        virtual int setup() { }
+        virtual int setup() { return 0; }
         virtual void cleanup() {}
         virtual void update() {}
         virtual void getappdir(char *installdir) {};
@@ -8,10 +8,10 @@ namespace integration {
         virtual void cancelticket() {}
         virtual void getticket(int* ticket) {};
         virtual void getsteamid(char* id) {};
-        virtual int getticketlength() { }
+        virtual int getticketlength() { return 0; }
 
         virtual void setachievement(const char* achievement) {}
-        virtual int getstat(const char* stat) {}
+        virtual int getstat(const char* stat) { return 0;  }
         virtual void setstat(const char* stat, int value) {}
         virtual void incrementstat(const char* stat, int increment) {}
         virtual void updateavgstat(const char* stat, float value, double sessionLength) {}
