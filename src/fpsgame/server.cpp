@@ -773,12 +773,12 @@ namespace server
     integration::steamserver steamserverintegration;
 #endif
 
-    void initintegration(int port, int address)
+    void initintegration(int port)
     {
 #ifdef STEAM_ENABLED
         sintegration = &steamserverintegration;
 #endif
-        sintegration->setup(port, address);
+        sintegration->setup(port);
     }
 
     void cleanupintegration()

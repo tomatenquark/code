@@ -4,6 +4,12 @@
 #include <string>
 #include <map>
 
+#define TOMATENQUARK_SERVER_VERSION "1.0.0.0"
+
+#define SPACEWAR_AUTHENTICATION_PORT 8766
+
+#define TOMATENQUARK_QUERY_PORT 8767
+
 namespace integration {
     struct steamserver: serverintegration {
     private:
@@ -13,10 +19,13 @@ namespace integration {
     public:
         steamserver();
 
-        void setup(int ip, int port) override
+        void setup(int port) override
         {
-            api_initialized = SteamGameServer_Init(ip, port + 4, port, port + 3,
-                                                   static_cast<EServerMode>(server::getserverprotection() + 1), "1");
+            api_initialized = SteamGameServer_Init(INADDR_ANY, SPACEWAR_AUTHENTICATION_PORT, port, TOMATENQUARK_QUERY_PORT,
+                                                   static_cast<EServerMode>(server::getserverprotection() + 1), TOMATENQUARK_SERVER_VERSION);
+            if (!api_initialized) {
+                conoutf("Failed to initialize Steam API");
+            }
         }
 
         void cleanup() override

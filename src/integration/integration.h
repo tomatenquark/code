@@ -21,7 +21,7 @@ namespace integration {
     };
 
     struct serverintegration {
-        virtual void setup(int unIP, int usGamePort) { }
+        virtual void setup(int usGamePort) { }
         virtual void cleanup() {}
         virtual void update() {}
 
@@ -52,7 +52,7 @@ namespace integration {
         };
 
         struct server: serverintegration {
-            void setup(int unIP, int usGamePort) override { }
+            void setup(int usGamePort) override { }
             void cleanup() override {}
             void update() override {}
 
