@@ -529,6 +529,11 @@ namespace game
             if(identexists("intermission")) execute("intermission");
             if (!m_edit) cintegration->incrementstat("frags", player1->frags);
             if (!m_edit) cintegration->updateavgstat("kpd", static_cast<float>(player1->frags / player1->deaths), (m_halftime) ? 5.0 : 10.0);
+            if (m_hideandseek && player1->health) {
+                int numhiders = 0;
+                loopv(clients) if(strcmp(clients[i]->team, "hide")) numhiders++;
+                if (numhiders == 1) cintegration->setachievement("ACH_CATCH_ME_IF_YOU_CAN");
+            }
         }
     }
 

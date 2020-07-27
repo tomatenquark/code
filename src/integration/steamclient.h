@@ -139,6 +139,11 @@ namespace integration {
             {
                     _ACH_ID( ACH_EDIT_ENTER, "How do you fly?" ),
                     _ACH_ID( ACH_EDIT_FLOATSPEED, "Starship surprise" ),
+                    _ACH_ID( ACH_FIRST_BLOOD, "First blood" ),
+                    _ACH_ID( ACH_DOUBLE_KILL, "Double kill" ),
+                    _ACH_ID( ACH_TRIPLE_KILL, "Triple kill" ),
+                    _ACH_ID( ACH_CATCH_ME_IF_YOU_CAN, "Catch me if you can" ),
+                    _ACH_ID( ACH_FLY_ME_TO_THE_MOON, "Fly me to the moon" ),
             };
 
     // Global access to Achievements object
