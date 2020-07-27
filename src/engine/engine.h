@@ -392,7 +392,6 @@ extern void writeservercfg();
 // client
 extern void localdisconnect(bool cleanup = true);
 extern void localservertoclient(int chan, ENetPacket *packet);
-extern void connectserv(const char *servername, int port, const char *serverpassword);
 extern void abortconnect();
 extern void clientkeepalive();
 
@@ -602,6 +601,8 @@ namespace recorder
     extern void capture(bool overlay = true);
     extern void cleanup();
 }
+
+extern integration::serverintegration *sintegration;
 
 #endif
 

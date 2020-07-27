@@ -1,21 +1,18 @@
 #include "game.h"
+#include <thread>
 
 namespace game
 {
     VARP(minradarscale, 0, 384, 10000);
     VARP(maxradarscale, 1, 1024, 10000);
     VARP(radarteammates, 0, 1, 1);
-    VARP(downloadmaps, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
     // Variables used for downloading
-    static char servercontent[MAXTRANS];
-    string serverdir = "";
-
-    void getservercontent()
-    {
-        conoutf("%s", servercontent);
-    }
-    COMMAND(getservercontent, "");
+    VARP(downloadmaps, 0, 1, 1);
+    VARP(downloadtimeout, 0, 50, 100);
+    // Client side integration of Steam (and potentially Discord or other platforms)
+    integration::dummy::client dummyclient;
+    integration::clientintegration * cintegration = &dummyclient;
 
     float calcradarscale()
     {
@@ -134,7 +131,7 @@ namespace game
 
     bool connected = false, remote = false, demoplayback = false, gamepaused = false;
     int sessionid = 0, mastermode = MM_OPEN, gamespeed = 100;
-    string servinfo = "", servauth = "", connectpass = "";
+    string servercontent = "", servinfo = "", servauth = "", connectpass = "";
 
     VARP(deadpush, 1, 2, 20);
 
@@ -207,6 +204,8 @@ namespace game
     }
 
     VARP(autoauth, 0, 1, 1);
+    VARP(autoticket, 0, 1, 1);
+    VAR(dbgticket, 0, 0, 1);
 
     void addauthkey(const char *name, const char *key, const char *desc)
     {
@@ -287,6 +286,7 @@ namespace game
     void edittoggled(bool on)
     {
         addmsg(N_EDITMODE, "ri", on ? 1 : 0);
+        if(on) cintegration->setachievement("ACH_EDIT_ENTER");
         if(player1->state==CS_DEAD) deathstate(player1, true);
         else if(player1->state==CS_EDITING && player1->editstate==CS_DEAD) showscores(false);
         disablezoom();
@@ -522,14 +522,6 @@ namespace game
 
     int gamemode = INT_MAX, nextmode = INT_MAX;
     string clientmap = "";
-
-    void format_servercontent(char* content) {
-        if (strstr(content, "http://")) memmove(&content[0], &content[7], strlen(content) - 6);
-        if (strstr(content, "https://")) memmove(&content[0], &content[8], strlen(content) - 7);
-        // Replace characters that would be invalid on Windows FS
-        for (int i = 0; i < strlen(content); i++) if (content[i] == '.') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
-        for (int i = 0; i < strlen(content); i++) if (content[i] == ':') memmove(&content[i], &content[i + 1], strlen(content) - i - 1);
-    }
 
     void setmode(int mode)
     {
@@ -798,6 +790,9 @@ namespace game
         else if(*numargs < 0) intret(gamepaused ? 1 : 0);
         else printvar(id, gamepaused ? 1 : 0); 
     });
+    ICOMMAND(integration, "", (), {
+        intret((int) hasintegration);
+    });
 
     bool ispaused() { return gamepaused; }
 
@@ -866,6 +861,15 @@ namespace game
                     numf += n;
                     break;
                 }
+                case 'x':
+                {
+                    int n = va_arg(args, int);
+                    int* arr = va_arg(args, int *);
+                    putint(p, n);
+                    for (int i = 0; i < n; i++) putint(p, arr[i]);
+                    numi += n + 1;
+                    break;
+                }
                 case 's': sendstring(va_arg(args, const char *), p); nums++; break;
             }
             va_end(args);
@@ -922,8 +926,8 @@ namespace game
         gamepaused = false;
         gamespeed = 100;
         clearclients(false);
-        copystring(servercontent, "");
-        if (strlen(serverdir)) removepackagedir(serverdir);
+        cintegration->getappdir(extensiondir);
+        cintegration->cancelticket();
         if(cleanup)
         {
             nextmode = gamemode = INT_MAX;
@@ -1070,26 +1074,24 @@ namespace game
             for(int i = 0; i < int(NUMGAMEMODES); i++) if(m_mp(STARTGAMEMODE + i)) { mode = STARTGAMEMODE + i; break; }
         }
         
-        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent))
+        if(multiplayer(false) && !m_edit && downloadmaps && strlen(servercontent) && hasintegration)
         {
             conoutf(CON_INFO, "downloading map %s", name);
-            int status = DOWNLOAD_PROGRESS;
-            int total = 1;
-            int current = 0;
-            copystring(serverdir, servercontent);
-            format_servercontent(serverdir);
-            prependstring(serverdir, homedir);
-            assetbundler::download_map(servercontent, (char*)name, (char*)serverdir, &status, &current, &total);
-            renderbackground("downloading map... (esc to abort)");
-            while (status == DOWNLOAD_PROGRESS) {
-                if(interceptkey(SDLK_ESCAPE)) status = DOWNLOAD_ABORTED;
-                float percentage = (float(current)/float(total));
-                defformatstring(download_text, "downloading map... %d%%", int(percentage*100));
-                renderprogress(percentage, download_text);
+            int status = 0;
+            bool download_started = cintegration->downloadmap(servercontent, &status);
+            if (download_started) renderbackground("downloading map... (esc to abort)");
+            else status = 2; // See https://partner.steamgames.com/doc/api/steam_api#EResult
+            int iterations = 0;
+            while (status < 2 && iterations < downloadtimeout)
+            {
+                if(interceptkey(SDLK_ESCAPE)) status = 2;
+                float progress = (float(iterations)/float(downloadtimeout));
+                defformatstring(download_text, "downloading map... %d%%", int(progress*100));
+                renderprogress(progress, download_text);
                 sendmessages();
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                iterations++;
             }
-            if (status == DOWNLOAD_FINISHED) addpackagedir(serverdir);
         }
 
         gamemode = mode;
@@ -1139,6 +1141,7 @@ namespace game
             sendstring("", p);
             sendstring("", p);
         }
+        putint(p, (autoticket && hasintegration));
         sendclientpacket(p.finalize(), 1);
     }
 
@@ -1400,10 +1403,10 @@ namespace game
             }
 
             case N_SERVERCONTENT:
-                getstring(text, p);
-                strcpy(servercontent, text);
+                getstring(servercontent, p, sizeof(servercontent));
+                conoutf(CON_DEBUG, "Using collection %s", servercontent);
                 break;
-                
+
             case N_MAPCHANGE:
                 getstring(text, p);
                 changemapserv(text, getint(p));
@@ -1997,6 +2000,26 @@ namespace game
                 break;
             }
 
+            case N_REQTICKET:
+                if (autoticket && hasintegration)
+                {
+                    int ticket[1024];
+                    cintegration->getticket(ticket);
+                    int ticketLength = cintegration->getticketlength();
+                    if (!ticketLength) break;
+                    string steamid;
+                    cintegration->getsteamid(steamid);
+
+                    packetbuf p(MAXTRANS, ENET_PACKET_FLAG_RELIABLE);
+                    putint(p, N_TICKETTRY);
+                    sendstring(steamid, p);
+                    putint(p, ticketLength);
+                    for (int i = 0; i < ticketLength; i++) putint(p, ticket[i]);
+                    if (dbgticket) for(int i = 0; i < ticketLength; i++) conoutf("%d", ticket[i]);
+                    sendclientpacket(p.finalize(), 1);
+                }
+                break;
+
             case N_INITAI:
             {
                 int bn = getint(p), on = getint(p), at = getint(p), sk = clamp(getint(p), 1, 101), pm = getint(p);
@@ -2239,5 +2262,7 @@ namespace game
             conoutf(CON_WARN, "map \f8%s.ogz \f~has been renamed to \f8%s.ogz", moldname, mnewname);
     }
     COMMAND(renamemap, "ss");
+
+    ICOMMAND(createmapid, "", (), if(m_edit && !strlen(mapid) && hasintegration) cintegration->createmapid());
 }
 

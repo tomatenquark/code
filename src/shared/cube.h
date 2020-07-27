@@ -40,6 +40,7 @@
   #ifdef __APPLE__
     #include "SDL2/SDL.h"
     #define GL_GLEXT_LEGACY
+    #define GL_SILENCE_DEPRECATION
     #define __glext_h_
     #include <OpenGL/gl.h>
     #define main SDL_main
@@ -62,11 +63,11 @@
 #include "glexts.h"
 #include "glemu.h"
 #include "zip.h"
-#include "assetbundler.h"
 #endif
 
 #include "iengine.h"
 #include "igame.h"
+#include "integration.h"
 
 #endif
 

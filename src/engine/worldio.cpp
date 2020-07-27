@@ -1087,8 +1087,7 @@ bool load_world(const char *mname, const char *cname)        // still supports a
             case ID_VAR:
             {
                 int val = f->getlil<int>();
-                if(exists && id->minval <= id->maxval) setvar(name, val);
-                if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
+                if(exists && id->minval <= id->maxval) setvar(name, val);if(dbgvars) conoutf(CON_DEBUG, "read var %s: %d", name, val);
                 break;
             }
  
@@ -1277,9 +1276,34 @@ bool load_world(const char *mname, const char *cname)        // still supports a
 
 void savecurrentmap() { save_world(game::getclientmap()); }
 void savemap(char *mname) { save_world(mname); }
+void saveworkshopmap(char *mname) {
+    if (!strlen(mapid) || !strlen(mname)) return;
+    // Create workshop item folder if not exists
+    string workshopfolder, mapname;
+    formatstring(workshopfolder, "packages/%s", mapid);
+    int dirlen = strlen(workshopfolder);
+    if(workshopfolder[dirlen] != '/' && workshopfolder[dirlen] != '\\' && dirlen+1 < (int)sizeof(workshopfolder)) { workshopfolder[dirlen++] = '/'; workshopfolder[dirlen] = '\0'; }
+    const char *dir = findfile(workshopfolder, "w");
+    if(!fileexists(dir, "w")) createdir(dir);
+    // Save map to folder
+    formatstring(mapname, "%s/%s.ogz", mapid, mname);
+    save_world(mapname);
+}
+
+void uploadmaptoworkshop(const char* title) {
+    if (!strlen(mapid) || !strlen(title)) return;
+    string workshopfolder;
+    formatstring(workshopfolder, "%spackages/%s", homedir, mapid);
+    string preview;
+    formatstring(preview, "%spackages/%s/%s.jpg", homedir, mapid, mapid);
+    game::uploadmaptoworkshop(mapid, title, workshopfolder, maptitle, (fileexists(preview, "r") ? preview : NULL));
+}
 
 COMMAND(savemap, "s");
 COMMAND(savecurrentmap, "");
+COMMAND(saveworkshopmap, "s");
+ICOMMAND(uploadcurrentmaptoworkshop, "", (), { uploadmaptoworkshop(game::getclientmap()); });
+COMMAND(uploadmaptoworkshop, "s");
 
 void writeobj(char *name)
 {

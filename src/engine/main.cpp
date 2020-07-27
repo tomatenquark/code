@@ -21,7 +21,6 @@ void cleanup()
     #ifdef __APPLE__
         if(screen) SDL_SetWindowFullscreen(screen, 0);
     #endif
-    curl_global_cleanup();
     SDL_Quit();
 }
 
@@ -36,6 +35,7 @@ void quit()                     // normal exit
     localdisconnect();
     writecfg();
     cleanup();
+    game::cleanupintegration();
     exit(EXIT_SUCCESS);
 }
 
@@ -1118,7 +1118,7 @@ int main(int argc, char **argv)
     setlogfile(NULL);
 
     int dedicated = 0;
-    char *load = NULL, *initscript = NULL;
+    char *load = NULL, *initscript = NULL, *connect = NULL, *connectpass = NULL;
 
     initing = INIT_RESET;
     // set home dir first
@@ -1164,7 +1164,12 @@ int main(int argc, char **argv)
                 break;
             }
             case 'x': initscript = &argv[i][2]; break;
+            case 'e': setextensiondir(&argv[i][2]); break;
             default: if(!serveroption(argv[i])) gameargs.add(argv[i]); break;
+        }
+        else if (argv[i][0]=='+') {
+            if (strstr(argv[i], "connect")) connect = argv[i+1]; i++; break;
+            if (strstr(argv[i], "password")) connectpass = argv[i+1]; i++; break;
         }
         else gameargs.add(argv[i]);
     }
@@ -1204,9 +1209,6 @@ int main(int argc, char **argv)
     gl_init();
     notexture = textureload("packages/textures/notexture.png");
     if(!notexture) fatal("could not find core textures");
-
-    logoutf("init: curl");
-    curl_global_init(CURL_GLOBAL_ALL);
 
     logoutf("init: console");
     if(!execfile("data/stdlib.cfg", false)) fatal("cannot find data files (you are running from the wrong folder, try .bat file in the main folder)");   // this is the first file we load.
@@ -1261,8 +1263,18 @@ int main(int argc, char **argv)
     identflags |= IDF_PERSIST;
 
     logoutf("init: mainloop");
+    game::initintegration();
+    logoutf("init: integrations");
 
     if(execfile("once.cfg", false)) remove(findfile("once.cfg", "rb"));
+
+    if(connect)
+    {
+        char *delimiter = strchr(connect, ':');
+        string addr;
+        copystring(addr, connect, strlen(connect) - strlen(delimiter) + 1);
+        connectserv(addr, (int) strtol(delimiter + 1, (char **)NULL, 10), connectpass);
+    }
 
     if(load)
     {
@@ -1312,6 +1324,7 @@ int main(int argc, char **argv)
         recomputecamera();
         updateparticles();
         updatesounds();
+        game::updateintegration();
 
         if(minimized) continue;
 

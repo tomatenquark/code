@@ -1,5 +1,13 @@
 #include "cube.h"
 
+#if defined(__clang__) || defined(_MSC_VER)
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+
 ///////////////////////////// console ////////////////////////
 
 void conoutf(const char *fmt, ...)
@@ -258,7 +266,7 @@ done:
 #include <dirent.h>
 #endif
 
-string homedir = "";
+string homedir = "", extensiondir = "";
 struct packagedir
 {
     char *dir, *filter;
@@ -424,6 +432,12 @@ const char *sethomedir(const char *dir)
     return homedir;
 }
 
+const char *setextensiondir(const char *dir)
+{
+    copystring(extensiondir, dir);
+    return extensiondir;
+}
+
 const char *addpackagedir(const char *dir)
 {
     string pdir;
@@ -479,6 +493,15 @@ const char *findfile(const char *filename, const char *mode)
             }
             return s;
         }
+    }
+    if(strlen(extensiondir))
+    {
+        if (strstr(filename, "packages")) {
+            formatstring(s, "%s%s", extensiondir, strreplace(filename, "packages", ""));
+        } else {
+            formatstring(s, "%s%s", extensiondir, filename);
+        }
+        if(fileexists(s, mode)) return s;
     }
     if(mode[0]=='w' || mode[0]=='a') return filename;
     loopv(packagedirs)
@@ -544,6 +567,29 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
     else return false;
 }
 
+void listdirs(const char *dir, vector<char *> &folders)
+{
+    if (!strlen(dir)) return;
+    for (const auto& entry: fs::directory_iterator(dir))
+    {
+        if (fs::is_directory(entry))
+        {
+            folders.add(strdup(entry.path().filename().string().c_str()));
+        }
+    }
+}
+
+void listextensionfiles(const char *dir, const char *ext, vector<char *> &files)
+{
+    for (const auto& entry: fs::directory_iterator(dir))
+    {
+        if (fs::is_regular_file(entry) && entry.path().has_extension() && !strcmp(entry.path().extension().string().c_str(), ext))
+        {
+            files.add(strdup(entry.path().filename().string().c_str()));
+        }
+    }
+}
+
 int listfiles(const char *dir, const char *ext, vector<char *> &files)
 {
     string dirname;
@@ -557,6 +603,11 @@ int listfiles(const char *dir, const char *ext, vector<char *> &files)
     if(homedir[0])
     {
         formatstring(s, "%s%s", homedir, dirname);
+        if(listdir(s, false, ext, files)) dirs++;
+    }
+    if(strlen(extensiondir))
+    {
+        formatstring(s, "%s%s", extensiondir, dirname);
         if(listdir(s, false, ext, files)) dirs++;
     }
     loopv(packagedirs)

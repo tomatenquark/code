@@ -161,6 +161,7 @@ void cleanupserver()
     if(pongsock != ENET_SOCKET_NULL) enet_socket_destroy(pongsock);
     if(lansock != ENET_SOCKET_NULL) enet_socket_destroy(lansock);
     pongsock = lansock = ENET_SOCKET_NULL;
+    server::cleanupintegration();
 }
 
 VARF(maxclients, 0, DEFAULTCLIENTS, MAXCLIENTS, { if(!maxclients) maxclients = DEFAULTCLIENTS; });
@@ -297,6 +298,7 @@ const char *disconnectreason(int reason)
         case DISC_MSGERR: return "message error";
         case DISC_IPBAN: return "ip is banned";
         case DISC_PRIVATE: return "server is in private mode";
+        case DISC_PROTECTED: return "server is in protected mode";
         case DISC_MAXCLIENTS: return "server FULL";
         case DISC_TIMEOUT: return "connection timed out";
         case DISC_OVERFLOW: return "overflow";
@@ -1036,6 +1038,7 @@ bool servererror(bool dedicated, const char *desc)
 bool setuplistenserver(bool dedicated)
 {
     ENetAddress address = { ENET_HOST_ANY, enet_uint16(serverport <= 0 ? server::serverport() : serverport) };
+    server::initintegration(address.port);
     if(*serverip)
     {
         if(enet_address_set_host(&address, serverip)<0) conoutf(CON_WARN, "WARNING: server ip not resolved");

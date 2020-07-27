@@ -1,4 +1,7 @@
 #include "game.h"
+#ifdef STEAM_ENABLED
+#include "steamserver.h"
+#endif
 
 namespace game
 {
@@ -16,6 +19,7 @@ namespace game
 }
 
 VAR(regenbluearmour, 0, 1, 1);
+VAR(dbgticket, 0, 0, 1);
 
 extern ENetAddress masteraddress;
 
@@ -232,7 +236,7 @@ namespace server
         bool warned, gameclip;
         ENetPacket *getdemo, *getmap, *clipboard;
         int lastclipboard, needclipboard;
-        int connectauth;
+        int connectauth, connectticket;
         uint authreq;
         string authname, authdesc;
         void *authchallenge;
@@ -338,7 +342,7 @@ namespace server
             playermodel = -1;
             privilege = PRIV_NONE;
             connected = local = false;
-            connectauth = 0;
+            connectauth = 0, connectticket = 0;
             position.setsize(0);
             messages.setsize(0);
             ping = 0;
@@ -658,6 +662,7 @@ namespace server
 			case 2: mastermask = MM_COOPSERV; break;
 		}
 	});
+    VAR(serverprotection, 0, 0, 2);
     SVAR(servermotd, "");
 
     struct teamkillkick
@@ -760,6 +765,25 @@ namespace server
             for(const int *p = msgsizes; *p >= 0; p += 2) sizetable[p[0]] = p[1];
         }
         return msg >= 0 && msg < NUMMSG ? sizetable[msg] : -1;
+    }
+
+    integration::dummy::server dummyserver;
+    integration::serverintegration *sintegration = &dummyserver;
+#ifdef STEAM_ENABLED
+    integration::steamserver steamserverintegration;
+#endif
+
+    void initintegration(int port)
+    {
+#ifdef STEAM_ENABLED
+        sintegration = &steamserverintegration;
+#endif
+        sintegration->setup(port);
+    }
+
+    void cleanupintegration()
+    {
+        sintegration->cleanup();
     }
 
     const char *modename(int n, const char *unknown)
@@ -1577,8 +1601,8 @@ namespace server
         }
 
         uchar operator[](int msg) const { return msg >= 0 && msg < NUMMSG ? msgmask[msg] : 0; }
-    } msgfilter(-1, N_CONNECT, N_SERVINFO, N_INITCLIENT, N_WELCOME, N_MAPCHANGE, N_SERVMSG, N_DAMAGE, N_HITPUSH, N_SHOTFX, N_EXPLODEFX, N_DIED, N_SPAWNSTATE, N_FORCEDEATH, N_TEAMINFO, N_ITEMACC, N_ITEMSPAWN, N_TIMEUP, N_CDIS, N_CURRENTMASTER, N_PONG, N_RESUME, N_BASESCORE, N_BASEINFO, N_BASEREGEN, N_ANNOUNCE, N_SENDDEMOLIST, N_SENDDEMO, N_DEMOPLAYBACK, N_SENDMAP, N_DROPFLAG, N_SCOREFLAG, N_RETURNFLAG, N_RESETFLAG, N_INVISFLAG, N_CLIENT, N_AUTHCHAL, N_INITAI, N_EXPIRETOKENS, N_DROPTOKENS, N_STEALTOKENS, N_DEMOPACKET, -2, N_REMIP, N_NEWMAP, N_GETMAP, N_SENDMAP, N_CLIPBOARD, -3, N_EDITENT, N_EDITF, N_EDITT, N_EDITM, N_FLIP, N_COPY, N_PASTE, N_ROTATE, N_REPLACE, N_DELCUBE, N_EDITVAR, N_EDITVSLOT, N_UNDO, N_REDO, -4, N_POS, NUMMSG),
-      connectfilter(-1, N_CONNECT, -2, N_AUTHANS, -3, N_PING, NUMMSG);
+    } msgfilter(-1, N_CONNECT, N_SERVINFO, N_INITCLIENT, N_WELCOME, N_SERVERCONTENT, N_MAPCHANGE, N_SERVMSG, N_DAMAGE, N_HITPUSH, N_SHOTFX, N_EXPLODEFX, N_DIED, N_SPAWNSTATE, N_FORCEDEATH, N_TEAMINFO, N_ITEMACC, N_ITEMSPAWN, N_TIMEUP, N_CDIS, N_CURRENTMASTER, N_PONG, N_RESUME, N_BASESCORE, N_BASEINFO, N_BASEREGEN, N_ANNOUNCE, N_SENDDEMOLIST, N_SENDDEMO, N_DEMOPLAYBACK, N_SENDMAP, N_DROPFLAG, N_SCOREFLAG, N_RETURNFLAG, N_RESETFLAG, N_INVISFLAG, N_CLIENT, N_AUTHCHAL, N_REQTICKET, N_INITAI, N_EXPIRETOKENS, N_DROPTOKENS, N_STEALTOKENS, N_DEMOPACKET, -2, N_REMIP, N_NEWMAP, N_GETMAP, N_SENDMAP, N_CLIPBOARD, -3, N_EDITENT, N_EDITF, N_EDITT, N_EDITM, N_FLIP, N_COPY, N_PASTE, N_ROTATE, N_REPLACE, N_DELCUBE, N_EDITVAR, N_EDITVSLOT, N_UNDO, N_REDO, -4, N_POS, NUMMSG),
+      connectfilter(-1, N_CONNECT, -2, N_AUTHANS, N_TICKETTRY, -3, N_PING, NUMMSG);
 
     int checktype(int type, clientinfo *ci)
     {
@@ -1589,7 +1613,7 @@ namespace server
                 // allow only before authconnect
                 case 1: return !ci->connectauth ? type : -1;
                 // allow only during authconnect
-                case 2: return ci->connectauth ? type : -1;
+                case 2: return ci->connectauth || ci->connectticket ? type : -1;
                 // always allow
                 case 3: return type;
                 // never allow
@@ -1856,7 +1880,8 @@ namespace server
     int welcomepacket(packetbuf &p, clientinfo *ci)
     {
         putint(p, N_WELCOME);
-        if (strlen(servercontent)) {
+        if(strlen(servercontent) > 0 && isnumeric(servercontent))
+        {
             putint(p, N_SERVERCONTENT);
             sendstring(servercontent, p);
         }
@@ -2475,6 +2500,7 @@ namespace server
         }
 
         shouldstep = clients.length() > 0;
+        sintegration->update();
     }
 
     void forcespectator(clientinfo *ci)
@@ -2627,6 +2653,7 @@ namespace server
             aiman::removeai(ci);
             if(!numclients(-1, false, true)) noclients(); // bans clear when server empties
             if(ci->local) checkpausegame();
+            if(serverprotection) sintegration->endsession(ci->clientnum);
         }
         else connects.removeobj(ci);
     }
@@ -2690,6 +2717,7 @@ namespace server
         uint ip = getclientip(ci->clientnum);
         if(checkbans(ip)) return DISC_IPBAN;
         if(mastermode>=MM_PRIVATE && allowedips.find(ip)<0) return DISC_PRIVATE;
+        if(serverprotection) return DISC_PROTECTED; // auth allows to circumvent ticket connect
         return DISC_NONE;
     }
 
@@ -2769,6 +2797,17 @@ namespace server
         if(ci->authreq) return true;
         if(ci->connectauth) disconnect_client(ci->clientnum, ci->connectauth);
         return false;
+    }
+
+    bool tryticket(clientinfo *ci)
+    {
+        sendf(ci->clientnum, 1, "ri", N_REQTICKET);
+        return true;
+    }
+
+    bool answerticket(clientinfo *ci, char* id, int length, int *ticket)
+    {
+        return server::sintegration->answerticket(ci->clientnum, id, length, ticket);
     }
 
     bool answerchallenge(clientinfo *ci, uint id, char *val, const char *desc)
@@ -2919,15 +2958,27 @@ namespace server
                     getstring(password, p, sizeof(password));
                     getstring(authdesc, p, sizeof(authdesc));
                     getstring(authname, p, sizeof(authname));
+                    int autoticket = getint(p);
                     int disc = allowconnect(ci, password);
                     if(disc)
                     {
-                        if(disc == DISC_LOCAL || !serverauth[0] || strcmp(serverauth, authdesc) || !tryauth(ci, authname, authdesc))
+                        switch(disc)
                         {
-                            disconnect_client(sender, disc);
-                            return;
+                            case DISC_LOCAL: disconnect_client(sender, disc); return;
+                            case DISC_PROTECTED:
+                                if (serverauth[0] && strcmp(serverauth, authdesc)) continue;
+                                if (!autoticket || !tryticket(ci)) {
+                                    disconnect_client(sender, disc); return;
+                                } else {
+                                    ci->connectticket = disc; break;
+                                }
+                            default:
+                                if(!serverauth[0] || strcmp(serverauth, authdesc) || !tryauth(ci, authname, authdesc)) {
+                                    disconnect_client(sender, disc); return;
+                                } else {
+                                    ci->connectauth = disc; break;
+                                }
                         }
-                        ci->connectauth = disc;
                     }
                     else connected(ci);
                     break;
@@ -2944,6 +2995,23 @@ namespace server
                         disconnect_client(sender, ci->connectauth);
                         return;
                     }
+                    break;
+                }
+
+                case N_TICKETTRY:
+                {
+                    string steamid;
+                    getstring(steamid, p, sizeof(steamid));
+                    int ticketLength = getint(p);
+                    int *ticket = new int[ticketLength];
+                    for(int i = 0; i < ticketLength; i++) ticket[i] = getint(p);
+                    if(dbgticket) for(int i = 0; i < ticketLength; i++) logoutf("%d", ticket[i]);
+                    if(!answerticket(ci, steamid, ticketLength, ticket))
+                    {
+                        disconnect_client(sender, ci->connectticket);
+                        return;
+                    }
+                    if (ci->connectticket) connected(ci);
                     break;
                 }
 
@@ -3747,5 +3815,14 @@ namespace server
     }
 
     #include "aiman.h"
-}
 
+    // Information needed for server browser
+    char* getservermodt() { return servermotd; }
+    char* getserverdesc() { return serverdesc; }
+    char* getservermap() { return smapname; }
+    char* getserverpass() { return serverpass; }
+    int getservermaxclients() { return maxclients; }
+    int getservernumbots() { return bots.alen; }
+    int getservermode() { return gamemode; }
+    int getserverprotection() { return serverprotection; }
+}

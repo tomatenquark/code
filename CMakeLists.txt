@@ -63,6 +63,8 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 ############### Dependencies ##########
 
 include(cmake/FindENet.cmake)
+include(cmake/FindSteam.cmake)
+
 find_package(ZLIB REQUIRED)
 find_package(ENet)
 
@@ -72,10 +74,7 @@ find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
-
-if(CURL_FOUND)
-    list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "CURL::libcurl")
-endif()
+find_package(Steam)
 
 if(SDL2_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2-static")
@@ -89,9 +88,13 @@ if(sdl2-mixer_FOUND)
     list(APPEND GOTQ_LINKING_LIBRARIES_CLIENT "SDL2::SDL2_mixer")
 endif()
 
+if(STEAM_FOUND)
+    list(APPEND GOTQ_LINKING_LIBRARIES_BASE "${STEAM_LIBRARY}")
+endif()
+
 ################ Files ################
 
-include_directories(src/shared src/engine src/fpsgame)
+include_directories(src/shared src/engine src/fpsgame src/integration)
 
 if(WIN32)
     set(GOTQ_APPLICATION_CLIENT_TYPE "WIN32")
@@ -103,6 +106,11 @@ elseif(APPLE)
 else()
     set(GOTQ_APPLICATION_CLIENT_TYPE "")
     set(GOTQ_ADDITIONAL_SOURCE_FILES "")
+endif()
+
+if(STEAM_FOUND)
+    include_directories("${STEAM_INCLUDE_DIR}")
+    set(GOTQ_ADDITIONAL_SOURCE_FILES "${GOTQ_ADDITIONAL_SOURCE_FILES}")
 endif()
 
 add_executable(tomaten_master
@@ -127,6 +135,9 @@ add_executable(tomaten_server
 )
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
+if(STEAM_FOUND)
+    target_compile_definitions(tomaten_server PUBLIC STEAM_ENABLED)
+endif()
 
 if(WIN32)
    set_target_properties(tomaten_master tomaten_server PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
@@ -192,12 +203,14 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_CLIENT_TYPE}
         src/fpsgame/server.cpp
         src/fpsgame/waypoint.cpp
         src/fpsgame/weapon.cpp
-        src/assetbundler/assetbundler.cpp
         ${GOTQ_ADDITIONAL_SOURCE_FILES}
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "src/assetbundler")
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
+
+if(STEAM_FOUND)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC STEAM_ENABLED)
+endif()
 
 if(APPLE)
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
@@ -223,6 +236,8 @@ else()
     list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "GL" "rt")
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_CLIENT "stdc++fs")
+        list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_SERVER "stdc++fs")
+        list(APPEND GOTQ_LINKING_PLATFORM_SPECIFIC_MASTER "stdc++fs")
     endif()
     # Server doesn't need more libs linked on UNIX
 endif()

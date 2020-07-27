@@ -1,6 +1,5 @@
 zlib
 enet
-curl
 sdl2
 sdl2-image[core,libjpeg-turbo]
 sdl2-mixer[core,dynamic-load,libvorbis]

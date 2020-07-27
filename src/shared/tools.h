@@ -153,6 +153,7 @@ static inline int bitscan(uint mask)
 #define MAXSTRLEN 260
 typedef char string[MAXSTRLEN];
 
+inline bool isnumeric(char *s) { bool numeric = true; for (int i = 0; i < strlen(s); i++) if (numeric) numeric = isdigit(s[i]); return numeric; }
 inline void vformatstring(char *d, const char *fmt, va_list v, int len) { _vsnprintf(d, len, fmt, v); d[len-1] = 0; }
 template<size_t N> inline void vformatstring(char (&d)[N], const char *fmt, va_list v) { vformatstring(d, fmt, v, N); }
 
@@ -1329,7 +1330,7 @@ static inline uchar cubeupper(uchar c)
 extern size_t decodeutf8(uchar *dst, size_t dstlen, const uchar *src, size_t srclen, size_t *carry = NULL);
 extern size_t encodeutf8(uchar *dstbuf, size_t dstlen, const uchar *srcbuf, size_t srclen, size_t *carry = NULL);
 
-extern string homedir;
+extern string homedir, extensiondir;
 
 extern char *makerelpath(const char *dir, const char *file, const char *prefix = NULL, const char *cmd = NULL);
 extern char *path(char *s);
@@ -1339,6 +1340,7 @@ extern bool fileexists(const char *path, const char *mode);
 extern bool createdir(const char *path);
 extern size_t fixpackagedir(char *dir);
 extern const char *sethomedir(const char *dir);
+extern const char *setextensiondir(const char *dir);
 extern const char *addpackagedir(const char *dir);
 extern bool removepackagedir(const char* dir);
 extern const char *findfile(const char *filename, const char *mode);
@@ -1351,6 +1353,8 @@ extern stream *opengzfile(const char *filename, const char *mode, stream *file =
 extern stream *openutf8file(const char *filename, const char *mode, stream *file = NULL);
 extern char *loadfile(const char *fn, size_t *size, bool utf8 = true);
 extern bool listdir(const char *dir, bool rel, const char *ext, vector<char *> &files);
+extern void listdirs(const char *dir, vector<char *> &files);
+extern void listextensionfiles(const char *dir, const char *ext, vector<char *> &files);
 extern int listfiles(const char *dir, const char *ext, vector<char *> &files);
 extern int listzipfiles(const char *dir, const char *ext, vector<char *> &files);
 extern void seedMT(uint seed);

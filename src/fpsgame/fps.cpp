@@ -1,8 +1,12 @@
 #include "game.h"
+#ifdef STEAM_ENABLED
+#include "steamclient.h"
+#endif
 
 namespace game
 {
     bool intermission = false;
+    bool hasintegration = false;
     int maptime = 0, maprealtime = 0, maplimit = -1;
     int respawnent = -1;
     int lasthit = 0, lastspawnattempt = 0;
@@ -12,6 +16,9 @@ namespace game
     fpsent *player1 = NULL;         // our client
     vector<fpsent *> players;       // other clients
     int savedammo[NUMGUNS];
+#ifdef STEAM_ENABLED
+    integration::steamclient steamintegration;
+#endif
 
     bool clientoption(const char *arg) { return false; }
 
@@ -520,6 +527,13 @@ namespace game
             disablezoom();
 
             if(identexists("intermission")) execute("intermission");
+            if (!m_edit) cintegration->incrementstat("frags", player1->frags);
+            if (!m_edit) cintegration->updateavgstat("kpd", static_cast<float>(player1->frags / player1->deaths), (m_halftime) ? 5.0 : 10.0);
+            if (m_hideandseek && player1->health) {
+                int numhiders = 0;
+                loopv(clients) if(strcmp(clients[i]->team, "hide")) numhiders++;
+                if (numhiders == 1) cintegration->setachievement("ACH_CATCH_ME_IF_YOU_CAN");
+            }
         }
     }
 
@@ -591,6 +605,38 @@ namespace game
         filtertext(player1->name, "unnamed", false, false, MAXNAMELEN);
         players.add(player1);
     }
+
+    void initintegration() {
+#ifdef STEAM_ENABLED
+        cintegration = &steamintegration;
+        hasintegration = cintegration->setup();
+        cintegration->getappdir(extensiondir);
+#else
+        hasintegration = cintegration->setup();
+#endif
+    }
+
+    void cleanupintegration() {
+        cintegration->cleanup();
+    }
+
+    void updateintegration() {
+        cintegration->update();
+    }
+
+    void setachievement(const char* achievement)
+    {
+        cintegration->setachievement(achievement);
+    }
+
+    void uploadmaptoworkshop(const char* id, const char* title, const char* content, const char* desc, const char* preview) {
+        cintegration->updatemapbyid(id, title, content, desc, preview);
+    }
+
+    ICOMMAND(getstat, "s", (const char* stat), {
+        if (!strlen(stat)) return;
+        intret(cintegration->getstat(stat));
+    })
 
     VARP(showmodeinfo, 0, 1, 1);
 

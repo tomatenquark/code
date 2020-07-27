@@ -2295,7 +2295,7 @@ void writecfg(const char *name)
     loopv(ids)
     {
         ident &id = *ids[i];
-        if(escapeid(id)[0] == '_') break; // do not persist prefixed elements
+        //if(escapeid(id)[0] == '_') break; // do not persist prefixed elements
         if(id.type==ID_ALIAS && id.flags&IDF_PERSIST && !(id.flags&IDF_OVERRIDDEN)) switch(id.valtype)
         {
         case VAL_STR:
@@ -2873,6 +2873,79 @@ ICOMMAND(loopfiles, "rsse", (ident *id, char *dir, char *ext, uint *body),
     if(files.length()) poparg(*id);
 });
 
+void loopdirs(ident *id, uint *body, char* dir)
+{
+    if(id->type!=ID_ALIAS) return;
+    identstack stack;
+    vector<char *> folders;
+    listdirs(dir, folders);
+    loopv(folders)
+    {
+        char *folder = folders[i];
+        if(i)
+        {
+            if(id->valtype == VAL_STR) delete[] id->val.s;
+            else id->valtype = VAL_STR;
+            id->val.s = folder;
+        }
+        else
+        {
+            tagval t;
+            t.setstr(folder);
+            pusharg(*id, t, stack);
+            id->flags &= ~IDF_UNKNOWN;
+        }
+        execute(body);
+    }
+    if(folders.length()) poparg(*id);
+}
+
+void loopextensionfiles (ident *id, char *dir, char *ext, uint *body)
+{
+    if(id->type!=ID_ALIAS) return;
+    identstack stack;
+    vector<char *> files;
+    defformatstring(extdir, "%s/%s", extensiondir, dir);
+    listextensionfiles(extdir, ext, files);
+    loopvrev(files)
+    {
+        char *file = files[i];
+        bool redundant = false;
+        for(int j = 0; j < int(i); j++) if(!strcmp(files[j], file)) { redundant = true; break; }
+        if(redundant) delete[] files.removeunordered(i);
+    }
+    loopv(files)
+    {
+        char *file = files[i];
+        if(i)
+        {
+            if(id->valtype == VAL_STR) delete[] id->val.s;
+            else id->valtype = VAL_STR;
+            id->val.s = file;
+        }
+        else
+        {
+            tagval t;
+            t.setstr(file);
+            pusharg(*id, t, stack);
+            id->flags &= ~IDF_UNKNOWN;
+        }
+        execute(body);
+    }
+    if(files.length()) poparg(*id);
+}
+COMMAND(loopextensionfiles, "rsse");
+
+ICOMMAND(loophomedirpackages, "re", (ident *id, uint *body), {
+    string packagesdir;
+    formatstring(packagesdir, "%spackages", homedir);
+    loopdirs(id, body, packagesdir);
+});
+
+ICOMMAND(loopextensiondir, "re", (ident *id, uint *body), {
+    loopdirs(id, body, extensiondir);
+})
+
 void findfile_(char *name)
 { 
     string fname;
@@ -3135,7 +3208,8 @@ ICOMMAND(strlen, "s", (char *s), intret(strlen(s)));
 ICOMMAND(strcode, "si", (char *s, int *i), intret(*i > 0 ? (memchr(s, 0, *i) ? 0 : uchar(s[*i])) : uchar(s[0])));
 ICOMMAND(codestr, "i", (int *i), { char *s = newstring(1); s[0] = char(*i); s[1] = '\0'; stringret(s); });
 ICOMMAND(struni, "si", (char *s, int *i), intret(*i > 0 ? (memchr(s, 0, *i) ? 0 : cube2uni(s[*i])) : cube2uni(s[0])));
-ICOMMAND(unistr, "i", (int *i), { char *s = newstring(1); s[0] = uni2cube(*i); s[1] = '\0'; stringret(s); }); 
+ICOMMAND(unistr, "i", (int *i), { char *s = newstring(1); s[0] = uni2cube(*i); s[1] = '\0'; stringret(s); });
+ICOMMAND(isnumber, "s", (char *s), { intret(isnumeric(s)); })
 
 #define STRMAPCOMMAND(name, map) \
     ICOMMAND(name, "s", (char *s), \
