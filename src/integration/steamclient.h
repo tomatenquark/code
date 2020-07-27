@@ -242,6 +242,13 @@ namespace integration {
             }
         }
 
+        void updateavgstat(const char* stat, float value, double sessionLength) override {
+            if (g_SteamAchievements)
+            {
+                SteamUserStats()->UpdateAvgRateStat(stat, value, sessionLength);
+            }
+        }
+
         CCallResult< steamclient, CreateItemResult_t > m_GetItemCreateCallResult;
 
         void OnGetItemCreateResult ( CreateItemResult_t *pParam, bool failure );

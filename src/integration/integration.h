@@ -14,6 +14,7 @@ namespace integration {
         virtual int getstat(const char* stat) {}
         virtual void setstat(const char* stat, int value) {}
         virtual void incrementstat(const char* stat, int increment) {}
+        virtual void updateavgstat(const char* stat, float value, double sessionLength) {}
 
         virtual void createmapid() {}
         virtual void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) {}
@@ -45,6 +46,7 @@ namespace integration {
             int getstat(const char* stat) override { return 0; }
             void setstat(const char* stat, int value) override {}
             void incrementstat(const char* stat, int increment) override {}
+            void updateavgstat(const char* stat, float value, double sessionLength) override {}
 
             void createmapid() override {}
             void updatemapbyid(const char* id, const char* title, const char* content, const char* desc = NULL, const char* preview = NULL) override {}

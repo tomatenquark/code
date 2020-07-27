@@ -527,6 +527,8 @@ namespace game
             disablezoom();
 
             if(identexists("intermission")) execute("intermission");
+            if (!m_edit) cintegration->incrementstat("frags", player1->frags);
+            if (!m_edit) cintegration->updateavgstat("kpd", static_cast<float>(player1->frags / player1->deaths), (m_halftime) ? 5.0 : 10.0);
         }
     }
 
