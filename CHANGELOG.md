@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-28-07
+### Added
+- Added tracking of frags and kpd
+- Added three achievements
+- Added authentication via Steam and protection via VAC
+- Replacetex and replacelasttex commands
+
+
+### Changes
+- Remove servercontent using `curl` method and replace it with Steam Workshop
+- Various fixes to sundisk, atmo and sun rendering
+- Increase network update rate
+- Remove MP3 support
+- Switch to CMake
+- Many saner default settings for modern machines contributed by Calinou
+
 ## [0.1.12] - 2020-06-06
 ### Fixes
 - Added packaging fixes for OSX, Linux and Windows
@@ -1016,7 +1032,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.1.12...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/tomatenquark/code/compare/v0.1.12...0.2.0
 [0.1.12]: https://github.com/tomatenquark/code/compare/v0.1.11...0.1.12
 [0.1.11]: https://github.com/tomatenquark/code/compare/v0.1.10...0.1.11
 [0.1.10]: https://github.com/tomatenquark/code/compare/v0.1.9...0.1.10
