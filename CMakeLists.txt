@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
 project(tomatenquark CXX)
 
 # Define Release by default.
@@ -65,7 +65,15 @@ message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: $
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 find_package(ZLIB REQUIRED)
-find_package(ENet)
+find_package(ENet REQUIRED)
+
+include(FetchContent)
+FetchContent_Declare(
+        backwards-cpp
+        GIT_REPOSITORY    https://github.com/bombela/backward-cpp.git
+        GIT_TAG           v1.5
+)
+FetchContent_MakeAvailable(backwards-cpp)
 
 list(APPEND GOTQ_LINKING_LIBRARIES_BASE "ZLIB::ZLIB" "${ENET_LIBRARY}")
 
@@ -118,6 +126,7 @@ add_executable(tomaten_master
         src/shared/tools.cpp
         src/engine/command.cpp
         src/engine/master.cpp
+        ${BACKWARD_ENABLE}
 )
 
 target_compile_definitions(tomaten_master PUBLIC STANDALONE)
@@ -131,6 +140,7 @@ add_executable(tomaten_server
         src/engine/worldio.cpp
         src/fpsgame/entities.cpp
         src/fpsgame/server.cpp
+        ${BACKWARD_ENABLE}
 )
 
 target_compile_definitions(tomaten_server PUBLIC STANDALONE)
@@ -203,6 +213,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${GOTQ_APPLICATION_CLIENT_TYPE}
         src/fpsgame/waypoint.cpp
         src/fpsgame/weapon.cpp
         ${GOTQ_ADDITIONAL_SOURCE_FILES}
+        ${BACKWARD_ENABLE}
 )
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC CLIENT)
