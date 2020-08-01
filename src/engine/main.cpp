@@ -1195,6 +1195,9 @@ int main(int argc, char **argv)
     ASSERT(dedicated <= 1);
     game::initclient();
 
+    game::initintegration();
+    logoutf("init: integrations");
+
     logoutf("init: video");
     SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, "0");
     #if !defined(WIN32) && !defined(__APPLE__)
@@ -1263,8 +1266,6 @@ int main(int argc, char **argv)
     identflags |= IDF_PERSIST;
 
     logoutf("init: mainloop");
-    game::initintegration();
-    logoutf("init: integrations");
 
     if(execfile("once.cfg", false)) remove(findfile("once.cfg", "rb"));
 
