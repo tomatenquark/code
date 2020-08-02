@@ -299,7 +299,7 @@ struct raceclientmode : clientmode
         countdown = COUNTDOWNSECONDS;
         timecounter = totalmillis;
         lastupdatecheck = totalmillis;
-        server::pausegame(true);
+        forcepaused(true);
         notgotspawnlocations = true;
         spawnlocs.deletecontents();
         if(!notgotitems){
@@ -370,7 +370,7 @@ struct raceclientmode : clientmode
           sequence = 2;
           sendservmsg("START!");
           timestarted = totalmillis;
-          server::pausegame(false);
+          forcepaused(false);
         }
         else if(remaining/1000 != countdown){
           defformatstring(msg,"- %d -", countdown--);
