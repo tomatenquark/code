@@ -102,6 +102,9 @@ namespace entities
                 case CARROT: case RESPAWNPOINT:
                     if(!m_classicsp) continue;
                     break;
+                case RACE_START: case RACE_FINISH: case RACE_CHECKPOINT:
+                    if(!m_race) continue;
+                    break;
             }
             const char *mdl = entmdlname(i);
             if(!mdl) continue;
@@ -328,6 +331,31 @@ namespace entities
                 d->vel = v;
                 break;
             }
+
+            case RACE_FINISH:
+                if (m_race) {
+                    addmsg(N_RACEFINISH, "rc", d);
+                }
+                d->lastpickup = e->type;
+                d->lastpickupmillis = lastmillis;
+                break;
+
+            case RACE_START:
+                if (m_race) {
+                    addmsg(N_RACESTART, "rc", d);
+                }
+                d->lastpickup = e->type;
+                d->lastpickupmillis = lastmillis;
+                break;
+
+            case RACE_CHECKPOINT:
+                if (m_race) {
+                    addmsg(N_RACECHECKPOINT, "rci", d, ents[n]->attr2);
+                }
+                d->lastpickup = e->type;
+                d->lastpickupindex = n;
+                d->lastpickupmillis = lastmillis;
+                break;
         }
     }
 
