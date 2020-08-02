@@ -91,7 +91,8 @@ enum
     M_SLOWMO     = 1<<18,
     M_COLLECT    = 1<<19,
     M_HALFTIME   = 1<<20,
-    M_HIDEANDSEEK= 1<<21
+    M_HIDEANDSEEK= 1<<21,
+    M_RACE       = 1<<22,
 };
 
 static struct gamemodeinfo
@@ -153,6 +154,7 @@ static struct gamemodeinfo
 #define m_hold         (m_checkall(gamemode, M_CTF | M_HOLD))
 #define m_collect      (m_check(gamemode, M_COLLECT))
 #define m_hideandseek  (m_check(gamemode, M_HIDEANDSEEK))
+#define m_race         (m_check(gamemode, M_RACE))
 #define m_teammode     (m_check(gamemode, M_TEAM))
 #define m_halftime     (m_check(gamemode, M_HALFTIME))
 #define isteam(a,b)    (m_teammode && strcmp(a, b)==0)
