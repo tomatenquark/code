@@ -75,7 +75,7 @@ namespace gle
     void disablequads()
     {
         quadsenabled = false;
-    
+
         if(glversion < 300) return;
 
         glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -352,4 +352,3 @@ namespace gle
         if(defaultvao) { glDeleteVertexArrays_(1, &defaultvao); defaultvao = 0; }
     }
 }
-

@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
     int i;
     for(i = 0; i < argc; i++) if(strcmp(argv[i], "-d") == 0) { server = YES; break; }
     if(server) return SDL_main(argc, (char**)argv);
-    
-	// neither of the followin is necessary as the principal class is set to SDLApplication in the plist 
+
+	// neither of the followin is necessary as the principal class is set to SDLApplication in the plist
 	//[SDLApplication sharedApplication];
     //[SDLApplication poseAsClass:[NSApplication class]];
-	
+
     return NSApplicationMain(argc,  (const char **)argv);
 }

@@ -87,4 +87,3 @@ struct model
         return center.z+radius.z;
     }
 };
-

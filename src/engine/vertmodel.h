@@ -13,7 +13,7 @@ struct vertmodel : animmodel
         GLuint vbuf;
         animstate as;
         int millis;
- 
+
         vbocacheentry() : vbuf(0) { as.cur.fr1 = as.prev.fr1 = -1; }
     };
 
@@ -158,7 +158,7 @@ struct vertmodel : animmodel
         {
             const vert * RESTRICT vert1 = &verts[as.cur.fr1 * numverts],
                        * RESTRICT vert2 = &verts[as.cur.fr2 * numverts],
-                       * RESTRICT pvert1 = as.interp<1 ? &verts[as.prev.fr1 * numverts] : NULL, 
+                       * RESTRICT pvert1 = as.interp<1 ? &verts[as.prev.fr1 * numverts] : NULL,
                        * RESTRICT pvert2 = as.interp<1 ? &verts[as.prev.fr2 * numverts] : NULL;
             #define ipvert(attrib)   v.attrib.lerp(vert1[i].attrib, vert2[i].attrib, as.cur.t)
             #define ipbvert(attrib, type)  v.attrib.lerp(bvert1[i].attrib, bvert2[i].attrib, as.cur.t)
@@ -174,7 +174,7 @@ struct vertmodel : animmodel
             {
                 const bumpvert * RESTRICT bvert1 = &bumpverts[as.cur.fr1 * numverts],
                                * RESTRICT bvert2 = &bumpverts[as.cur.fr2 * numverts],
-                               * RESTRICT bpvert1 = as.interp<1 ? &bumpverts[as.prev.fr1 * numverts] : NULL, 
+                               * RESTRICT bpvert1 = as.interp<1 ? &bumpverts[as.prev.fr1 * numverts] : NULL,
                                * RESTRICT bpvert2 = as.interp<1 ? &bumpverts[as.prev.fr2 * numverts] : NULL;
                 if(as.interp<1) iploop(vvertbump, { ipvertp(pos); ipbvertp(tangent, vec4); })
                 else iploop(vvertbump, { ipvert(pos); ipbvert(tangent, vec4); })
@@ -224,7 +224,7 @@ struct vertmodel : animmodel
         int vlen, vertsize;
         uchar *vdata;
 
-        vertmeshgroup() : numframes(0), tags(NULL), numtags(0), edata(NULL), ebuf(0), vtangents(false), vlen(0), vertsize(0), vdata(NULL) 
+        vertmeshgroup() : numframes(0), tags(NULL), numtags(0), edata(NULL), ebuf(0), vtangents(false), vlen(0), vertsize(0), vdata(NULL)
         {
         }
 
@@ -255,13 +255,13 @@ struct vertmodel : animmodel
 
         void calctagmatrix(part *p, int i, const animstate &as, matrix4 &matrix)
         {
-            const matrix4x3 &tag1 = tags[as.cur.fr1*numtags + i].transform, 
+            const matrix4x3 &tag1 = tags[as.cur.fr1*numtags + i].transform,
                             &tag2 = tags[as.cur.fr2*numtags + i].transform;
             matrix4x3 tag;
             tag.lerp(tag1, tag2, as.cur.t);
             if(as.interp<1)
             {
-                const matrix4x3 &tag1p = tags[as.prev.fr1*numtags + i].transform, 
+                const matrix4x3 &tag1p = tags[as.prev.fr1*numtags + i].transform,
                                 &tag2p = tags[as.prev.fr2*numtags + i].transform;
                 matrix4x3 tagp;
                 tagp.lerp(tag1p, tag2p, as.prev.t);
@@ -275,7 +275,7 @@ struct vertmodel : animmodel
         {
             if(!vc.vbuf) glGenBuffers_(1, &vc.vbuf);
             if(ebuf) return;
-                
+
             vector<ushort> idxs;
 
             if(tangents) loopv(meshes) ((vertmesh *)meshes[i])->calctangents();
@@ -294,8 +294,8 @@ struct vertmodel : animmodel
                 if(tangents) FILLVDATA(vvertbump);
                 else FILLVDATA(vvertn);
                 #undef FILLVDATA
-            } 
-            else 
+            }
+            else
             {
                 gle::bindvbo(vc.vbuf);
                 #define GENVBO(type) do { \
@@ -306,7 +306,7 @@ struct vertmodel : animmodel
                 int numverts = 0, htlen = 128;
                 loopv(meshes) numverts += ((vertmesh *)meshes[i])->numverts;
                 while(htlen < numverts) htlen *= 2;
-                if(numverts*4 > htlen*3) htlen *= 2; 
+                if(numverts*4 > htlen*3) htlen *= 2;
                 int *htdata = new int[htlen];
                 memset(htdata, -1, htlen*sizeof(int));
                 if(tangents) GENVBO(vvertbump);
@@ -400,17 +400,17 @@ struct vertmodel : animmodel
                 {
                     vc->as = *as;
                     vc->millis = lastmillis;
-                    loopv(meshes) 
+                    loopv(meshes)
                     {
                         vertmesh &m = *(vertmesh *)meshes[i];
                         m.interpverts(*as, tangents, vdata + m.voffset*vertsize, p->skins[i]);
                     }
                     gle::bindvbo(vc->vbuf);
-                    glBufferData_(GL_ARRAY_BUFFER, vlen*vertsize, vdata, GL_STREAM_DRAW);    
+                    glBufferData_(GL_ARRAY_BUFFER, vlen*vertsize, vdata, GL_STREAM_DRAW);
                 }
                 vc->millis = lastmillis;
             }
-        
+
             bindvbo(as, *vc);
             loopv(meshes)
             {
@@ -418,7 +418,7 @@ struct vertmodel : animmodel
                 p->skins[i].bind(m, as);
                 m->render(as, p->skins[i], *vc);
             }
-            
+
             loopv(p->links) calctagmatrix(p, p->links[i].tag, *as, p->links[i].matrix);
         }
     };
@@ -448,12 +448,12 @@ template<class MDL> struct vertcommands : modelcommands<MDL, struct MDL::vertmes
         if(!mdl.meshes) conoutf(CON_ERROR, "could not load %s", filename);
         else mdl.initskins();
     }
-    
+
     static void setpitch(float *pitchscale, float *pitchoffset, float *pitchmin, float *pitchmax)
     {
         if(!MDL::loading || MDL::loading->parts.empty()) { conoutf(CON_ERROR, "not loading an %s", MDL::formatname()); return; }
         part &mdl = *MDL::loading->parts.last();
-    
+
         mdl.pitchscale = *pitchscale;
         mdl.pitchoffset = *pitchoffset;
         if(*pitchmin || *pitchmax)
@@ -482,9 +482,8 @@ template<class MDL> struct vertcommands : modelcommands<MDL, struct MDL::vertmes
 
     vertcommands()
     {
-        if(MDL::multiparted()) this->modelcommand(loadpart, "load", "sf"); 
+        if(MDL::multiparted()) this->modelcommand(loadpart, "load", "sf");
         this->modelcommand(setpitch, "pitch", "ffff");
         if(MDL::animated()) this->modelcommand(setanim, "anim", "siiff");
     }
 };
-

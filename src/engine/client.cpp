@@ -8,7 +8,7 @@ int connmillis = 0, connattempts = 0, discmillis = 0;
 
 bool multiplayer(bool msg)
 {
-    bool val = curpeer || hasnonlocalclients(); 
+    bool val = curpeer || hasnonlocalclients();
     if(val && msg) conoutf(CON_ERROR, "operation not available in multiplayer");
     return val;
 }
@@ -74,7 +74,7 @@ SVARP(connectname, "");
 VARP(connectport, 0, 0, 0xFFFF);
 
 void connectserv(const char *servername, int serverport, const char *serverpassword)
-{   
+{
     if(connpeer)
     {
         conoutf("aborting connection attempt");
@@ -106,7 +106,7 @@ void connectserv(const char *servername, int serverport, const char *serverpassw
         address.host = ENET_HOST_BROADCAST;
     }
 
-    if(!clienthost) 
+    if(!clienthost)
     {
         clienthost = enet_host_create(NULL, 2, server::numchannels(), rate*1024, rate*1024);
         if(!clienthost)
@@ -117,7 +117,7 @@ void connectserv(const char *servername, int serverport, const char *serverpassw
         clienthost->duplicatePeers = 0;
     }
 
-    connpeer = enet_host_connect(clienthost, &address, server::numchannels(), 0); 
+    connpeer = enet_host_connect(clienthost, &address, server::numchannels(), 0);
     enet_host_flush(clienthost);
     connmillis = totalmillis;
     connattempts = 0;
@@ -138,7 +138,7 @@ void reconnect(const char *serverpassword)
 
 void disconnect(bool async, bool cleanup)
 {
-    if(curpeer) 
+    if(curpeer)
     {
         if(!discmillis)
         {
@@ -220,7 +220,7 @@ void gets2c()           // get updates from the server
     {
         conoutf("attempting to connect...");
         connmillis = totalmillis;
-        ++connattempts; 
+        ++connattempts;
         if(connattempts > 3)
         {
             conoutf(CON_ERROR, "\f3could not connect to server");
@@ -232,7 +232,7 @@ void gets2c()           // get updates from the server
     switch(event.type)
     {
         case ENET_EVENT_TYPE_CONNECT:
-            disconnect(false, false); 
+            disconnect(false, false);
             localdisconnect(false);
             curpeer = connpeer;
             connpeer = NULL;
@@ -241,7 +241,7 @@ void gets2c()           // get updates from the server
             if(rate) setrate(rate);
             game::gameconnect(true);
             break;
-         
+
         case ENET_EVENT_TYPE_RECEIVE:
             if(discmillis) conoutf("attempting to disconnect...");
             else localservertoclient(event.channelID, event.packet);
@@ -271,4 +271,3 @@ void gets2c()           // get updates from the server
             break;
     }
 }
-

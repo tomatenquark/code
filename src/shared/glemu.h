@@ -177,4 +177,3 @@ namespace gle
     extern void setup();
     extern void cleanup();
 }
-

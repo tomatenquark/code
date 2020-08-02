@@ -29,7 +29,7 @@
             while ([path length] > 1)
             {
                 path = [path stringByDeletingLastPathComponent];
-                
+
                 NSString *probe = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.app/Contents/gamedata", kSAUERBRATEN]];
                 if ([fm fileExistsAtPath:[probe stringByAppendingPathComponent:@"packages"]])
                 {
@@ -57,13 +57,13 @@
         path = [path stringByAppendingPathComponent:kSAUERBRATEN];
         if (![fm fileExistsAtPath:path]) [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil]; // ensure it exists
     }
-    userPath = [path retain];    
+    userPath = [path retain];
 }
 
 - (void)awakeFromNib
 {
     [self findPaths];
-        
+
     [NSApp setDelegate:self]; // so can catch the double-click, dropped files, termination
     [[NSAppleEventManager sharedAppleEventManager] setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
 }
@@ -77,7 +77,7 @@
 - (NSArray*)launchArgs
 {
     NSMutableArray *args = [NSMutableArray array];
-    [args addObject:[NSString stringWithFormat:@"-q%@", userPath]];     
+    [args addObject:[NSString stringWithFormat:@"-q%@", userPath]];
 
     char **argv = *_NSGetArgv();
     int argc = *_NSGetArgc();
@@ -90,12 +90,12 @@
     else
     {
         // copy all args except program name and "-nolauncher" arg
-        for(int i = 1; i < argc; i++) 
+        for(int i = 1; i < argc; i++)
         {
             if(strcmp(argv[i], "-nolauncher")==0) continue;
             [args addObject:[NSString stringWithUTF8String:argv[i]]];
         }
-        
+
     }
     return args;
 }
@@ -107,10 +107,10 @@
     argv[0] = [[[NSBundle mainBundle] executablePath] fileSystemRepresentation];
     argv[argc] = NULL;
     for (int i = 1; i < argc; i++) argv[i] = [[args objectAtIndex:i-1] UTF8String];
-    
+
     // call back into C/C++ world
     if(dataPath) chdir([dataPath fileSystemRepresentation]);
-    SDL_main(argc, (char**)argv);    
+    SDL_main(argc, (char**)argv);
     // won't reach here as the C/C++ code calls fatal/exit
 }
 

@@ -70,7 +70,7 @@ namespace sphere
 
         gle::bindvbo(vbuf);
         gle::bindebo(ebuf);
-   
+
         gle::vertexpointer(sizeof(vert), &verts->pos);
         gle::texcoord0pointer(sizeof(vert), &verts->s, GL_UNSIGNED_SHORT, 2, GL_TRUE);
         gle::enablevertex();
@@ -191,7 +191,7 @@ struct fireballrenderer : listrenderer
     void seedemitter(particleemitter &pe, const vec &o, const vec &d, int fade, float size, int gravity)
     {
         pe.maxfade = max(pe.maxfade, fade);
-        pe.extendbb(o, (size+1+pe.ent->attr2)*WOBBLE); 
+        pe.extendbb(o, (size+1+pe.ent->attr2)*WOBBLE);
     }
 
     void renderpart(listparticle *p, const vec &o, const vec &d, int blend, int ts)
@@ -246,4 +246,3 @@ struct fireballrenderer : listrenderer
     }
 };
 static fireballrenderer fireballs("packages/particles/explosion.png"), bluefireballs("packages/particles/plasma.png");
-

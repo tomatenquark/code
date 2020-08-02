@@ -21,7 +21,7 @@ struct ragdollskel
     {
         int vert[2];
         float mindist, maxdist;
-    }; 
+    };
 
     struct rotlimit
     {
@@ -107,9 +107,9 @@ struct ragdollskel
     {
         setupjoints();
         setuprotfrictions();
-        
+
         loaded = true;
-    } 
+    }
 
     void addreljoint(int bone, int parent)
     {
@@ -150,7 +150,7 @@ struct ragdolldata
           radius(0),
           timestep(0),
           scale(scale),
-          verts(new vert[skel->verts.length()]), 
+          verts(new vert[skel->verts.length()]),
           tris(new matrix3[skel->tris.length()]),
           animjoints(!skel->animjoints || skel->joints.empty() ? NULL : new matrix4x3[skel->joints.length()]),
           reljoints(skel->reljoints.empty() ? NULL : new dualquat[skel->reljoints.length()])
@@ -250,8 +250,8 @@ struct ragdolldata
 };
 
 /*
-    seed particle position = avg(modelview * base2anim * spherepos)  
-    mapped transform = invert(curtri) * origtrig 
+    seed particle position = avg(modelview * base2anim * spherepos)
+    mapped transform = invert(curtri) * origtrig
     parented transform = parent{invert(curtri) * origtrig} * (invert(parent{base2anim}) * base2anim)
 */
 
@@ -307,7 +307,7 @@ inline void ragdolldata::applyrotlimit(ragdollskel::tri &t1, ragdollskel::tri &t
     v2c.newpos.add(vec().cross(c2, q2c).madd(q2c, s2).add(v2c.pos));
     v2c.weight++;
 }
-    
+
 void ragdolldata::constrainrot()
 {
     loopv(skel->rotlimits)
@@ -321,7 +321,7 @@ void ragdolldata::constrainrot()
         float angle;
         if(!rot.calcangleaxis(angle, axis)) continue;
         angle = r.maxangle - fabs(angle);
-        if(angle >= 0) continue; 
+        if(angle >= 0) continue;
         angle += 1e-3f;
 
         applyrotlimit(skel->tris[r.tri[0]], skel->tris[r.tri[1]], angle, axis);
@@ -458,8 +458,8 @@ void ragdolldata::move(dynent *pl, float ts)
         if(!water) game::physicstrigger(pl, true, 0, 1, pl->inwater);
     }
     pl->inwater = water ? material&MATF_VOLUME : MAT_AIR;
-   
-    calcrotfriction(); 
+
+    calcrotfriction();
 	float tsfric = timestep ? ts/timestep : 1,
 		  airfric = ragdollairfric + min((ragdollbodyfricscale*collisions)/skel->verts.length(), 1.0f)*(ragdollbodyfric - ragdollairfric);
     collisions = 0;
@@ -485,11 +485,11 @@ void ragdolldata::move(dynent *pl, float ts)
             v.pos = v.oldpos;
             v.oldpos.sub(dir.reflect(collidewall));
             collisions++;
-        }   
+        }
     }
 
     if(unsticks && ragdollunstick) tryunstick(ts*ragdollunstick);
- 
+
     timestep = ts;
     if(collisions)
     {
@@ -501,7 +501,7 @@ void ragdolldata::move(dynent *pl, float ts)
     constrain();
     calctris();
     calcboundsphere();
-}    
+}
 
 FVAR(ragdolleyesmooth, 0, 0.5f, 1);
 VAR(ragdolleyesmoothmillis, 1, 250, 10000);
@@ -531,4 +531,3 @@ void cleanragdoll(dynent *d)
 {
     DELETEP(d->ragdoll);
 }
-

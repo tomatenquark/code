@@ -68,4 +68,3 @@ void addglare()
 
     glDisable(GL_BLEND);
 }
-     

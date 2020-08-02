@@ -485,4 +485,3 @@ extern PFNGLISVERTEXARRAYPROC      glIsVertexArray_;
 #define GL_TEXTURE_SWIZZLE_A              0x8E45
 #define GL_TEXTURE_SWIZZLE_RGBA           0x8E46
 #endif
-

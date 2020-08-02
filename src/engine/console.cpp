@@ -132,7 +132,7 @@ int drawconlines(int conskip, int confade, int conwidth, int conheight, int cono
         char *line = conlines[idx].line;
         int width, height;
         text_bounds(line, width, height, conwidth);
-        if(dir <= 0) y -= height; 
+        if(dir <= 0) y -= height;
         draw_text(line, conoff, y, 0xFF, 0xFF, 0xFF, 0xFF, -1, conwidth);
         if(dir > 0) y += height;
     }
@@ -145,10 +145,10 @@ int renderconsole(int w, int h, int abovehud)                   // render buffer
         conoff = fullconsole ? FONTH : FONTH/3,
         conheight = min(fullconsole ? ((h*fullconsize/100)/FONTH)*FONTH : FONTH*consize, h - 2*(conpad + conoff)),
         conwidth = w - 2*(conpad + conoff) - (fullconsole ? 0 : game::clipconsole(w, h));
-    
+
     extern void consolebox(int x1, int y1, int x2, int y2);
     if(fullconsole) consolebox(conpad, conpad, conwidth+conpad+2*conoff, conheight+conpad+2*conoff);
-    
+
     int y = drawconlines(conskip, fullconsole ? 0 : confade, conwidth, conheight, conpad+conoff, fullconsole ? fullconfilter : confilter);
     if(!fullconsole && (miniconsize && miniconwidth))
         drawconlines(miniconskip, miniconfade, (miniconwidth*(w - 2*(conpad + conoff)))/100, min(FONTH*miniconsize, abovehud - y), conpad+conoff, miniconfilter, abovehud, -1);
@@ -166,7 +166,7 @@ struct keym
         ACTION_EDITING,
         NUMACTIONS
     };
-    
+
     int code;
     char *name;
     char *actions[NUMACTIONS];
@@ -186,7 +186,7 @@ void keymap(int *code, char *key)
     DELETEA(km.name);
     km.name = newstring(key);
 }
-    
+
 COMMAND(keymap, "is");
 
 keym *keypressed = NULL;
@@ -220,13 +220,13 @@ keym *findbind(char *key)
         if(!strcasecmp(km.name, key)) return &km;
     });
     return NULL;
-}   
-    
+}
+
 void getbind(char *key, int type)
 {
     keym *km = findbind(key);
     result(km ? km->actions[type] : "");
-}   
+}
 
 void bindkey(char *key, char *action, int state, const char *cmd)
 {
@@ -319,7 +319,7 @@ struct hline
                (commandprompt ? !prompt || strcmp(commandprompt, prompt) : prompt!=NULL) ||
                commandflags != flags;
     }
-    
+
     void save()
     {
         buf = newstring(commandbuf);
@@ -491,7 +491,7 @@ bool consolekey(int code, bool isdown)
 
             case SDLK_UP:
                 if(histpos > history.length()) histpos = history.length();
-                if(histpos > 0) history[--histpos]->restore(); 
+                if(histpos > 0) history[--histpos]->restore();
                 break;
 
             case SDLK_DOWN:
@@ -558,7 +558,7 @@ void processkey(int code, bool isdown, int modstate)
     }
     keym *haskey = keyms.access(code);
     if(haskey && haskey->pressed) execbind(*haskey, isdown); // allow pressed keys to release
-    else if(!g3d_key(code, isdown)) // 3D GUI mouse button intercept   
+    else if(!g3d_key(code, isdown)) // 3D GUI mouse button intercept
     {
         if(!consolekey(code, isdown))
         {
@@ -584,7 +584,7 @@ void writebinds(stream *f)
         loopv(binds)
         {
             keym &km = *binds[i];
-            if(*km.actions[j]) 
+            if(*km.actions[j])
             {
                 if(validateblock(km.actions[j])) f->printf("%s %s [%s]\n", cmds[j], escapestring(km.name), km.actions[j]);
                 else f->printf("%s %s %s\n", cmds[j], escapestring(km.name), escapestring(km.actions[j]));
@@ -619,14 +619,14 @@ struct filesval
     char *dir, *ext;
     vector<char *> files;
     int millis;
-    
+
     filesval(int type, const char *dir, const char *ext) : type(type), dir(newstring(dir)), ext(ext && ext[0] ? newstring(ext) : NULL), millis(-1) {}
     ~filesval() { DELETEA(dir); DELETEA(ext); files.deletearrays(); }
 
     void update()
     {
         if((type!=FILES_DIR && type!=FILES_VAR) || millis >= commandmillis) return;
-        files.deletearrays();        
+        files.deletearrays();
         if(type==FILES_VAR)
         {
             string buf;
@@ -689,7 +689,7 @@ void addcomplete(char *command, int type, char *dir, char *ext)
     if(!val)
     {
         filesval *f = new filesval(type, dir, ext);
-        if(type==FILES_LIST) explodelist(dir, f->files); 
+        if(type==FILES_LIST) explodelist(dir, f->files);
         val = &completefiles[fileskey(type, f->dir, f->ext)];
         *val = f;
     }
@@ -776,7 +776,7 @@ void writecompletions(stream *f)
     {
         char *k = cmds[i];
         filesval *v = completions[k];
-        if(v->type==FILES_LIST) 
+        if(v->type==FILES_LIST)
         {
             if(validateblock(v->dir)) f->printf("listcomplete %s [%s]\n", escapeid(k), v->dir);
             else f->printf("listcomplete %s %s\n", escapeid(k), escapestring(v->dir));
@@ -784,4 +784,3 @@ void writecompletions(stream *f)
         else f->printf("%s %s %s %s\n", v->type==FILES_VAR ? "varcomplete" : "complete", escapeid(k), escapestring(v->dir), escapestring(v->ext ? v->ext : "*"));
     }
 }
-

@@ -71,9 +71,8 @@ struct BIH
     bool traverse(const vec &o, const vec &ray, float maxdist, float &dist, int mode);
     bool traverse(const mesh &m, const vec &o, const vec &ray, const vec &invray, float maxdist, float &dist, int mode, node *curnode, float tmin, float tmax);
     bool triintersect(const mesh &m, int tidx, const vec &mo, const vec &mray, float maxdist, float &dist, int mode);
-    
+
     void preload();
 };
 
 extern bool mmintersect(const extentity &e, const vec &o, const vec &ray, float maxdist, int mode, float &dist);
-

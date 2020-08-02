@@ -49,7 +49,7 @@ struct blobrenderer
     blobvert *vdata;
     int numedata, numvdata;
     blobinfo *startrender, *endrender;
- 
+
     blobinfo *lastblob;
 
     vec blobmin, blobmax;
@@ -153,7 +153,7 @@ struct blobrenderer
         blobinfo &b = blobs[endblob];
         int next = endblob + 1;
         if(next>=maxblobs) next = 0;
-        if(next==startblob) 
+        if(next==startblob)
         {
             lastblob = &b;
             freeblob();
@@ -224,7 +224,7 @@ struct blobrenderer
             }
             else
             {
-                if(pc < below)  
+                if(pc < below)
                 {
                     if(c > below) out[numout++] = vec(*p).sub(v).mul((below - c)/(pc - c)).add(v);
                 }
@@ -236,14 +236,14 @@ struct blobrenderer
         }
         return numout;
     }
-        
+
     void dupblob()
     {
-        if(lastblob->startvert >= lastblob->endvert) 
+        if(lastblob->startvert >= lastblob->endvert)
         {
             lastblob->startindex = lastblob->endindex = endindex;
             lastblob->startvert = lastblob->endvert = endvert;
-            return; 
+            return;
         }
         blobinfo &b = newblob(lastblob->o, lastblob->radius);
         b.flags |= BL_DUP;
@@ -288,7 +288,7 @@ struct blobrenderer
                 indexes[endindex++] = i1;
                 indexes[endindex++] = i2;
                 i2 = addvert(*cur++);
-                indexes[endindex++] = i2; 
+                indexes[endindex++] = i2;
             }
 
             availverts -= endvert - lastblob->endvert;
@@ -317,7 +317,7 @@ struct blobrenderer
                     pos[numverts++] = vec(x xv, y yv, z zv);
                 GENFACEVERTS(o.x, o.x, o.y, o.y, o.z, o.z, , + mat->csize, , + mat->rsize, + 0.1f, - 0.1f);
             #undef GENFACEORIENT
-            #undef GENFACEVERT 
+            #undef GENFACEVERT
                 default:
                     return;
             }
@@ -332,7 +332,7 @@ struct blobrenderer
             if(numverts >= 4 && !(cu.merged&(1<<orient)) && !flataxisface(cu, orient) && faceconvexity(verts, numverts, size)) numplanes++;
             else flat = dim;
         }
-        else if(cu.merged&(1<<orient)) return; 
+        else if(cu.merged&(1<<orient)) return;
         else if(!vismask || (vismask&0x40 && visibleface(cu, orient, o, size, MAT_AIR, (cu.material&MAT_ALPHA)^MAT_ALPHA, MAT_ALPHA)))
         {
             ivec v[4];
@@ -354,7 +354,7 @@ struct blobrenderer
             if(offset < blobmin[dim] || offset > blobmax[dim]) return;
             flat = dim;
         }
-    
+
         vec vmin = pos[0], vmax = pos[0];
         for(int i = 1; i < numverts; i++) { vmin.min(pos[i]); vmax.max(pos[i]); }
         if(vmax.x < blobmin.x || vmin.x > blobmax.x || vmax.y < blobmin.y || vmin.y > blobmax.y ||
@@ -381,7 +381,7 @@ struct blobrenderer
                 }
             if(flat!=0) CLIPSIDE(clip<0>, blobmin.x, blobmax.x);
             if(flat!=1) CLIPSIDE(clip<1>, blobmin.y, blobmax.y);
-            if(flat!=2) 
+            if(flat!=2)
             {
                 CLIPSIDE(clip<2>, blobmin.z, blobmax.z);
                 CLIPSIDE(split<2>, blobmin.z + blobfadelow, blobmax.z - blobfadehigh);
@@ -448,7 +448,7 @@ struct blobrenderer
                 else
                 {
                     int vismask = cu[i].visible;
-                    if(vismask&0xC0) 
+                    if(vismask&0xC0)
                     {
                         if(vismask&0x80) for(int j = 0; j < int(6); j++) gentris(cu[i], j, co, size, NULL, vismask);
                         else for(int j = 0; j < int(6); j++) if(vismask&(1<<j)) gentris(cu[i], j, co, size);
@@ -487,7 +487,7 @@ struct blobrenderer
         blobalpha = uchar(scale);
         gentris(worldroot, ivec(0, 0, 0), worldsize>>1);
         return !(b.flags & BL_DUP) ? &b : NULL;
-    } 
+    }
 
     static void setuprenderstate()
     {
@@ -532,7 +532,7 @@ struct blobrenderer
     {
         float minz = b->o.z - (blobheight + blobfadelow), maxz = b->o.z + blobfadehigh,
               scale = fade*blobintensity*255/100.0f, scalelow = scale / blobfadelow, scalehigh = scale / blobfadehigh;
-        uchar alpha = uchar(scale); 
+        uchar alpha = uchar(scale);
         b->millis = totalmillis;
         do
         {
@@ -563,7 +563,7 @@ struct blobrenderer
             if(!lastrender || lastrender->tex != tex) glBindTexture(GL_TEXTURE_2D, tex->id);
             lastrender = this;
         }
-    
+
         union { int i; float f; } ox, oy;
         ox.f = o.x; oy.f = o.y;
         uint hash = uint(ox.i^~oy.i^(INT_MAX-oy.i)^uint(radius));
@@ -575,7 +575,7 @@ struct blobrenderer
             cache[hash] = ushort(b - blobs);
             if(!b) return;
         }
-        else if(fade < 1 && totalmillis - b->millis > 0) fadeblob(b, fade); 
+        else if(fade < 1 && totalmillis - b->millis > 0) fadeblob(b, fade);
         do
         {
             if(b->endvert - b->startvert >= 3)
@@ -596,9 +596,9 @@ struct blobrenderer
                 }
             }
             int offset = b - &blobs[0] + 1;
-            if(offset >= maxblobs) offset = 0; 
+            if(offset >= maxblobs) offset = 0;
             if(offset < endblob ? offset > startblob || startblob > endblob : offset > startblob) b = &blobs[offset];
-            else break; 
+            else break;
         } while(b->flags & BL_DUP);
     }
 
@@ -638,8 +638,8 @@ struct blobrenderer
                 if(estart) glUnmapBuffer_(GL_ELEMENT_ARRAY_BUFFER);
                 if(vstart) glUnmapBuffer_(GL_ARRAY_BUFFER);
                 for(blobinfo *b = startrender;; b = &blobs[b->next])
-                {   
-                    b->flags &= ~BL_RENDER; 
+                {
+                    b->flags &= ~BL_RENDER;
                     if(b->next >= maxblobs) break;
                 }
                 startrender = endrender = NULL;
@@ -652,7 +652,7 @@ struct blobrenderer
         for(blobinfo *b = startrender;; b = &blobs[b->next])
         {
             b->flags &= ~BL_RENDER;
-            ushort offset = ushort(vdst - vstart) - b->startvert; 
+            ushort offset = ushort(vdst - vstart) - b->startvert;
             for(int i = b->startindex; i < b->endindex; ++i)
                 *edst++ = indexes[i] + offset;
             memcpy(vdst, &verts[b->startvert], (b->endvert - b->startvert)*sizeof(blobvert));
@@ -689,7 +689,7 @@ blobrenderer *blobrenderer::lastrender = NULL;
 VARFP(blobstattris, 128, 4096, 16384, initblobs(BLOB_STATIC));
 VARFP(blobdyntris, 128, 4096, 16384, initblobs(BLOB_DYNAMIC));
 
-static blobrenderer blobs[] = 
+static blobrenderer blobs[] =
 {
     blobrenderer("<grey>packages/particles/blob.png"),
     blobrenderer("<grey>packages/particles/blob.png")
@@ -724,4 +724,3 @@ void cleanupblobs()
 {
     for(int i = 0; i < int(sizeof(blobs)/sizeof(blobs[0])); i++) blobs[i].cleanup();
 }
-

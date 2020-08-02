@@ -19,7 +19,7 @@ struct animmodel : model
         void setframes(const animinfo &info)
         {
             anim = info.anim;
-            if(info.range<=1) 
+            if(info.range<=1)
             {
                 fr1 = 0;
                 t = 0;
@@ -149,7 +149,7 @@ struct animmodel : model
             }
             else
             {
-                float bias = max(mincolor-1.0f, 0.2f), scale = 0.5f*max(0.8f-bias, 0.0f), 
+                float bias = max(mincolor-1.0f, 0.2f), scale = 0.5f*max(0.8f-bias, 0.0f),
                       minshade = scale*max(ambient, mincolor);
                 LOCALPARAMF(lightscale, scale - minshade, scale, minshade + bias);
             }
@@ -178,7 +178,7 @@ struct animmodel : model
             if(shader) return shader;
 
             string opts;
-            int optslen = 0; 
+            int optslen = 0;
             if(alphatested()) opts[optslen++] = 'a';
             if(owner->tangents()) opts[optslen++] = 'q';
             if(bumpmapped()) opts[optslen++] = 'n';
@@ -201,13 +201,13 @@ struct animmodel : model
         {
             if(tex->type&Texture::ALPHA && !tex->alphamask) loadalphamask(tex);
         }
- 
+
         void preloadshader(bool force)
         {
             if(force) cleanup();
             loadshader();
         }
- 
+
         void setshader(mesh *m, const animstate *as)
         {
             m->setshader(loadshader());
@@ -314,10 +314,10 @@ struct animmodel : model
             }
         }
 
-        virtual void setshader(Shader *s) 
-        { 
+        virtual void setshader(Shader *s)
+        {
             if(glaring) s->setvariant(0, 1);
-            else s->set(); 
+            else s->set();
         }
 
         template<class V, class T> void smoothnorms(V *verts, int numverts, T *tris, int numtris, float limit, bool areaweight)
@@ -384,13 +384,13 @@ struct animmodel : model
             }
             for(int i = 0; i < int(numverts); i++) verts[i].norm.normalize();
         }
-      
+
         template<class V, class T> void buildnorms(V *verts, int numverts, T *tris, int numtris, bool areaweight, int numframes)
         {
             if(!numverts) return;
             for(int i = 0; i < int(numframes); i++) buildnorms(&verts[i*numverts], numverts, tris, numtris, areaweight);
         }
- 
+
         static inline void fixqtangent(quat &q, float bt)
         {
             static const float bias = -1.5f/65535, biasscale = sqrtf(1 - bias*bias);
@@ -412,7 +412,7 @@ struct animmodel : model
             fixqtangent(q, bt);
             v.tangent = q;
         }
- 
+
         template<class B, class V, class TC, class T> void calctangents(B *bumpverts, V *verts, TC *tcverts, int numverts, T *tris, int numtris, bool areaweight)
         {
             vec *tangent = new vec[2*numverts], *bitangent = tangent+numverts;
@@ -489,7 +489,7 @@ struct animmodel : model
             DELETEA(name);
             meshes.deletecontents();
             DELETEP(next);
-        }            
+        }
 
         virtual int findtag(const char *name) { return -1; }
         virtual void concattagtransform(part *p, int i, const matrix4x3 &m, matrix4x3 &n) {}
@@ -760,7 +760,7 @@ struct animmodel : model
                 info.frame = 0;
                 info.range = meshes->totalframes();
             }
-            else 
+            else
             {
                 animspec *spec = NULL;
                 if(anims[animpart])
@@ -775,7 +775,7 @@ struct animmodel : model
                     {
                         int secondaryidx = (anim>>ANIM_SECONDARY)&ANIM_INDEX;
                         if(secondaryidx < NUMANIMS)
-                        { 
+                        {
                             vector<animspec> &secondary = anims[animpart][secondaryidx];
                             if(secondary.length())
                             {
@@ -826,7 +826,7 @@ struct animmodel : model
                 animinterpinfo &ai = d->animinterp[interp];
                 if((info.anim&ANIM_CLAMP)==ANIM_CLAMP) aitime = min(aitime, int(info.range*info.speed*0.5e-3f));
                 void *ak = meshes->animkey();
-                if(d->ragdoll && !(anim&ANIM_RAGDOLL)) 
+                if(d->ragdoll && !(anim&ANIM_RAGDOLL))
                 {
                     ai.prev.range = ai.cur.range = 0;
                     ai.lastswitch = -1;
@@ -913,7 +913,7 @@ struct animmodel : model
 
             meshes->render(as, pitch, oaxis, oforward, d, this);
 
-            if(!(anim&ANIM_REUSE)) 
+            if(!(anim&ANIM_REUSE))
             {
                 loopv(links)
                 {
@@ -1027,7 +1027,7 @@ struct animmodel : model
             part *p = m->parts[0];
             switch(linktype(m))
             {
-                case LINK_TAG:    
+                case LINK_TAG:
                     if(p->index >= 0) unlink(p);
                     p->index = 0;
                     break;
@@ -1038,7 +1038,7 @@ struct animmodel : model
                     break;
 
                 case LINK_REUSE:
-                    p->render(anim | ANIM_REUSE, basetime, basetime2, pitch, axis, forward, d, as); 
+                    p->render(anim | ANIM_REUSE, basetime, basetime2, pitch, axis, forward, d, as);
                     break;
             }
         }
@@ -1093,7 +1093,7 @@ struct animmodel : model
 
         if(transparent<1)
         {
-            if(anim&ANIM_GHOST) 
+            if(anim&ANIM_GHOST)
             {
                 glDepthFunc(GL_GREATER);
                 glDepthMask(GL_FALSE);
@@ -1117,7 +1117,7 @@ struct animmodel : model
 
         render(anim, basetime, basetime2, pitch, axis, forward, d, a);
 
-        if(transparent<1 && (alphadepth || anim&ANIM_GHOST)) 
+        if(transparent<1 && (alphadepth || anim&ANIM_GHOST))
         {
             glDepthFunc(GL_LESS);
             if(anim&ANIM_GHOST) glDepthMask(GL_TRUE);
@@ -1269,7 +1269,7 @@ struct animmodel : model
     void setglow(float glow, float delta, float pulse)
     {
         if(parts.empty()) loaddefaultparts();
-        loopv(parts) loopvj(parts[i]->skins) 
+        loopv(parts) loopvj(parts[i]->skins)
         {
             skin &s = parts[i]->skins[j];
             s.glow = glow;
@@ -1318,7 +1318,7 @@ struct animmodel : model
         if(parts.empty()) return;
         vec bbmin(1e16f, 1e16f, 1e16f), bbmax(-1e16f, -1e16f, -1e16f);
         matrix4x3 m;
-        initmatrix(m); 
+        initmatrix(m);
         parts[0]->calcbb(bbmin, bbmax, m);
         radius = bbmax;
         radius.sub(bbmin);
@@ -1487,7 +1487,7 @@ template<class MDL, class MESH> struct modelcommands
         }
 
     #define loopskins(meshname, s, body) loopmeshes(meshname, m, { skin &s = mdl.skins[i]; body; })
-    
+
     static void setskin(char *meshname, char *tex, char *masks, float *envmapmax, float *envmapmin)
     {
         loopskins(meshname, s,
@@ -1500,7 +1500,7 @@ template<class MDL, class MESH> struct modelcommands
             }
         );
     }
-    
+
     static void setspec(char *meshname, int *percent)
     {
         float spec = 1.0f;
@@ -1508,7 +1508,7 @@ template<class MDL, class MESH> struct modelcommands
         else if(*percent<0) spec = 0.0f;
         loopskins(meshname, s, s.spec = spec);
     }
-    
+
     static void setambient(char *meshname, int *percent)
     {
         float ambient = 0.3f;
@@ -1516,7 +1516,7 @@ template<class MDL, class MESH> struct modelcommands
         else if(*percent<0) ambient = 0.0f;
         loopskins(meshname, s, s.ambient = ambient);
     }
-    
+
     static void setglow(char *meshname, int *percent, int *delta, float *pulse)
     {
         float glow = 3.0f, glowdelta = *delta/100.0f, glowpulse = *pulse > 0 ? *pulse/1000.0f : 0;
@@ -1525,66 +1525,66 @@ template<class MDL, class MESH> struct modelcommands
         glowdelta -= glow;
         loopskins(meshname, s, { s.glow = glow; s.glowdelta = glowdelta; s.glowpulse = glowpulse; });
     }
-    
+
     static void setglare(char *meshname, float *specglare, float *glowglare)
     {
         loopskins(meshname, s, { s.specglare = *specglare; s.glowglare = *glowglare; });
     }
-    
+
     static void setalphatest(char *meshname, float *cutoff)
     {
         loopskins(meshname, s, s.alphatest = max(0.0f, min(1.0f, *cutoff)));
     }
-    
+
     static void setalphablend(char *meshname, int *blend)
     {
         loopskins(meshname, s, s.alphablend = *blend!=0);
     }
-    
+
     static void setcullface(char *meshname, int *cullface)
     {
         loopskins(meshname, s, s.cullface = *cullface!=0);
     }
-    
+
     static void setenvmap(char *meshname, char *envmap)
     {
         Texture *tex = cubemapload(envmap);
         loopskins(meshname, s, s.envmap = tex);
     }
-    
+
     static void setbumpmap(char *meshname, char *normalmapfile)
     {
         Texture *normalmaptex = textureload(makerelpath(MDL::dir, normalmapfile), 0, true, false);
         loopskins(meshname, s, s.normalmap = normalmaptex);
     }
-    
+
     static void setfullbright(char *meshname, float *fullbright)
     {
         loopskins(meshname, s, s.fullbright = *fullbright);
     }
-    
+
     static void setshader(char *meshname, char *shader)
     {
         loopskins(meshname, s, s.shader = lookupshaderbyname(shader));
     }
-    
+
     static void setscroll(char *meshname, float *scrollu, float *scrollv)
     {
         loopskins(meshname, s, { s.scrollu = *scrollu; s.scrollv = *scrollv; });
     }
-    
+
     static void setnoclip(char *meshname, int *noclip)
     {
         loopmeshes(meshname, m, m.noclip = *noclip!=0);
     }
-  
+
     static void setlink(int *parent, int *child, char *tagname, float *x, float *y, float *z)
     {
         if(!MDL::loading) { conoutf(CON_ERROR, "not loading an %s", MDL::formatname()); return; }
         if(!MDL::loading->parts.inrange(*parent) || !MDL::loading->parts.inrange(*child)) { conoutf(CON_ERROR, "no models loaded to link"); return; }
         if(!MDL::loading->parts[*parent]->link(MDL::loading->parts[*child], tagname, vec(*x, *y, *z))) conoutf(CON_ERROR, "could not link model %s", MDL::loading->name);
     }
- 
+
     template<class F> void modelcommand(F *fun, const char *suffix, const char *args)
     {
         defformatstring(name, "%s%s", MDL::formatname(), suffix);
@@ -1614,4 +1614,3 @@ template<class MDL, class MESH> struct modelcommands
         if(MDL::multiparted()) modelcommand(setlink, "link", "iisfff");
     }
 };
-

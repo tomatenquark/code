@@ -352,8 +352,8 @@ struct ctfclientmode : clientmode
         loopv(flags) if(flags[i].dropper == ci->clientnum) { flags[i].dropper = -1; flags[i].dropcount = 0; }
     }
 
-    bool canspawn(clientinfo *ci, bool connecting) 
-    { 
+    bool canspawn(clientinfo *ci, bool connecting)
+    {
         return m_efficiency || !m_protect ? connecting || !ci->state.lastdeath || gamemillis+curtime-ci->state.lastdeath >= RESPAWNSECS*1000 : true;
     }
 
@@ -1350,4 +1350,3 @@ case N_INVISFLAG:
 }
 
 #endif
-

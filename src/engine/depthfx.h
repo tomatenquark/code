@@ -136,7 +136,7 @@ bool depthfxing = false;
 
 bool binddepthfxtex()
 {
-    if(!reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)        
+    if(!reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)
     {
         glActiveTexture_(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, depthfxtex.rendertex);
@@ -190,4 +190,3 @@ void drawdepthfxtex()
 
     depthfxtex.render(1<<depthfxsize, 1<<depthfxsize, blurdepthfx, blurdepthfxsigma/100.0f);
 }
-

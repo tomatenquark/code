@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `dbgbind` variable
 
 ## [0.1.7] - 2020-11-05
-### Added 
+### Added
 - Added player name status icons
 - Add hide and seek game mode
 - Add getmodeinfo command
@@ -156,7 +156,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - allow jpeg screenshots
 - experimental alpha mask support for world geometry
-- allow disabling pitch clamping 
+- allow disabling pitch clamping
 
 ## Changed
 - Increase flag drop limit to 3
@@ -907,7 +907,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - changed most integer points into ivec
 - fixed cursor position depth for small gridsizes
 - added error msg to newmap when not in editmode
-- started to clean up some stuff 
+- started to clean up some stuff
 
 ## Jan 4 2005
 

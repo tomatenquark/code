@@ -38,28 +38,28 @@ void loadshaders()
     nocolorshader = lookupshaderbyname("nocolor");
     foggedshader = lookupshaderbyname("fogged");
     foggednotextureshader = lookupshaderbyname("foggednotexture");
-    
+
     nullshader->set();
 
     loadedshaders = true;
 }
 
-Shader *lookupshaderbyname(const char *name) 
-{ 
+Shader *lookupshaderbyname(const char *name)
+{
     Shader *s = shaders.access(name);
     return s && s->loaded() ? s : NULL;
 }
 
 Shader *generateshader(const char *name, const char *fmt, ...)
 {
-    if(!loadedshaders) return NULL; 
+    if(!loadedshaders) return NULL;
     Shader *s = name ? lookupshaderbyname(name) : NULL;
     if(!s)
     {
         defvformatstring(cmd, fmt, fmt);
         bool wasstandard = standardshaders;
         standardshaders = true;
-        execute(cmd); 
+        execute(cmd);
         standardshaders = wasstandard;
         s = name ? lookupshaderbyname(name) : NULL;
         if(!s) s = nullshader;
@@ -104,7 +104,7 @@ static void showglslinfo(GLenum type, GLuint obj, const char *name, const char *
     }
 }
 
-static void compileglslshader(GLenum type, GLuint &obj, const char *def, const char *name, bool msg = true) 
+static void compileglslshader(GLenum type, GLuint &obj, const char *def, const char *name, bool msg = true)
 {
     const char *source = def + strspn(def, " \t\r\n");
     const char *parts[16];
@@ -146,14 +146,14 @@ static void compileglslshader(GLenum type, GLuint &obj, const char *def, const c
     glCompileShader_(obj);
     GLint success;
     glGetShaderiv_(obj, GL_COMPILE_STATUS, &success);
-    if(!success) 
+    if(!success)
     {
         if(msg) showglslinfo(type, obj, name, parts, numparts);
         glDeleteShader_(obj);
         obj = 0;
     }
     else if(dbgshader > 1 && msg) showglslinfo(type, obj, name, parts, numparts);
-}  
+}
 
 VAR(dbgubo, 0, 0, 1);
 
@@ -582,7 +582,7 @@ Shader *newshader(int type, const char *name, const char *vs, const char *ps, Sh
         Shader::lastshader = NULL;
     }
 
-    Shader *exists = shaders.access(name); 
+    Shader *exists = shaders.access(name);
     char *rname = exists ? exists->name : newstring(name);
     Shader &s = shaders[rname];
     s.name = rname;
@@ -709,7 +709,7 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
         memset(vspragma, ' ', len);
         vspragma += len;
         if(!strncmp(vspragma, "override", olen))
-        { 
+        {
             memset(vspragma, ' ', olen);
             vspragma += olen;
             char *end = vspragma + strcspn(vspragma, "\n\r");
@@ -726,7 +726,7 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
         memset(pspragma, ' ', len);
         pspragma += len;
         if(!strncmp(pspragma, "override", olen))
-        { 
+        {
             memset(pspragma, ' ', olen);
             pspragma += olen;
             char *end = pspragma + strcspn(pspragma, "\n\r");
@@ -735,7 +735,7 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
             memset(end, ' ', endlen);
         }
     }
-    row += rowoffset; 
+    row += rowoffset;
     if(row < 0 || row >= MAXVARIANTROWS) return;
     int col = s.numvariants(row);
     defformatstring(varname, "<variant:%d,%d>%s", col, row, sname);
@@ -788,10 +788,10 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
     string pslight;
     vspragma += strcspn(vspragma, "\n");
     if(*vspragma) vspragma++;
-    
+
     if(sscanf(pspragma, "//:dynlight %100s", pslight)!=1) return;
 
-    pspragma += strcspn(pspragma, "\n"); 
+    pspragma += strcspn(pspragma, "\n");
     if(*pspragma) pspragma++;
 
     const char *vsmain = findglslmain(vs), *psmain = findglslmain(ps);
@@ -818,21 +818,21 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
             vsdl.put(dir, strlen(dir));
             psdl.put(dir, strlen(dir));
         }
-            
+
         vsdl.put(vsmain, vspragma-vsmain);
         psdl.put(psmain, pspragma-psmain);
 
         for(int k = 0; k < int(i+1); k++)
         {
-            defformatstring(tc, 
-                k<numlights ? 
+            defformatstring(tc,
+                k<numlights ?
                     "dynlight%ddir = vvertex.xyz*dynlightpos[%d].w + dynlightpos[%d].xyz;\n" :
-                    "vec3 dynlight%ddir = dynlight0dir*dynlightpos[%d].w + dynlightpos[%d].xyz;\n",   
+                    "vec3 dynlight%ddir = dynlight0dir*dynlightpos[%d].w + dynlightpos[%d].xyz;\n",
                 k, k, k);
             if(k < numlights) vsdl.put(tc, strlen(tc));
             else psdl.put(tc, strlen(tc));
 
-            defformatstring(dl, 
+            defformatstring(dl,
                 "%s.rgb += dynlightcolor[%d] * (1.0 - clamp(dot(dynlight%ddir, dynlight%ddir), 0.0, 1.0));\n",
                 pslight, k, k, k);
             psdl.put(dl, strlen(dl));
@@ -842,7 +842,7 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
         psdl.put(pspragma, strlen(pspragma)+1);
 
         defformatstring(name, "<dynlight %d>%s", i+1, sname);
-        Shader *variant = newshader(s.type, name, vsdl.getbuf(), psdl.getbuf(), &s, row); 
+        Shader *variant = newshader(s.type, name, vsdl.getbuf(), psdl.getbuf(), &s, row);
         if(!variant) return;
         if(row < 4) genwatervariant(s, name, vsdl.getbuf(), psdl.getbuf(), row+2);
     }
@@ -889,7 +889,7 @@ static void genshadowmapvariant(Shader &s, const char *sname, const char *vs, co
         "shadowmaptc = vec3(shadowmapproject * vvertex);\n";
     vssm.put(tcgen, strlen(tcgen));
     const char *sm =
-        smoothshadowmappeel ? 
+        smoothshadowmappeel ?
             "vec4 smvals = texture2D(shadowmap, shadowmaptc.xy);\n"
             "vec2 smdiff = clamp(smvals.xz - shadowmaptc.zz*smvals.y, 0.0, 1.0);\n"
             "float shadowed = clamp((smdiff.x > 0.0 ? smvals.w : 0.0) - 8.0*smdiff.y, 0.0, 1.0);\n" :
@@ -898,7 +898,7 @@ static void genshadowmapvariant(Shader &s, const char *sname, const char *vs, co
             "float smtest = shadowmaptc.z*smvals.y;\n"
             "float shadowed = smtest < smvals.x && smtest > smvals.z ? smvals.w : 0.0;\n";
     pssm.put(sm, strlen(sm));
-    defformatstring(smlight, 
+    defformatstring(smlight,
         "%s.rgb -= shadowed*clamp(%s.rgb - shadowmapambient.rgb, 0.0, 1.0);\n",
         pslight, pslight);
     pssm.put(smlight, strlen(smlight));
@@ -921,7 +921,7 @@ static void genfogshader(vector<char> &vsbuf, vector<char> &psbuf, const char *v
     static const int pragmalen = strlen("//:fog");
     const char *vsmain = findglslmain(vs), *vsend = strrchr(vs, '}');
     if(vsmain && vsend)
-    {   
+    {
         vsbuf.put(vs, vsmain - vs);
         const char *fogparams = "\nuniform vec4 fogplane;\nvarying float fogcoord;\n";
         vsbuf.put(fogparams, strlen(fogparams));
@@ -941,8 +941,8 @@ static void genfogshader(vector<char> &vsbuf, vector<char> &psbuf, const char *v
         psbuf.put(fogparams, strlen(fogparams));
         psbuf.put(psmain, psend - psmain);
         const char *psdef = "\n#define FOG_COLOR ";
-        const char *psfog = 
-            pspragma && !strncmp(pspragma+pragmalen, "rgba", 4) ? 
+        const char *psfog =
+            pspragma && !strncmp(pspragma+pragmalen, "rgba", 4) ?
                 "\ngl_FragColor = mix((FOG_COLOR), gl_FragColor, clamp(fogcoord*fogparams.x + fogparams.y, 0.0, 1.0));\n" :
                 "\ngl_FragColor.rgb = mix((FOG_COLOR).rgb, gl_FragColor.rgb, clamp(fogcoord*fogparams.x + fogparams.y, 0.0, 1.0));\n";
         int clen = 0;
@@ -1004,7 +1004,7 @@ void defershader(int *type, const char *name, const char *contents)
 void Shader::force()
 {
     if(!deferred() || !defer) return;
-        
+
     char *cmd = defer;
     defer = NULL;
     bool wasstandard = standardshaders, wasforcing = forceshaders;
@@ -1030,7 +1030,7 @@ void fixshaderdetail()
 {
     // must null out separately because fixdetailshader can recursively set it
     enumerate(shaders, Shader, s, { if(!s.forced) s.detailshader = NULL; });
-    enumerate(shaders, Shader, s, { if(s.forced) s.fixdetailshader(); }); 
+    enumerate(shaders, Shader, s, { if(s.forced) s.fixdetailshader(); });
     linkslotshaders();
 }
 
@@ -1069,7 +1069,7 @@ Shader *useshaderbyname(const char *name)
 {
     Shader *s = shaders.access(name);
     if(!s) return NULL;
-    if(!s->detailshader) s->fixdetailshader(); 
+    if(!s->detailshader) s->fixdetailshader();
     s->forced = true;
     return s;
 }
@@ -1077,7 +1077,7 @@ Shader *useshaderbyname(const char *name)
 void shader(int *type, char *name, char *vs, char *ps)
 {
     if(lookupshaderbyname(name)) return;
-   
+
     defformatstring(info, "shader %s", name);
     renderprogress(loadprogress, info);
 
@@ -1092,7 +1092,7 @@ void shader(int *type, char *name, char *vs, char *ps)
         if(psbuf.length()) ps = psbuf.getbuf(); \
     }
     GENSHADER(slotparams.length(), genuniformdefs(vsbuf, psbuf, vs, ps));
-    GENSHADER(strstr(vs, "//:fog") || strstr(ps, "//:fog"), genfogshader(vsbuf, psbuf, vs, ps)); 
+    GENSHADER(strstr(vs, "//:fog") || strstr(ps, "//:fog"), genfogshader(vsbuf, psbuf, vs, ps));
     Shader *s = newshader(*type, name, vs, ps);
     if(s)
     {
@@ -1291,7 +1291,7 @@ static int allocatepostfxtex(int scale)
     loopv(postfxtexs)
     {
         postfxtex &t = postfxtexs[i];
-        if(t.scale==scale && t.used < 0) return i; 
+        if(t.scale==scale && t.used < 0) return i;
     }
     postfxtex &t = postfxtexs.add();
     t.scale = scale;
@@ -1319,7 +1319,7 @@ void renderpostfx()
 {
     if(postfxpasses.empty()) return;
 
-    if(postfxw != screenw || postfxh != screenh) 
+    if(postfxw != screenw || postfxh != screenh)
     {
         cleanuppostfx(false);
         postfxw = screenw;
@@ -1358,7 +1358,7 @@ void renderpostfx()
             glFramebufferTexture2D_(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postfxtexs[tex].id, 0);
         }
 
-        int w = tex >= 0 ? max(screenw>>postfxtexs[tex].scale, 1) : screenw, 
+        int w = tex >= 0 ? max(screenw>>postfxtexs[tex].scale, 1) : screenw,
             h = tex >= 0 ? max(screenh>>postfxtexs[tex].scale, 1) : screenh;
         glViewport(0, 0, w, h);
         p.shader->set();
@@ -1425,7 +1425,7 @@ ICOMMAND(addpostfx, "siisffff", (char *name, int *bind, int *scale, char *inputs
     int inputmask = inputs[0] ? 0 : 1;
     int freemask = inputs[0] ? 0 : 1;
     bool freeinputs = true;
-    for(; *inputs; inputs++) if(isdigit(*inputs)) 
+    for(; *inputs; inputs++) if(isdigit(*inputs))
     {
         inputmask |= 1<<(*inputs-'0');
         if(freeinputs) freemask |= 1<<(*inputs-'0');
@@ -1460,9 +1460,9 @@ void reloadshaders()
     loadshaders();
     identflags |= IDF_PERSIST;
     linkslotshaders();
-    enumerate(shaders, Shader, s, 
+    enumerate(shaders, Shader, s,
     {
-        if(!s.standard && !(s.type&(SHADER_DEFERRED|SHADER_INVALID)) && !s.variantshader) 
+        if(!s.standard && !(s.type&(SHADER_DEFERRED|SHADER_INVALID)) && !s.variantshader)
         {
             defformatstring(info, "shader %s", s.name);
             renderprogress(0.0, info);
@@ -1470,7 +1470,7 @@ void reloadshaders()
             loopv(s.variants)
             {
                 Shader *v = s.variants[i];
-                if((v->reusevs && v->reusevs->invalid()) || 
+                if((v->reusevs && v->reusevs->invalid()) ||
                    (v->reuseps && v->reuseps->invalid()) ||
                    !v->compile())
                     v->cleanup(true);
@@ -1505,7 +1505,7 @@ void setupblurkernel(int radius, float sigma, float *weights, float *offsets)
 
 void setblurshader(int pass, int size, int radius, float *weights, float *offsets)
 {
-    if(radius<1 || radius>MAXBLURRADIUS) return; 
+    if(radius<1 || radius>MAXBLURRADIUS) return;
     static Shader *blurshader[7][2] = { { NULL, NULL }, { NULL, NULL }, { NULL, NULL }, { NULL, NULL }, { NULL, NULL }, { NULL, NULL }, { NULL, NULL } };
     Shader *&s = blurshader[radius-1][pass];
     if(!s)
@@ -1519,4 +1519,3 @@ void setblurshader(int pass, int size, int radius, float *weights, float *offset
     for(int k = 0; k < int(8); k++) scaledoffsets[k] = offsets[k]/size;
     LOCALPARAMV(offsets, scaledoffsets, 8);
 }
-

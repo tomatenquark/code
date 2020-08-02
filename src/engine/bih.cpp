@@ -319,7 +319,7 @@ bool mmintersect(const extentity &e, const vec &o, const vec &ray, float maxdist
     float v = mo.dot(mray), inside = m->bih->entradius - mo.squaredlen();
     if((inside < 0 && v > 0) || inside + v*v < 0) return false;
     int yaw = e.attr1;
-    if(yaw != 0) 
+    if(yaw != 0)
     {
         const vec2 &rot = sincosmod360(-yaw);
         mo.rotate_around_z(rot);
@@ -327,4 +327,3 @@ bool mmintersect(const extentity &e, const vec &o, const vec &ray, float maxdist
     }
     return m->bih->traverse(mo, mray, maxdist ? maxdist : 1e16f, dist, mode);
 }
-

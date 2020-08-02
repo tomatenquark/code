@@ -70,4 +70,3 @@
 #include "integration.h"
 
 #endif
-

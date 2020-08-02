@@ -9,7 +9,7 @@ struct normalgroup
     normalgroup(const vec &pos) : pos(pos), flat(0), normals(-1), tnormals(-1) {}
 };
 
-static inline bool htcmp(const vec &v, const normalgroup &n) { return v == n.pos; } 
+static inline bool htcmp(const vec &v, const normalgroup &n) { return v == n.pos; }
 
 struct normal
 {
@@ -119,7 +119,7 @@ void findnormal(const vec &key, const vec &surface, vec &v)
 {
     const normalgroup *g = normalgroups.access(key);
     if(!g) v = surface;
-    else if(g->tnormals < 0 || !findtnormal(*g, surface, v)) 
+    else if(g->tnormals < 0 || !findtnormal(*g, surface, v))
         findnormal(*g, surface, v);
 }
 
@@ -190,8 +190,8 @@ void addnormals(cube &c, const ivec &o, int size)
 
         if(!numplanes) for(int k = 0; k < int(numverts); k++) norms[k] = addnormal(pos[k], i);
         else if(numplanes==1) for(int k = 0; k < int(numverts); k++) norms[k] = addnormal(pos[k], planes[0]);
-        else 
-        { 
+        else
+        {
             vec avg = vec(planes[0]).add(planes[1]).normalize();
             norms[0] = addnormal(pos[0], avg);
             norms[1] = addnormal(pos[1], planes[0]);
@@ -219,7 +219,7 @@ void addnormals(cube &c, const ivec &o, int size)
                 tjoint &t = tjoints[tj];
                 if(t.edge != edge) break;
                 float offset = (t.offset - offset1) * doffset;
-                vec tpos = vec(d).mul(t.offset/8.0f).add(o); 
+                vec tpos = vec(d).mul(t.offset/8.0f).add(o);
                 addtnormal(tpos, offset, norms[e1], norms[e2], normalgroups.access(v1), normalgroups.access(v2));
                 tj = t.next;
             }
@@ -230,9 +230,9 @@ void addnormals(cube &c, const ivec &o, int size)
 void calcnormals(bool lerptjoints)
 {
     if(!lerpangle) return;
-    usetnormals = lerptjoints; 
+    usetnormals = lerptjoints;
     if(usetnormals) findtjoints();
-    lerpthreshold = cos(lerpangle*RAD) - 1e-5f; 
+    lerpthreshold = cos(lerpangle*RAD) - 1e-5f;
     progress = 1;
     for(int i = 0; i < int(8); i++) addnormals(worldroot[i], ivec(i, ivec(0, 0, 0), worldsize/2), worldsize/2);
 }
@@ -303,7 +303,7 @@ void initlerpbounds(float u, float v, const lerpvert *lv, int numv, lerpbounds &
     else { start.min = first; end.min = second; }
 
     if((lv[1].tc.x - lv->tc.x)*(lv[2].tc.y - lv->tc.y) > (lv[1].tc.y - lv->tc.y)*(lv[2].tc.x - lv->tc.x))
-    { 
+    {
         start.winding = end.winding = 1;
         start.max = (start.min == lv ? &lv[numv-1] : start.min-1);
         end.max = (end.min == &lv[numv-1] ? lv : end.min+1);
@@ -348,7 +348,7 @@ void updatelerpbounds(float v, const lerpvert *lv, int numv, lerpbounds &start, 
 }
 
 void lerpnormal(float u, float v, const lerpvert *lv, int numv, lerpbounds &start, lerpbounds &end, vec &normal, vec &nstep)
-{   
+{
     updatelerpbounds(v, lv, numv, start, end);
 
     if(start.u + 1 > end.u)
@@ -363,7 +363,7 @@ void lerpnormal(float u, float v, const lerpvert *lv, int numv, lerpbounds &star
         vec nstart(start.normal), nend(end.normal);
         nstart.normalize();
         nend.normalize();
-       
+
         nstep = nend;
         nstep.sub(nstart);
         nstep.div(end.u-start.u);
@@ -373,11 +373,10 @@ void lerpnormal(float u, float v, const lerpvert *lv, int numv, lerpbounds &star
         normal.add(nstart);
         normal.normalize();
     }
-     
+
     start.normal.add(start.nstep);
     start.u += start.ustep;
 
-    end.normal.add(end.nstep); 
+    end.normal.add(end.nstep);
     end.u += end.ustep;
 }
-

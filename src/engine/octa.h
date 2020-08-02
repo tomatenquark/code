@@ -52,7 +52,7 @@ enum
     LAYER_DUP    = (1<<7),
 
     LAYER_BLEND  = LAYER_TOP|LAYER_BOTTOM,
-    
+
     MAXFACEVERTS = 15
 };
 
@@ -190,7 +190,7 @@ struct cubeext
     uchar maxverts;          // allocated space for verts
 
     vertinfo *verts() { return (vertinfo *)(this+1); }
-};  
+};
 
 struct cube
 {
@@ -337,4 +337,3 @@ enum
 #define GENFACEVERTS(x0,x1, y0,y1, z0,z1, c0,c1, r0,r1, d0,d1) \
     GENFACEVERTSXY(x0,x1, y0,y1, z0,z1, c0,c1, r0,r1, d0,d1) \
     GENFACEVERTSZ(x0,x1, y0,y1, z0,z1, c0,c1, r0,r1, d0,d1)
-

@@ -805,4 +805,3 @@ namespace ai
     }
     ICOMMAND(movewaypoints, "iii", (int *dx, int *dy, int *dz), movewaypoints(vec(*dx, *dy, *dz)));
 }
-

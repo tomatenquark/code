@@ -20,7 +20,7 @@ struct smd : skelloader<smd>
 
     struct smdmeshgroup : skelmeshgroup
     {
-        smdmeshgroup() 
+        smdmeshgroup()
         {
         }
 
@@ -61,10 +61,10 @@ struct smd : skelloader<smd>
             while(*curbuf)
             {
                 char c = *curbuf++;
-                if(c == '"') break;      
+                if(c == '"') break;
                 if(isspace(c) && !allowspace) break;
                 if(curname < &name[namesize-1]) *curname++ = c;
-            } 
+            }
             *curname = '\0';
         }
 
@@ -79,7 +79,7 @@ struct smd : skelloader<smd>
                 string name;
                 readname(curbuf, name, sizeof(name));
                 int parent = strtol(curbuf, &curbuf, 10);
-                if(id < 0 || id > 255 || parent > 255 || !name[0]) continue; 
+                if(id < 0 || id > 255 || parent > 255 || !name[0]) continue;
                 while(!bones.inrange(id)) bones.add();
                 smdbone &bone = bones[id];
                 copystring(bone.name, name);
@@ -115,7 +115,7 @@ struct smd : skelloader<smd>
             {
                 if(verts.empty() || tris.empty()) return;
                 vert *mverts = new vert[mesh->numverts + verts.length()];
-                if(mesh->numverts) 
+                if(mesh->numverts)
                 {
                     memcpy(mverts, mesh->verts, mesh->numverts*sizeof(vert));
                     delete[] mesh->verts;
@@ -124,7 +124,7 @@ struct smd : skelloader<smd>
                 mesh->numverts += verts.length();
                 mesh->verts = mverts;
                 tri *mtris = new tri[mesh->numtris + tris.length()];
-                if(mesh->numtris) 
+                if(mesh->numtris)
                 {
                     memcpy(mtris, mesh->tris, mesh->numtris*sizeof(tri));
                     delete[] mesh->tris;
@@ -138,22 +138,22 @@ struct smd : skelloader<smd>
         struct smdvertkey : vert
         {
             smdmeshdata *mesh;
-            
+
             smdvertkey(smdmeshdata *mesh) : mesh(mesh) {}
         };
-     
+
         void readtriangles(stream *f, char *buf, size_t bufsize)
         {
             smdmeshdata *curmesh = NULL;
             hashtable<const char *, smdmeshdata> materials(1<<6);
-            hashset<int> verts(1<<12); 
+            hashset<int> verts(1<<12);
             while(f->getline(buf, bufsize))
             {
                 char *curbuf = buf;
                 if(skipcomment(curbuf)) continue;
                 if(!strncmp(curbuf, "end", 3)) break;
                 string material;
-                readmaterial(curbuf, material, sizeof(material)); 
+                readmaterial(curbuf, material, sizeof(material));
                 if(!curmesh || strcmp(curmesh->mesh->name, material))
                 {
                     curmesh = materials.access(material);
@@ -176,9 +176,9 @@ struct smd : skelloader<smd>
                         if(!f->getline(buf, bufsize)) goto endsection;
                         curbuf = buf;
                     } while(skipcomment(curbuf));
-                    smdvertkey key(curmesh);     
+                    smdvertkey key(curmesh);
                     int parent = -1, numlinks = 0, len = 0;
-                    if(sscanf(curbuf, " %d %f %f %f %f %f %f %f %f %d%n", &parent, &key.pos.x, &key.pos.y, &key.pos.z, &key.norm.x, &key.norm.y, &key.norm.z, &key.tc.x, &key.tc.y, &numlinks, &len) < 9) goto endsection;    
+                    if(sscanf(curbuf, " %d %f %f %f %f %f %f %f %f %d%n", &parent, &key.pos.x, &key.pos.y, &key.pos.z, &key.norm.x, &key.norm.y, &key.norm.z, &key.tc.x, &key.tc.y, &numlinks, &len) < 9) goto endsection;
                     curbuf += len;
                     key.pos.y = -key.pos.y;
                     key.norm.y = -key.norm.y;
@@ -193,7 +193,7 @@ struct smd : skelloader<smd>
                         if(sscanf(curbuf, " %d %f%n", &bone, &weight, &len) < 2) break;
                         curbuf += len;
                         tweight += weight;
-                        if(bone == parent) pweight += weight;                       
+                        if(bone == parent) pweight += weight;
                         else sorted = c.addweight(sorted, weight, bone);
                     }
                     if(tweight < 1) pweight += 1 - tweight;
@@ -248,7 +248,7 @@ struct smd : skelloader<smd>
         {
             stream *f = openfile(filename, "r");
             if(!f) return false;
-            
+
             char buf[512];
             int version = -1;
             while(f->getline(buf, sizeof(buf)))
@@ -263,7 +263,7 @@ struct smd : skelloader<smd>
                 {
                     if(skel->numbones > 0) { skipsection(f, buf, sizeof(buf)); continue; }
                     vector<smdbone> bones;
-                    readnodes(f, buf, sizeof(buf), bones); 
+                    readnodes(f, buf, sizeof(buf), bones);
                     if(bones.empty()) continue;
                     skel->numbones = bones.length();
                     skel->bones = new boneinfo[skel->numbones];
@@ -378,7 +378,7 @@ struct smd : skelloader<smd>
                     skipsection(f, buf, sizeof(buf));
             }
             int numframes = animbones.length() / skel->numbones;
-            dualquat *framebones = new dualquat[(skel->numframes+numframes)*skel->numbones];             
+            dualquat *framebones = new dualquat[(skel->numframes+numframes)*skel->numbones];
             if(skel->framebones)
             {
                 memcpy(framebones, skel->framebones, skel->numframes*skel->numbones*sizeof(dualquat));
@@ -401,10 +401,10 @@ struct smd : skelloader<smd>
             name = newstring(meshfile);
 
             if(!loadmesh(meshfile)) return false;
-            
+
             return true;
         }
-    };            
+    };
 
     meshgroup *loadmeshes(const char *name, va_list args)
     {
@@ -444,4 +444,3 @@ static inline bool htcmp(const smd::smdmeshgroup::smdvertkey &k, int index)
 }
 
 skelcommands<smd> smdcommands;
-

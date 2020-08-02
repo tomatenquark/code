@@ -27,7 +27,7 @@ struct iqmmesh
 };
 
 enum
-{        
+{
     IQM_POSITION     = 0,
     IQM_TEXCOORD     = 1,
     IQM_NORMAL       = 2,
@@ -36,7 +36,7 @@ enum
     IQM_BLENDWEIGHTS = 5,
     IQM_COLOR        = 6,
     IQM_CUSTOM       = 0x10
-};  
+};
 
 enum
 {
@@ -60,8 +60,8 @@ struct iqmjoint
 {
     uint name;
     int parent;
-    vec pos; 
-    quat orient; 
+    vec pos;
+    quat orient;
     vec size;
 };
 
@@ -103,7 +103,7 @@ struct iqm : skelloader<iqm>
 
     struct iqmmeshgroup : skelmeshgroup
     {
-        iqmmeshgroup() 
+        iqmmeshgroup()
         {
         }
 
@@ -142,10 +142,10 @@ struct iqm : skelloader<iqm>
                 if(skel->numbones <= 0)
                 {
                     skel->numbones = hdr.num_joints;
-                    skel->bones = new boneinfo[skel->numbones]; 
+                    skel->bones = new boneinfo[skel->numbones];
                     for(int i = 0; i < int(hdr.num_joints); i++)
                     {
-                        iqmjoint &j = joints[i]; 
+                        iqmjoint &j = joints[i];
                         boneinfo &b = skel->bones[i];
                         if(!b.name) b.name = newstring(&str[j.name]);
                         b.parent = j.parent;
@@ -155,7 +155,7 @@ struct iqm : skelloader<iqm>
                             j.orient.x = -j.orient.x;
                             j.orient.z = -j.orient.z;
                             j.orient.normalize();
-                            b.base = dualquat(j.orient, j.pos);      
+                            b.base = dualquat(j.orient, j.pos);
                             if(b.parent >= 0) b.base.mul(skel->bones[b.parent].base, dualquat(b.base));
                             (b.invbase = b.base).invert();
                         }
@@ -170,7 +170,7 @@ struct iqm : skelloader<iqm>
             {
                 iqmmesh &im = imeshes[i];
                 skelmesh *m = new skelmesh;
-                m->group = this;   
+                m->group = this;
                 meshes.add(m);
                 m->name = newstring(&str[im.name]);
                 m->numverts = im.num_vertexes;
@@ -227,7 +227,7 @@ struct iqm : skelloader<iqm>
                     else v.blend = noblend;
                 }
                 m->numtris = im.num_triangles;
-                if(m->numtris) m->tris = new tri[m->numtris]; 
+                if(m->numtris) m->tris = new tri[m->numtris];
                 iqmtriangle *mtris = tris + im.first_triangle;
                 for(int j = 0; j < int(im.num_triangles); j++)
                 {
@@ -246,7 +246,7 @@ struct iqm : skelloader<iqm>
             }
 
             sortblendcombos();
-                
+
             return true;
         }
 
@@ -311,9 +311,9 @@ struct iqm : skelloader<iqm>
                         if(b.parent >= 0) frame[k].mul(skel->bones[b.parent].base, dualquat(frame[k]));
                         frame[k].fixantipodal(skel->framebones[k]);
                     }
-                } 
+                }
             }
-     
+
             return true;
         }
 
@@ -365,7 +365,7 @@ struct iqm : skelloader<iqm>
             }
             return sa;
         }
-    };            
+    };
 
     meshgroup *loadmeshes(const char *name, va_list args)
     {
@@ -393,4 +393,3 @@ struct iqm : skelloader<iqm>
 };
 
 skelcommands<iqm> iqmcommands;
-

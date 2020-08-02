@@ -21,11 +21,11 @@ namespace game
         physent *stacked;
         vec stackpos;
 
-        movable(const entity &e) : 
+        movable(const entity &e) :
             etype(e.type),
             mapmodel(e.attr2),
-            health(e.type==BARREL ? (e.attr4 ? e.attr4 : BARRELHEALTH) : 0), 
-            weight(e.type==PLATFORM || e.type==ELEVATOR ? PLATFORMWEIGHT : (e.attr3 ? e.attr3 : (e.type==BARREL ? BARRELWEIGHT : BOXWEIGHT))), 
+            health(e.type==BARREL ? (e.attr4 ? e.attr4 : BARRELHEALTH) : 0),
+            weight(e.type==PLATFORM || e.type==ELEVATOR ? PLATFORMWEIGHT : (e.attr3 ? e.attr3 : (e.type==BARREL ? BARRELWEIGHT : BOXWEIGHT))),
             exploding(0),
             tag(e.type==PLATFORM || e.type==ELEVATOR ? e.attr3 : 0),
             dir(e.type==PLATFORM || e.type==ELEVATOR ? (e.attr4 < 0 ? -1 : 1) : 0),
@@ -35,18 +35,18 @@ namespace game
             state = CS_ALIVE;
             type = ENT_INANIMATE;
             yaw = e.attr1;
-            if(e.type==PLATFORM || e.type==ELEVATOR) 
+            if(e.type==PLATFORM || e.type==ELEVATOR)
             {
                 maxspeed = e.attr4 ? fabs(float(e.attr4)) : PLATFORMSPEED;
                 if(tag) vel = vec(0, 0, 0);
-                else if(e.type==PLATFORM) { vecfromyawpitch(yaw, 0, 1, 0, vel); vel.mul(dir*maxspeed); } 
+                else if(e.type==PLATFORM) { vecfromyawpitch(yaw, 0, 1, 0, vel); vel.mul(dir*maxspeed); }
                 else vel = vec(0, 0, dir*maxspeed);
             }
 
             const char *mdlname = mapmodelname(e.attr2);
             if(mdlname) setbbfrommodel(this, mdlname);
         }
-       
+
         void hitpush(int damage, const vec &dir, fpsent *actor, int gun)
         {
             if(etype!=BOX && etype!=BARREL) return;
@@ -61,14 +61,14 @@ namespace game
             exploding = 0;
             game::explode(true, (fpsent *)at, o, this, guns[GUN_BARREL].damage, GUN_BARREL);
         }
- 
+
         void damaged(int damage, fpsent *at, int gun = -1)
         {
             if(etype!=BARREL || state!=CS_ALIVE || exploding) return;
             health -= damage;
             if(health>0) return;
             if(gun==GUN_BARREL) exploding = lastmillis + EXPLODEDELAY;
-            else explode(at); 
+            else explode(at);
         }
 
         void suicide()
@@ -79,7 +79,7 @@ namespace game
     };
 
     vector<movable *> movables;
-   
+
     void clearmovables()
     {
         if(movables.length())
@@ -88,7 +88,7 @@ namespace game
             movables.deletecontents();
         }
         if(!m_dmsp && !m_classicsp) return;
-        loopv(entities::ents) 
+        loopv(entities::ents)
         {
             const entity &e = *entities::ents[i];
             if(e.type!=BOX && e.type!=BARREL && e.type!=PLATFORM && e.type!=ELEVATOR) continue;
@@ -173,7 +173,7 @@ namespace game
 			rendermodel(NULL, mdlname, ANIM_MAPMODEL|ANIM_LOOP, o, m.yaw, 0, MDL_LIGHT | MDL_SHADOW | MDL_CULL_VFC | MDL_CULL_DIST | MDL_CULL_OCCLUDED, &m);
         }
     }
-    
+
     void suicidemovable(movable *m)
     {
         m->suicide();
@@ -185,4 +185,3 @@ namespace game
         m->damaged(damage, at, gun);
     }
 }
-

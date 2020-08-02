@@ -206,7 +206,7 @@ int renderwaterlod(int x, int y, int z, int size, int mat)
                 if(subdiv2 >= size) rendervertwater(childsize, x + childsize, y, z, childsize, mat);
                 if(subdiv3 >= size) rendervertwater(childsize, x + childsize, y + childsize, z, childsize, mat);
                 if(subdiv4 >= size) rendervertwater(childsize, x, y + childsize, z, childsize, mat);
-            } 
+            }
         }
         return minsubdiv;
     }
@@ -321,7 +321,7 @@ void setprojtexmatrix(Reflection &ref)
         ref.init = false;
         (ref.projmat = camprojmatrix).projective();
     }
-    
+
     LOCALPARAM(watermatrix, ref.projmat);
 }
 
@@ -400,7 +400,7 @@ void renderwater()
         }
         else SETWATERSHADER(above, waterenv);
     }
-    else if(waterrefract) 
+    else if(waterrefract)
     {
         if(waterfade) SETWATERSHADER(above, waterfade);
         else SETWATERSHADER(above, waterrefract);
@@ -434,7 +434,7 @@ void renderwater()
         }
 
         bool below = camera1->o.z < ref.height+offset;
-        if(below) 
+        if(below)
         {
             if(!belowshader) continue;
             belowshader->set();
@@ -453,7 +453,7 @@ void renderwater()
             {
                 glActiveTexture_(GL_TEXTURE3);
                 glBindTexture(GL_TEXTURE_2D, ref.refracttex);
-                if(waterfade) 
+                if(waterfade)
                 {
                     float fadeheight = ref.height+offset+(below ? -2 : 2);
                     LOCALPARAMF(waterheight, fadeheight);
@@ -657,7 +657,7 @@ void addreflection(materialsurface &m)
         {
             if(!ref) ref = &r;
         }
-        else if(r.height==height && r.material==mat) 
+        else if(r.height==height && r.material==mat)
         {
             r.matsurfs.add(&m);
             r.depth = max(r.depth, int(m.depth));
@@ -672,7 +672,7 @@ void addreflection(materialsurface &m)
         if(!oldest || oldest->age<0) return;
         ref = oldest;
     }
-    if(ref->height!=height || ref->material!=mat) 
+    if(ref->height!=height || ref->material!=mat)
     {
         ref->material = mat;
         ref->height = height;
@@ -704,7 +704,7 @@ static void drawmaterialquery(const materialsurface &m, float offset, float bord
 #define GENFACEORIENT(orient, v0, v1, v2, v3) \
         case orient: v0 v1 v2 v3 break;
 #define GENFACEVERT(orient, vert, mx,my,mz, sx,sy,sz) \
-            gle::attribf(mx sx, my sy, mz sz); 
+            gle::attribf(mx sx, my sy, mz sz);
         GENFACEVERTS(x, x, y, y, z, z, - border, + csize, - border, + rsize, + offset, - offset)
 #undef GENFACEORIENT
 #undef GENFACEVERT
@@ -771,7 +771,7 @@ void queryreflections()
             else addwaterfallrefraction(m);
         }
     }
-  
+
     for(int i = 0; i < int(MAXREFLECTIONS); i++)
     {
         Reflection &ref = reflections[i];
@@ -907,9 +907,9 @@ static bool calcscissorbox(Reflection &ref, int size, vec &clipmin, vec &clipmax
     for(int i = 0; i < int(8); i++)
     {
         const vec4 &p = v[i];
-        if(p.z >= -p.w) continue;    
+        if(p.z >= -p.w) continue;
         for(int j = 0; j < int(3); j++)
-        { 
+        {
             const vec4 &o = v[i^(1<<j)];
             if(o.z <= -o.w) continue;
             float t = (p.z + p.w)/(p.z + p.w - o.z - o.w),
@@ -958,14 +958,14 @@ void drawreflections()
         Reflection &ref = reflections[++n%MAXREFLECTIONS];
         if(ref.height<0 || ref.age || ref.matsurfs.empty()) continue;
         if(oqfrags && oqwater && ref.query && ref.query->owner==&ref)
-        { 
+        {
             if(!ref.prevquery || ref.prevquery->owner!=&ref || checkquery(ref.prevquery))
             {
                 if(checkquery(ref.query)) continue;
             }
         }
 
-        if(!refs) 
+        if(!refs)
         {
             glViewport(0, 0, size, size);
             glBindFramebuffer_(GL_FRAMEBUFFER, reflectionfb);
@@ -993,7 +993,7 @@ void drawreflections()
             if(scissor) glEnable(GL_SCISSOR_TEST);
             maskreflection(ref, offset, true);
             savevfcP();
-            setvfcP(ref.height+offset, clipmin, clipmax); 
+            setvfcP(ref.height+offset, clipmin, clipmax);
             drawreflection(ref.height+offset, false);
             restorevfcP();
             if(scissor) glDisable(GL_SCISSOR_TEST);
@@ -1012,7 +1012,7 @@ void drawreflections()
                 restorevfcP();
             }
             if(scissor) glDisable(GL_SCISSOR_TEST);
-        }    
+        }
 
         if(refs>=maxreflect) break;
     }
@@ -1053,7 +1053,7 @@ void drawreflections()
         maskreflection(ref, -0.1f, false);
         savevfcP();
         setvfcP(-1, clipmin, clipmax);
-        drawreflection(-1, true); 
+        drawreflection(-1, true);
         restorevfcP();
         if(scissor) glDisable(GL_SCISSOR_TEST);
     }
@@ -1063,4 +1063,3 @@ nowaterfall:
     glViewport(0, 0, screenw, screenh);
     glBindFramebuffer_(GL_FRAMEBUFFER, 0);
 }
-

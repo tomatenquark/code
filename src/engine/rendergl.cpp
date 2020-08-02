@@ -600,7 +600,7 @@ void gl_init()
     glClearDepth(1);
     glDepthFunc(GL_LESS);
     glDisable(GL_DEPTH_TEST);
-    
+
     glEnable(GL_LINE_SMOOTH);
     //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -622,7 +622,7 @@ VAR(wireframe, 0, 0, 1);
 ICOMMAND(getcamyaw, "", (), floatret(camera1->yaw));
 ICOMMAND(getcampitch, "", (), floatret(camera1->pitch));
 ICOMMAND(getcamroll, "", (), floatret(camera1->roll));
-ICOMMAND(getcampos, "", (), 
+ICOMMAND(getcampos, "", (),
 {
     defformatstring(pos, "%s %s %s", floatstr(camera1->o.x), floatstr(camera1->o.y), floatstr(camera1->o.z));
     result(pos);
@@ -653,7 +653,7 @@ void setcammatrix()
 void setcamprojmatrix(bool init = true, bool flush = false)
 {
     if(init)
-    {   
+    {
         setcammatrix();
     }
 
@@ -673,7 +673,7 @@ void setcamprojmatrix(bool init = true, bool flush = false)
         fogplane.x /= projmatrix.a.x;
         fogplane.y /= projmatrix.b.y;
         fogplane.z /= projmatrix.c.w;
-        GLOBALPARAMF(fogplane, fogplane.x, fogplane.y, 0, fogplane.z);               
+        GLOBALPARAMF(fogplane, fogplane.x, fogplane.y, 0, fogplane.z);
     }
     else
     {
@@ -772,7 +772,7 @@ FVARP(sensitivity, 1e-3f, 3, 1000);
 FVARP(sensitivityscale, 1e-3f, 1, 1000);
 VARP(invmouse, 0, 0, 1);
 FVARP(mouseaccel, 0, 0, 1000);
- 
+
 VAR(thirdperson, 0, 0, 2);
 FVAR(thirdpersondistance, 0, 20, 50);
 FVAR(thirdpersonup, -25, 0, 25);
@@ -796,12 +796,12 @@ void mousemove(int dx, int dy)
     float cursens = sensitivity, curaccel = mouseaccel;
     if(zoom)
     {
-        if(zoomautosens) 
+        if(zoomautosens)
         {
             cursens = float(sensitivity*zoomfov)/fov;
             curaccel = float(mouseaccel*zoomfov)/fov;
         }
-        else 
+        else
         {
             cursens = zoomsens;
             curaccel = zoomaccel;
@@ -845,7 +845,7 @@ void recomputecamera()
         camera1->type = ENT_CAMERA;
         camera1->move = -1;
         camera1->eyeheight = camera1->aboveeye = camera1->radius = camera1->xradius = camera1->yradius = 2;
-       
+
         matrix3 orient;
         orient.identity();
         orient.rotate_around_z(camera1->yaw*RAD);
@@ -853,7 +853,7 @@ void recomputecamera()
         orient.rotate_around_y(camera1->roll*-RAD);
         vec dir = vec(orient.b).neg(), side = vec(orient.a).neg(), up = orient.c;
 
-        if(game::collidecamera()) 
+        if(game::collidecamera())
         {
             movecamera(camera1, dir, thirdpersondistance, 1);
             movecamera(camera1, dir, clamp(thirdpersondistance - camera1->o.dist(player->o), 0.0f, 1.0f), 0.1f);
@@ -874,7 +874,7 @@ void recomputecamera()
                 movecamera(camera1, side, clamp(dist - camera1->o.dist(pos), 0.0f, 1.0f), 0.1f);
             }
         }
-        else 
+        else
         {
             camera1->o.add(vec(dir).mul(thirdpersondistance));
             if(thirdpersonup) camera1->o.add(vec(up).mul(thirdpersonup));
@@ -940,7 +940,7 @@ void enablepolygonoffset(GLenum type)
         glEnable(type);
         return;
     }
-    
+
     bool clipped = reflectz < 1e15f && reflectclip;
 
     nooffsetmatrix = projmatrix;
@@ -955,7 +955,7 @@ void disablepolygonoffset(GLenum type)
         glDisable(type);
         return;
     }
-    
+
     projmatrix = nooffsetmatrix;
     setcamprojmatrix(false, true);
 }
@@ -963,8 +963,8 @@ void disablepolygonoffset(GLenum type)
 void calcspherescissor(const vec &center, float size, float &sx1, float &sy1, float &sx2, float &sy2)
 {
     vec worldpos(center), e;
-    if(reflecting) worldpos.z = 2*reflectz - worldpos.z; 
-    cammatrix.transform(worldpos, e); 
+    if(reflecting) worldpos.z = 2*reflectz - worldpos.z;
+    cammatrix.transform(worldpos, e);
     if(e.z > 2*size) { sx1 = sy1 = 1; sx2 = sy2 = -1; return; }
     float zzrr = e.z*e.z - size*size,
           dx = e.x*e.x + zzrr, dy = e.y*e.y + zzrr,
@@ -1035,7 +1035,7 @@ int pushscissor(float sx1, float sy1, float sx2, float sy2)
 
     glScissor(sx, sy, sw, sh);
     if(scissoring<=1) glEnable(GL_SCISSOR_TEST);
-    
+
     return scissoring;
 }
 
@@ -1453,7 +1453,7 @@ void drawreflection(float z, bool refract, int fogdepth, const bvec &col)
     rendergame();
 
     if(refracting && z>=0 && !isthirdperson() && fabs(camera1->o.z-z) <= 0.5f*(player->eyeheight + player->aboveeye))
-    {   
+    {
         matrix4 oldprojmatrix = projmatrix, avatarproj;
         avatarproj.perspective(curavatarfov, aspect, nearplane, farplane);
         if(reflectclip)
@@ -1478,7 +1478,7 @@ void drawreflection(float z, bool refract, int fogdepth, const bvec &col)
 
     if(fading) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-    if(reflectclip && z>=0) projmatrix = noclipmatrix; 
+    if(reflectclip && z>=0) projmatrix = noclipmatrix;
 
     if(reflecting)
     {
@@ -1489,7 +1489,7 @@ void drawreflection(float z, bool refract, int fogdepth, const bvec &col)
 
     popfogdist();
     popfogcolor();
-    
+
     reflectz = 1e16f;
     refracting = 0;
     reflecting = fading = fogging = false;
@@ -1514,7 +1514,7 @@ void drawcubemap(int size, const vec &o, float yaw, float pitch, const cubemapsi
     cmcamera.roll = 0;
     camera1 = &cmcamera;
     setviewcell(camera1->o);
-   
+
     int fogmat = lookupmaterial(o)&(MATF_VOLUME|MATF_INDEX);
 
     setfog(fogmat);
@@ -1718,8 +1718,8 @@ void drawminimap()
         for(int k = 0; k < int(2); k++) bbmin[k] = max(bbmin[k], clipmin[k]);
         for(int k = 0; k < int(2); k++) bbmax[k] = min(bbmax[k], clipmax[k]);
     }
- 
-    minimapradius = vec(bbmax).sub(vec(bbmin)).mul(0.5f); 
+
+    minimapradius = vec(bbmax).sub(vec(bbmin)).mul(0.5f);
     minimapcenter = vec(bbmin).add(minimapradius);
     minimapradius.x = minimapradius.y = max(minimapradius.x, minimapradius.y);
     minimapscale = vec((0.5f - 1.0f/size)/minimapradius.x, (0.5f - 1.0f/size)/minimapradius.y, 1.0f);
@@ -1871,7 +1871,7 @@ void gl_drawframe()
     int w = screenw, h = screenh;
     aspect = forceaspect ? forceaspect : w/float(h);
     fovy = 2*atan2(tan(curfov/2*RAD), aspect)/RAD;
-    
+
     int fogmat = lookupmaterial(camera1->o)&(MATF_VOLUME|MATF_INDEX), abovemat = MAT_AIR;
     float fogblend = 1.0f, causticspass = 0.0f;
     if(isliquid(fogmat&MATF_VOLUME))
@@ -1882,7 +1882,7 @@ void gl_drawframe()
         if(caustics && (fogmat&MATF_VOLUME)==MAT_WATER && camera1->o.z < z)
             causticspass = min(z - camera1->o.z, 1.0f);
     }
-    else fogmat = MAT_AIR;    
+    else fogmat = MAT_AIR;
     setfog(fogmat, fogblend, abovemat);
     if(fogmat!=MAT_AIR)
     {
@@ -1902,10 +1902,10 @@ void gl_drawframe()
     xtravertsva = xtraverts = glde = gbatches = 0;
 
     visiblecubes();
-    
+
     glClear(GL_DEPTH_BUFFER_BIT|(wireframe && editmode ? GL_COLOR_BUFFER_BIT : 0));
 
-    if(wireframe && editmode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
+    if(wireframe && editmode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     if(limitsky()) drawskybox(farplane, true);
 
@@ -1980,7 +1980,7 @@ void damagecompass(int n, const vec &loc)
 {
     if(!usedamagecompass || minimized) return;
     vec delta(loc);
-    delta.sub(camera1->o); 
+    delta.sub(camera1->o);
     float yaw = 0, pitch;
     if(delta.magnitude() > 4)
     {
@@ -2083,7 +2083,7 @@ void loadcrosshair(const char *name, int i)
 {
     if(i < 0 || i >= MAXCROSSHAIRS) return;
 	crosshairs[i] = name ? textureload(name, 3, true) : notexture;
-    if(crosshairs[i] == notexture) 
+    if(crosshairs[i] == notexture)
     {
         name = game::defaultcrosshair(i);
         if(!name) name = "data/crosshair.png";
@@ -2098,7 +2098,7 @@ void loadcrosshair_(const char *name, int *i)
 
 COMMANDN(loadcrosshair, loadcrosshair_, "si");
 
-ICOMMAND(getcrosshair, "i", (int *i), 
+ICOMMAND(getcrosshair, "i", (int *i),
 {
     const char *name = "";
     if(*i >= 0 && *i < MAXCROSSHAIRS)
@@ -2108,7 +2108,7 @@ ICOMMAND(getcrosshair, "i", (int *i),
     }
     result(name);
 });
- 
+
 void writecrosshairs(stream *f)
 {
     for(int i = 0; i < int(MAXCROSSHAIRS); i++) if(crosshairs[i] && crosshairs[i]!=notexture)
@@ -2133,13 +2133,13 @@ void drawcrosshair(int w, int h)
         g3d_cursorpos(cx, cy);
     }
     else
-    { 
+    {
         int index = game::selectcrosshair(color);
         if(index < 0) return;
         if(!crosshairfx) index = 0;
         if(!crosshairfx || !crosshaircolors) color = vec(1, 1, 1);
         crosshair = crosshairs[index];
-        if(!crosshair) 
+        if(!crosshair)
         {
             loadcrosshair(NULL, index);
             crosshair = crosshairs[index];
@@ -2210,7 +2210,7 @@ void gl_drawhud()
 
     hudmatrix.ortho(0, w, h, 0, -1, 1);
     resethudmatrix();
-    
+
     gle::colorf(1, 1, 1);
 
     extern int debugsm;
@@ -2235,10 +2235,10 @@ void gl_drawhud()
     }
 
     glEnable(GL_BLEND);
-   
+
     extern void debugparticles();
     debugparticles();
- 
+
     if(!mainmenu)
     {
         drawdamagescreen(w, h);
@@ -2286,12 +2286,12 @@ void gl_drawhud()
                     char *dst = buf;
                     const char *src = &buf[!wallclock24 && buf[0]=='0' ? 1 : 0];
                     while(*src) *dst++ = tolower(*src++);
-                    *dst++ = '\0'; 
+                    *dst++ = '\0';
                     draw_text(buf, conw-5*FONTH, conh-FONTH*3/2-roffset);
                     roffset += FONTH;
                 }
             }
-                       
+
             if(editmode || showeditstats)
             {
                 static int laststats = 0, prevstats[8] = { 0, 0, 0, 0, 0, 0, 0 }, curstats[8] = { 0, 0, 0, 0, 0, 0, 0 };
@@ -2348,13 +2348,13 @@ void gl_drawhud()
                         int tw, th;
                         text_bounds(gameinfo, tw, th);
                         th += FONTH-1; th -= th%FONTH;
-                        roffset += max(th, FONTH);    
+                        roffset += max(th, FONTH);
                         draw_text(gameinfo, conw-max(5*FONTH, 2*FONTH+tw), conh-FONTH/2-roffset);
                     }
                     DELETEA(gameinfo);
                 }
-            } 
-            
+            }
+
             pophudmatrix();
         }
 
@@ -2401,5 +2401,3 @@ void cleanupgl()
 
     gle::cleanup();
 }
-
-
