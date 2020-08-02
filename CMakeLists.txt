@@ -37,6 +37,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(BUILD_FLAGS "${BUILD_FLAGS} -DWINDOWS")
     if(BUILD_TARGET_X64)
         set(BUILD_FLAGS "${BUILD_FLAGS} -DWIN64")
+        add_definitions(-DWIN64)
     else()
         set(BUILD_FLAGS "${BUILD_FLAGS} -DWIN32")
     endif()
@@ -58,7 +59,6 @@ message(STATUS "Set debug mode flags (${BUILD_DEBUG_FLAGS}) (Current mode: ${CMA
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${BUILD_C_RELEASE_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BUILD_CXX_RELEASE_FLAGS}")
 message(STATUS "Set release mode flags (${BUILD_RELEASE_FLAGS}) (Current mode: ${CMAKE_BUILD_TYPE}, compiler: ${CMAKE_CXX_COMPILER_ID})")
-
 
 ############### Dependencies ##########
 

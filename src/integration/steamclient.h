@@ -179,13 +179,33 @@ namespace integration {
         void getappdir(char *installdir) override
         {
             if (!api_Initialized) return;
-            string pdir = "";
-            int folderLength = 0;
-            SteamApps()->GetAppInstallDir( SteamUtils()->GetAppID(), pdir, folderLength );
-            fs::path workshopdir(pdir);
+            // Since apparently SteamApps()->GetAppInstallDir is unstable or doesn't work,
+            // We are relying on this information: https://www.pcgamingwiki.com/wiki/Glossary:Game_data#Client_folder
+#ifdef __APPLE__
+            fs::path workshopdir(homedir);
             workshopdir = workshopdir.parent_path().parent_path();
-            workshopdir.append( "workshop" );
-            workshopdir.append( "content" );
+            workshopdir.append("Steam");
+#elif __LINUX__
+            fs::path workshopdir(homedir);
+            workshopdir = workshopdir.parent_path();
+            workshopdir.append("steam");
+            workshopdir.append("steam");
+#elif WIN64
+            char* programPath;
+            programPath = getenv ("PROGRAMFILES(X86)");
+            if (programPath == NULL) return;
+            fs::path workshopdir(programPath);
+            workshopdir.append("Steam");
+#else
+            char* programPath;
+            programPath = getenv ("PROGRAMFILES");
+            if (programPath == NULL) return;
+            fs::path workshopdir(programPath);
+            workshopdir.append("Steam");
+#endif
+            workshopdir.append("steamapps");
+            workshopdir.append("workshop");
+            workshopdir.append("content");
             workshopdir.append( std::to_string(SteamUtils()->GetAppID()) );
             copystring(installdir, workshopdir.string().c_str() , strlen(workshopdir.string().c_str()) + 1 );
         }
