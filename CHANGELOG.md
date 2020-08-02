@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2020-02-08
+### Fixes
+- Fixed issues with the workshop that could potentially crash the client
+- Includes some fixes to the 0.1.0 essential release
+
+### Added
+- Added a proper stacktrace library (backward-cpp)
+
 ## [0.2.0] - 2020-28-07
 ### Added
 - Added tracking of frags and kpd
@@ -1032,7 +1040,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/tomatenquark/code/compare/v0.2.0...0.2.1
 [0.2.0]: https://github.com/tomatenquark/code/compare/v0.1.12...0.2.0
 [0.1.12]: https://github.com/tomatenquark/code/compare/v0.1.11...0.1.12
 [0.1.11]: https://github.com/tomatenquark/code/compare/v0.1.10...0.1.11
