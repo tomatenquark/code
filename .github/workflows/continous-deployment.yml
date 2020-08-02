@@ -35,7 +35,7 @@ jobs:
         run: zip -r tomatenquark_macos.zip .
         working-directory: build/Release
       - uses: actions/upload-artifact@v1
-        with: 
+        with:
           name: tomatenquark_macos
           path: ./build/Release/tomatenquark_macos.zip
   build-windows:
@@ -91,7 +91,7 @@ jobs:
       - name: Archive Windows binaries
         run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat, .\server.bat, .\server-init.cfg -DestinationPath tomatenquark_windows.zip
       - uses: actions/upload-artifact@v1
-        with: 
+        with:
           name: tomatenquark_windows
           path: ./tomatenquark_windows.zip
   build-ubuntu:
@@ -126,7 +126,7 @@ jobs:
           cp ./build64/tomaten_server bin_unix/linux_64_server
           zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
       - uses: actions/upload-artifact@v1
-        with: 
+        with:
           name: tomatenquark_ubuntu
           path: ./tomatenquark_ubuntu.zip
   release:
@@ -170,7 +170,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           draft: false
-          prerelease: true
+          prerelease: false
       - name: Upload OSX App
         uses: actions/upload-release-asset@v1.0.1
         env:
