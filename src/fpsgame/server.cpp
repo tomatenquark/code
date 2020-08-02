@@ -184,6 +184,7 @@ namespace server
         int maxhealth, frags, flags, deaths, teamkills, shotdamage, damage;
         int timeplayed;
         float effectiveness;
+        int racetime, racelaps, racecheckpoint, racerank, racestate;
 
         void save(gamestate &gs)
         {
@@ -196,6 +197,11 @@ namespace server
             damage = gs.damage;
             timeplayed = gs.timeplayed;
             effectiveness = gs.effectiveness;
+            racetime = gs.racetime;
+            racelaps = gs.racelaps;
+            racecheckpoint = gs.racecheckpoint;
+            racerank = gs.racerank;
+            racestate = gs.racestate;
         }
 
         void restore(gamestate &gs)
@@ -1356,12 +1362,12 @@ namespace server
         if(!gamepaused) return;
         int admins = 0;
         loopv(clients) if(clients[i]->privilege >= (restrictpausegame ? PRIV_ADMIN : PRIV_MASTER) || clients[i]->local) admins++;
-        if(!admins) pausegame(false);
+        if(!admins) server::pausegame(false);
     }
 
     void forcepaused(bool paused)
     {
-        pausegame(paused);
+        server::pausegame(paused);
     }
 
     bool ispaused() { return gamepaused; }

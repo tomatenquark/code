@@ -1,11 +1,7 @@
-// bomb.h: client and server state for bomb gamemode
+// race.h: client and server state for race gamemode
 #ifndef PARSEMESSAGES
 
 #ifdef SERVMODE
-
-extern void sendspawn(clientinfo *ci);
-extern void pausegame(bool val);
-
 struct raceservmode : servmode
 #else
 
@@ -81,7 +77,7 @@ struct raceclientmode : clientmode
       putint(p, v.length());
       loopv(v){
         spawnloc &sploc = v[i];
-        loopk(3) putint(p, int(sploc.o[k]*DMF));
+        for(int k = 0; k < 3; k++) putint(p, int(sploc.o[k]*DMF));
         putint(p, sploc.team);
         putint(p, sploc.index);
       }
@@ -115,15 +111,6 @@ struct raceclientmode : clientmode
       settexture("packages/hud/radar.png", 3);
       drawradar(x - roffset, y - roffset, rsize);
 
-      // show obstacles on minimap
-      if(showminimapobstacles) loopv(movables)
-      {
-          dynent *m = (dynent *) movables[i];
-          if(!isobstaclealive((movable *) m)) continue;
-          settexture("packages/hud/block_yellow_t.png", 3);
-          drawblip(d, x, y, s, m->o, 1.0f);
-      }
-
       // show other players on minimap
       loopv(players)
       {
@@ -153,7 +140,7 @@ struct raceclientmode : clientmode
         return ANIM_LOSE|ANIM_LOOP;
     }
 
-    void renderscoreboard(g3d_gui &g, game::scoregroup &sg, int fgcolor, int bgcolor) {
+    /*void renderscoreboard(g3d_gui &g, game::scoregroup &sg, int fgcolor, int bgcolor) {
         if (showracerank) {
             g.pushlist();
             g.strut(4);
@@ -222,7 +209,7 @@ struct raceclientmode : clientmode
             }
             g.poplist();
         }
-    }
+    }*/
 
     void killed(fpsent *d, fpsent *actor) {
         // conoutf("killed");
@@ -312,7 +299,7 @@ struct raceclientmode : clientmode
         countdown = COUNTDOWNSECONDS;
         timecounter = totalmillis;
         lastupdatecheck = totalmillis;
-        pausegame(true);
+        server::pausegame(true);
         notgotspawnlocations = true;
         spawnlocs.deletecontents();
         if(!notgotitems){
@@ -342,9 +329,9 @@ struct raceclientmode : clientmode
 
     bool parsespawnloc(ucharbuf &p, bool commit) {
         int numsploc = getint(p);
-        loopi(numsploc){
+        for(int i = 0; i < numsploc; i++){
             vec o;
-            loopk(3) o[k] = max(getint(p)/DMF, 0.0f);
+            for(int k = 0; k < 3; k++) o[k] = max(getint(p)/DMF, 0.0f);
             int team = getint(p), index = getint(p);
             if(p.overread()) break;
             if(m_teammode ? team < 1 || team > 2 : team) return false;
@@ -362,8 +349,7 @@ struct raceclientmode : clientmode
       switch(sequence){
       case 0:
         if(totalmillis - timecounter >= 10000) {
-            // sendservmsg("Map load complete (grannies left behind).");
-            sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 1000, E_STATIC_BOTTOM, "Map load complete (grannies left behind)");
+            sendservmsg("Map load complete (grannies left behind).");
         } else {
           loopv(spawnlocs){
             if(spawnlocs[i]->cn == -1) continue;
@@ -371,8 +357,7 @@ struct raceclientmode : clientmode
             if(!ci || ci->state.state==CS_SPECTATOR || ci->state.aitype != AI_NONE || ci->clientmap[0] || ci->mapcrc) continue;
             return;
           }
-          sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 1000, E_STATIC_BOTTOM, "Map load complete");
-          // sendservmsg("Map load complete.");
+          sendservmsg("Map load complete.");
         }
         sequence = 1;
         timecounter = totalmillis;
@@ -383,16 +368,13 @@ struct raceclientmode : clientmode
         int remaining = COUNTDOWNSECONDS*1000 - (totalmillis - timecounter);
         if(remaining <= 0){
           sequence = 2;
-          sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 2000, E_ZOOM_IN, "S T A R T");
-          // sendservmsg("FIGHT!");
+          sendservmsg("START!");
           timestarted = totalmillis;
-          pausegame(false);
+          server::pausegame(false);
         }
         else if(remaining/1000 != countdown){
-          // defformatstring(msg)("-%d...", countdown--);
-          // sendservmsg(msg);
-          defformatstring(msg)("- %d -", countdown--);
-          sendf(-1, 1, "ri3s ", N_HUDANNOUNCE, 1500, E_ZOOM_IN, msg);
+          defformatstring(msg,"- %d -", countdown--);
+          sendservmsg(msg);
         }
         break;
       }
@@ -417,7 +399,7 @@ struct raceclientmode : clientmode
     void update() {
         if (totalmillis > lastupdatecheck + 1000) {
             lastupdatecheck = totalmillis;
-            if(checkfinished()) forceintermission();
+            if(checkfinished()) game::forceintermission();
             loopv(clients) {
                 clientinfo *ci = clients[i];
                 ci->state.racerank = getrank(ci->clientnum);
@@ -466,8 +448,8 @@ struct raceclientmode : clientmode
 
     void sendfinishannounce(clientinfo *ci) {
         int rank = ci->state.racerank;
-        defformatstring(msg)("%d%s", rank, (rank==1 ? "st" : (rank==2 ? "nd" : (rank==3 ? "rd": "th"))));
-        sendf(ci->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 3000, E_ZOOM_OUT, msg);
+        defformatstring(msg, "%d%s", rank, (rank==1 ? "st" : (rank==2 ? "nd" : (rank==3 ? "rd": "th"))));
+        sendservmsg(msg);
     }
 
     void initplayers() {
@@ -509,7 +491,7 @@ struct raceclientmode : clientmode
         }
         vector<spawnloc*> pool[3];
         loopv(spawnlocs) pool[spawnlocs[i]->team].add(spawnlocs[i]);
-        loopi(3) pool[i].shuffle();
+        for(int i = 0; i < 3; i++) pool[i].shuffle();
         for(int i = 0; i < activepl.length(); i++){
             vector<spawnloc*>& tpool = pool[m_teammode ? bombteamname(activepl[i]->team) : 0];
             if(tpool.length()){
@@ -581,8 +563,8 @@ case N_RACEFINISH:
               // cq->state.state = CS_FINISHED;
               // sendf(-1, 1, "ri4", N_DIED, cq->clientnum, cq->clientnum, cq->state.frags);
           } else {
-              defformatstring(msg)("%d %s REMAINING", RACELAPS - cq->state.racelaps, RACELAPS - cq->state.racelaps != 1 ? "LAPS" : "LAP");
-              sendf(cq->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 1500, E_ZOOM_IN, msg);
+              defformatstring(msg,"%d %s REMAINING", RACELAPS - cq->state.racelaps, RACELAPS - cq->state.racelaps != 1 ? "LAPS" : "LAP");
+              sendservmsg(msg);
           }
       }
   }
@@ -612,8 +594,8 @@ case N_RACECHECKPOINT:
       cq->state.racecheckpoint++;
       cq->state.racerank = racemode.getrank(cq->clientnum);
       sendf(-1, 1, "ri7", N_RACEINFO, cq->clientnum, cq->state.racestate, cq->state.racelaps, cq->state.racecheckpoint, racemode.getracetime(cq), cq->state.racerank);
-      defformatstring(msg)("CHECKPOINT %d", cq->state.racecheckpoint);
-      sendf(cq->clientnum, 1, "ri3s ", N_HUDANNOUNCE, 400, E_ZOOM_OUT, msg);
+      defformatstring(msg,"CHECKPOINT %d", cq->state.racecheckpoint);
+      sendservmsg(msg);
   }
   break;
 }
