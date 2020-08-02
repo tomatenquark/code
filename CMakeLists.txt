@@ -77,7 +77,6 @@ FetchContent_MakeAvailable(backwards-cpp)
 
 list(APPEND GOTQ_LINKING_LIBRARIES_BASE "ZLIB::ZLIB" "${ENET_LIBRARY}")
 
-find_package(CURL CONFIG)
 find_package(SDL2 CONFIG)
 find_package(sdl2-image CONFIG)
 find_package(sdl2-mixer CONFIG)
