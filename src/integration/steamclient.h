@@ -182,13 +182,15 @@ namespace integration {
             // Since apparently SteamApps()->GetAppInstallDir is unstable or doesn't work,
             // We are relying on this information: https://www.pcgamingwiki.com/wiki/Glossary:Game_data#Client_folder
 #ifdef __APPLE__
-            fs::path workshopdir(homedir);
-            workshopdir = workshopdir.parent_path().parent_path();
+            std::string steamdir(homedir);
+            fs::path workshopdir(steamdir.substr(0, steamdir.size() - 1));
+            workshopdir = workshopdir.parent_path();
             workshopdir.append("Steam");
 #elif __LINUX__
-            fs::path workshopdir(homedir);
+            std::string steamdir(homedir);
+            fs::path workshopdir(steamdir.substr(0, steamdir.size() - 1));
             workshopdir = workshopdir.parent_path();
-            workshopdir.append("steam");
+            workshopdir.append(".steam");
             workshopdir.append("steam");
 #elif WIN64
             char* programPath;
