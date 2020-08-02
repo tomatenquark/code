@@ -245,7 +245,7 @@ namespace integration {
             }
         }
 
-        int getstat(const char* stat) {
+        int getstat(const char* stat) override {
             if (g_SteamAchievements) {
                 int value = 0;
                 SteamUserStats()->GetStat(stat, &value);
