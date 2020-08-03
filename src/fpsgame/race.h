@@ -73,14 +73,14 @@ struct raceclientmode : clientmode
         temp.index = i;
         v.add(temp);
       }
-      putint(p, N_SPAWNLOC);
+      /*putint(p, N_SPAWNLOC);
       putint(p, v.length());
       loopv(v){
         spawnloc &sploc = v[i];
         for(int k = 0; k < 3; k++) putint(p, int(sploc.o[k]*DMF));
         putint(p, sploc.team);
         putint(p, sploc.index);
-      }
+      }*/
     }
 
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, float size_factor)
@@ -399,7 +399,7 @@ struct raceclientmode : clientmode
     void update() {
         if (totalmillis > lastupdatecheck + 1000) {
             lastupdatecheck = totalmillis;
-            if(checkfinished()) game::forceintermission();
+            if(checkfinished()) server::startintermission();
             loopv(clients) {
                 clientinfo *ci = clients[i];
                 ci->state.racerank = getrank(ci->clientnum);
@@ -491,7 +491,7 @@ struct raceclientmode : clientmode
         }
         vector<spawnloc*> pool[3];
         loopv(spawnlocs) pool[spawnlocs[i]->team].add(spawnlocs[i]);
-        for(int i = 0; i < 3; i++) pool[i].shuffle();
+        /*for(int i = 0; i < 3; i++) pool[i].shuffle();
         for(int i = 0; i < activepl.length(); i++){
             vector<spawnloc*>& tpool = pool[m_teammode ? bombteamname(activepl[i]->team) : 0];
             if(tpool.length()){
@@ -500,7 +500,7 @@ struct raceclientmode : clientmode
                 if(resuscitate) sendspawn(activepl[i]);
                 tpool.removeunordered(0);
             }
-        }
+        }*/
     }
 
     bool canspawn(clientinfo *ci, bool connecting) {
