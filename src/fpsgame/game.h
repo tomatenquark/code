@@ -131,7 +131,8 @@ static struct gamemodeinfo
     { "collect", M_COLLECT | M_TEAM, "Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. Collect items for ammo." },
     { "insta collect", M_NOITEMS | M_INSTA | M_COLLECT | M_TEAM, "Instagib Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with full rifle ammo and die instantly from one shot. There are no items." },
     { "effic collect", M_NOITEMS | M_EFFICIENCY | M_COLLECT | M_TEAM, "Efficiency Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with all weapons and armour. There are no items." },
-    { "hideandseek", M_HALFTIME | M_HIDEANDSEEK | M_TEAM , "Hide and Seek: \fs\f2Hiders\fr need to hide from \fs\f1seekers\fr. \fs\f2Hiders\fr can not kill \fs\f1seekers\fr." }
+    { "hideandseek", M_HALFTIME | M_HIDEANDSEEK | M_TEAM , "Hide and Seek: \fs\f2Hiders\fr need to hide from \fs\f1seekers\fr. \fs\f2Hiders\fr can not kill \fs\f1seekers\fr." },
+    { "race", M_RACE, "Race: Be the first who completes 3 laps. Kill people to repulse them." }
 };
 
 #define STARTGAMEMODE (-3)
