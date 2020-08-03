@@ -82,7 +82,6 @@ enum
     M_CTF        = 1<<8,
     M_PROTECT    = 1<<9,
     M_HOLD       = 1<<10,
-    M_EXTRATIME  = 1<<11,
     M_EDIT       = 1<<12,
     M_DEMO       = 1<<13,
     M_LOCAL      = 1<<14,
@@ -155,7 +154,6 @@ static struct gamemodeinfo
 #define m_collect      (m_check(gamemode, M_COLLECT))
 #define m_hideandseek  (m_check(gamemode, M_HIDEANDSEEK))
 #define m_teammode     (m_check(gamemode, M_TEAM))
-#define m_extratime    (m_check(gamemode, M_EXTRATIME))
 #define m_halftime     (m_check(gamemode, M_HALFTIME))
 #define isteam(a,b)    (m_teammode && strcmp(a, b)==0)
 
