@@ -1015,6 +1015,8 @@ namespace server
         return best;
     }
 
+    VAR(persistteams, 0, 0, 1);
+
     void autoteam()
     {
         static const char * const teamnames[2] = {"good", "evil"};
@@ -2073,7 +2075,7 @@ namespace server
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
         clearteaminfo();
-        if(m_teammode) autoteam();
+        if(m_teammode && !persistteams) autoteam();
 
         if(m_capture) smode = &capturemode;
         else if(m_ctf) smode = &ctfmode;
