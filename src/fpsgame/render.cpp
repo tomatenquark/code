@@ -227,9 +227,9 @@ namespace game
 
     VARP(statusicons, 0, 1, 1);
 
-    void renderstatusicons(fpsent *d, int team)
+    void renderstatusicons(fpsent *d, int team, float yoffset)
     {
-        vec p = d->abovehead();
+        vec p = d->abovehead().madd(camup, yoffset);
         int icons = 0;
         const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
         if(statusicons)
@@ -265,6 +265,32 @@ namespace game
         }
     }
 
+    VARP(statusbars, 0, 0, 2);
+    FVARP(statusbarscale, 0, 1, 2);
+
+    float renderstatusbars(fpsent *d, int team)
+    {
+        if(!statusbars || m_insta || (player1->state==CS_SPECTATOR ? statusbars <= 1 : team != 1)) return 0;
+        vec p = d->abovehead().msub(camdir, 50/80.0f).msub(camup, 2.0f);
+        float offset = 0;
+        float scale = statusbarscale;
+        if(d->armour > 0)
+        {
+            int limit = d->armourtype==A_YELLOW ? 200 : (d->armourtype==A_GREEN ? 100 : 50);
+            int color = d->armourtype==A_YELLOW ? 0xFFC040 : (d->armourtype==A_GREEN ? 0x008C00 : 0x0B5899);
+            float size = scale*sqrtf(max(d->armour, limit)/100.0f);
+            float fill = float(d->armour)/limit;
+            offset += size;
+            particle_meter(vec(p).madd(camup, offset), fill, PART_METER, 1, color, 0, size);
+        }
+        int color = d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : 0x40FF80);
+        float size = scale*sqrtf(max(d->health, d->maxhealth)/100.0f);
+        float fill = float(d->health)/d->maxhealth;
+        offset += size;
+        particle_meter(vec(p).madd(camup, offset), fill, PART_METER, 1, color, 0, size);
+        return offset;
+    }
+
     void rendergame(bool mainpass)
     {
         if(mainpass) ai::render();
@@ -298,7 +324,11 @@ namespace game
             }
 
             copystring(d->info, colorname(d));
-            if(d->state!=CS_DEAD) renderstatusicons(d, team);
+            if(d->state!=CS_DEAD)
+            {
+                float offset = renderstatusbars(d, team);
+                renderstatusicons(d, team, offset);
+            }
         }
         loopv(ragdolls)
         {
