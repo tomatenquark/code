@@ -231,10 +231,13 @@ namespace game
     {
         vec p = d->abovehead();
         int icons = 0;
-        if(d->quadmillis) icons++;
-        const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
-        if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
-        if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems) icons++;
+        if(statusicons)
+        {
+            if(d->quadmillis) icons++;
+            const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
+            if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
+            if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems) icons++;
+        }
         if(icons) concatstring(d->info, " ");
         particle_text(p, d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, 2.0f, 0, icons);
         if(icons)
@@ -295,10 +298,7 @@ namespace game
             }
 
             copystring(d->info, colorname(d));
-            if(d->state!=CS_DEAD)
-            {
-                if(statusicons) renderstatusicons(d, team);
-            }
+            if(d->state!=CS_DEAD) renderstatusicons(d, team);
         }
         loopv(ragdolls)
         {
