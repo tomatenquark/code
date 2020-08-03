@@ -171,7 +171,7 @@ namespace game
             if(bouncetype == BNC_GRENADE && offsetmillis > 0 && offset.z < 0)
                 offsetheight = raycube(vec(o.x + offset.x, o.y + offset.y, o.z), vec(0, 0, -1), -offset.z);
             else offsetheight = -1;
-        } 
+        }
     };
 
     vector<bouncer *> bouncers;
@@ -227,7 +227,7 @@ namespace game
         b->bounces++;
         adddecal(DECAL_BLOOD, vec(b->o).sub(vec(surface).mul(b->radius)), surface, 2.96f/b->bounces, bvec(0x60, 0xFF, 0xFF), rnd(4));
     }
-        
+
     void updatebouncers(int time)
     {
         loopv(bouncers)
@@ -529,7 +529,7 @@ namespace game
             int qdam = guns[p.gun].damage*(p.owner->quadmillis ? 4 : 1);
             if(p.owner->type==ENT_AI) qdam /= MONSTERDAMAGEFACTOR;
             vec dv;
-            float dist = p.to.dist(p.o, dv); 
+            float dist = p.to.dist(p.o, dv);
             dv.mul(time/max(dist*1000/p.speed, float(time)));
             vec v = vec(p.o).add(dv);
             bool exploded = false;
@@ -850,7 +850,7 @@ namespace game
     static const char * const gibnames[3] = { "gibs/gib01", "gibs/gib02", "gibs/gib03" };
     static const char * const debrisnames[4] = { "debris/debris01", "debris/debris02", "debris/debris03", "debris/debris04" };
     static const char * const barreldebrisnames[4] = { "barreldebris/debris01", "barreldebris/debris02", "barreldebris/debris03", "barreldebris/debris04" };
-         
+
     void preloadbouncers()
     {
         for(int i = 0; i < int(sizeof(projnames)/sizeof(projnames[0])); i++) preloadmodel(projnames[i]);
@@ -1000,4 +1000,3 @@ namespace game
         }
     }
 };
-

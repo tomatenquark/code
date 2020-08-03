@@ -161,7 +161,7 @@ static struct shadowmaptexture : rendertarget
         shadowmapping = false;
         shadowmapmaxz = min(shadowmapmaxz, shadowfocus.z);
 
-        if(shadowmapcasters && smdepthpeel) 
+        if(shadowmapcasters && smdepthpeel)
         {
             int sx, sy, sw, sh;
             bool scissoring = rtscissor && scissorblur(sx, sy, sw, sh) && sw > 0 && sh > 0;
@@ -253,8 +253,8 @@ bool isshadowmapreceiver(vtxarray *va)
     float skew = va->size/2*SHADOWSKEW;
     if(!shadowmap || !shadowmaptex ||
        va->o.z + va->size <= shadowfocus.z - shadowmapdist || va->o.z >= shadowmapmaxz ||
-       va->o.x + va->size <= cx - shadowmapradius-skew || va->o.x >= cx + shadowmapradius+skew || 
-       va->o.y + va->size <= cy - shadowmapradius-skew || va->o.y >= cy + shadowmapradius+skew) 
+       va->o.x + va->size <= cx - shadowmapradius-skew || va->o.x >= cx + shadowmapradius+skew ||
+       va->o.y + va->size <= cy - shadowmapradius-skew || va->o.y >= cy + shadowmapradius+skew)
         return false;
     return true;
 #endif
@@ -296,7 +296,7 @@ void pushshadowmap()
 			g = max(25.0f, 0.4f*ambientcolor[1] + 0.6f*max(ambientcolor[1], skylightcolor[1]));
 			b = max(25.0f, 0.4f*ambientcolor[2] + 0.6f*max(ambientcolor[2], skylightcolor[2]));
 		}
-		else 
+		else
         {
             r = max(25.0f, 2.0f*ambientcolor[0]);
             g = max(25.0f, 2.0f*ambientcolor[1]);
@@ -326,4 +326,3 @@ void viewshadowmap()
     if(!shadowmap) return;
     shadowmaptex.debug();
 }
-

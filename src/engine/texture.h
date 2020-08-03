@@ -85,10 +85,10 @@ struct SlotShaderParamState : LocalShaderParamState
     }
 };
 
-enum 
-{ 
-    SHADER_DEFAULT    = 0, 
-    SHADER_NORMALSLMS = 1<<0, 
+enum
+{
+    SHADER_DEFAULT    = 0,
+    SHADER_NORMALSLMS = 1<<0,
     SHADER_ENVMAP     = 1<<1,
     SHADER_OPTION     = 1<<3,
 
@@ -254,7 +254,7 @@ struct Shader
     {
         if(lastshader!=detailshader) detailshader->bindprograms();
     }
- 
+
     void set()
     {
         if(isnull() || !loaded()) return;
@@ -272,7 +272,7 @@ struct Shader
 
     bool compile();
     void cleanup(bool invalid = false);
-    
+
     static int uniformlocversion();
 };
 
@@ -333,7 +333,7 @@ struct GlobalShaderParam
 
     template<class T>
     T *reserve(int n = 1) { return (T *)resolve()->buf; }
-};  
+};
 
 struct LocalShaderParam
 {
@@ -341,7 +341,7 @@ struct LocalShaderParam
     int loc;
 
     LocalShaderParam(const char *name) : name(name), loc(-1) {}
-    
+
     LocalShaderParamState *resolve()
     {
         Shader *s = Shader::lastshader;
@@ -455,16 +455,16 @@ struct ImageData
         : data(NULL), owner(NULL), freefunc(NULL)
     {}
 
-    
-    ImageData(int nw, int nh, int nbpp, int nlevels = 1, int nalign = 0, GLenum ncompressed = GL_FALSE) 
-    { 
-        setdata(NULL, nw, nh, nbpp, nlevels, nalign, ncompressed); 
+
+    ImageData(int nw, int nh, int nbpp, int nlevels = 1, int nalign = 0, GLenum ncompressed = GL_FALSE)
+    {
+        setdata(NULL, nw, nh, nbpp, nlevels, nalign, ncompressed);
     }
 
     ImageData(int nw, int nh, int nbpp, uchar *data)
         : owner(NULL), freefunc(NULL)
-    { 
-        setdata(data, nw, nh, nbpp); 
+    {
+        setdata(data, nw, nh, nbpp);
     }
 
     ImageData(SDL_Surface *s) { wrap(s); }
@@ -482,9 +482,9 @@ struct ImageData
         data = ndata ? ndata : new uchar[calcsize()];
         if(!ndata) { owner = this; freefunc = NULL; }
     }
-  
+
     int calclevelsize(int level) const { return ((max(w>>level, 1)+align-1)/align)*((max(h>>level, 1)+align-1)/align)*bpp; }
- 
+
     int calcsize() const
     {
         if(!align) return w*h*bpp;
@@ -544,10 +544,10 @@ struct Texture
         IMAGE      = 0,
         CUBEMAP    = 1,
         TYPE       = 0xFF,
-        
+
         STUB       = 1<<8,
         TRANSIENT  = 1<<9,
-        COMPRESSED = 1<<10, 
+        COMPRESSED = 1<<10,
         ALPHA      = 1<<11,
         MIRROR     = 1<<12,
         FLAGS      = 0xFF00
@@ -575,19 +575,19 @@ enum
     TEX_ENVMAP
 };
 
-enum 
-{ 
-    VSLOT_SHPARAM = 0, 
-    VSLOT_SCALE, 
-    VSLOT_ROTATION, 
-    VSLOT_OFFSET, 
-    VSLOT_SCROLL, 
-    VSLOT_LAYER, 
+enum
+{
+    VSLOT_SHPARAM = 0,
+    VSLOT_SCALE,
+    VSLOT_ROTATION,
+    VSLOT_OFFSET,
+    VSLOT_SCROLL,
+    VSLOT_LAYER,
     VSLOT_ALPHA,
     VSLOT_COLOR,
-    VSLOT_NUM 
+    VSLOT_NUM
 };
-   
+
 struct VSlot
 {
     Slot *slot;
@@ -605,9 +605,9 @@ struct VSlot
     vec glowcolor;
 
     VSlot(Slot *slot = NULL, int index = -1) : slot(slot), next(NULL), index(index), changed(0)
-    { 
+    {
         reset();
-        if(slot) addvariant(slot); 
+        if(slot) addvariant(slot);
     }
 
     void addvariant(Slot *slot);
@@ -658,7 +658,7 @@ struct Slot
     ImageData *layermask;
 
     Slot(int index = -1) : index(index), variants(NULL), autograss(NULL), layermaskname(NULL), layermask(NULL) { reset(); }
-    
+
     void reset()
     {
         sts.shrink(0);
@@ -680,7 +680,7 @@ struct Slot
         loaded = false;
         grasstex = NULL;
         thumbnail = NULL;
-        loopv(sts) 
+        loopv(sts)
         {
             Tex &t = sts[i];
             t.t = NULL;
@@ -776,4 +776,3 @@ extern Slot dummyslot;
 extern VSlot dummyvslot;
 extern vector<Slot *> slots;
 extern vector<VSlot *> vslots;
-

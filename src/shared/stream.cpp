@@ -222,17 +222,17 @@ size_t encodeutf8(uchar *dstbuf, size_t dstlen, const uchar *srcbuf, size_t srcl
         {
             if(dst >= dstend) goto done;
             const uchar *end = min(srcend, &src[dstend-dst]);
-            do 
-            { 
+            do
+            {
                 if(uni == '\f')
                 {
                     if(++src >= srcend) goto done;
                     goto uni1;
                 }
-                *dst++ = uni; 
-                if(++src >= end) goto done; 
-                uni = cube2uni(*src); 
-            } 
+                *dst++ = uni;
+                if(++src >= end) goto done;
+                uni = cube2uni(*src);
+            }
             while(uni <= 0x7F);
         }
         if(uni <= 0x7FF) { if(dst + 2 > dstend) goto done; *dst++ = 0xC0 | (uni>>6); goto uni2; }
@@ -247,7 +247,7 @@ size_t encodeutf8(uchar *dstbuf, size_t dstlen, const uchar *srcbuf, size_t srcl
     uni3: *dst++ = 0x80 | ((uni>>6)&0x3F);
     uni2: *dst++ = 0x80 | (uni&0x3F);
     uni1:;
-    } 
+    }
     while(++src < srcend);
 
 done:
@@ -451,7 +451,7 @@ const char *addpackagedir(const char *dir)
         if(!filter) break;
         if(filter > pdir && filter[-1] == PATHDIV && filter[len] == PATHDIV) break;
         filter += len;
-    }    
+    }
     packagedir &pf = packagedirs.add();
     pf.dir = filter ? newstring(pdir, filter-pdir) : newstring(pdir);
     pf.dirlen = filter ? filter-pdir : strlen(pdir);
@@ -528,9 +528,9 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
             if(!ext) files.add(newstring(FindFileData.cFileName));
             else
             {
-                size_t namelen = strlen(FindFileData.cFileName); 
-                if(namelen > extsize) 
-                { 
+                size_t namelen = strlen(FindFileData.cFileName);
+                if(namelen > extsize)
+                {
                     namelen -= extsize;
                     if(FindFileData.cFileName[namelen] == '.' && strncmp(FindFileData.cFileName+namelen+1, ext, extsize-1)==0)
                         files.add(newstring(FindFileData.cFileName, namelen));
@@ -742,8 +742,8 @@ struct filestream : stream
     }
 
     bool end() { return feof(file)!=0; }
-    offset tell() 
-    { 
+    offset tell()
+    {
 #ifdef WIN32
 #if defined(__GNUC__) && !defined(__MINGW32__)
         offset off = ftello64(file);
@@ -756,8 +756,8 @@ struct filestream : stream
         // ftello returns LONG_MAX for directories on some platforms
         return off + 1 >= 0 ? off : -1;
     }
-    bool seek(offset pos, int whence) 
-    { 
+    bool seek(offset pos, int whence)
+    {
 #ifdef WIN32
 #if defined(__GNUC__) && !defined(__MINGW32__)
         return fseeko64(file, pos, whence) >= 0;
@@ -1094,7 +1094,7 @@ struct utf8stream : stream
     offset pos;
     size_t bufread, bufcarry, buflen;
     bool reading, writing, autoclose;
-    uchar buf[BUFSIZE]; 
+    uchar buf[BUFSIZE];
 
     utf8stream() : file(NULL), pos(0), bufread(0), bufcarry(0), buflen(0), reading(false), writing(false), autoclose(false)
     {
@@ -1121,10 +1121,10 @@ struct utf8stream : stream
     {
         size_t n = file->read(buf, 3);
         if(n == 3 && buf[0] == 0xEF && buf[1] == 0xBB && buf[2] == 0xBF) return true;
-        buflen = n; 
+        buflen = n;
         return false;
     }
-            
+
     bool open(stream *f, const char *mode, bool needclose)
     {
         if(file) return false;
@@ -1134,16 +1134,16 @@ struct utf8stream : stream
             else if(*mode=='w') { writing = true; break; }
         }
         if(!reading && !writing) return false;
-       
+
         file = f;
-       
+
         if(reading) checkheader();
- 
+
         autoclose = needclose;
         return true;
-    } 
+    }
 
-    void finishreading() 
+    void finishreading()
     {
         if(!reading) return;
     }
@@ -1181,14 +1181,14 @@ struct utf8stream : stream
             return !off;
         }
         else if(whence == SEEK_CUR) off += pos;
-       
+
         if(off >= pos) off -= pos;
         else if(off < 0 || !file->seek(0, SEEK_SET)) return false;
         else
         {
             bufread = bufcarry = buflen = 0;
             pos = 0;
-            checkheader(); 
+            checkheader();
         }
 
         uchar skip[512];
@@ -1198,7 +1198,7 @@ struct utf8stream : stream
             if(read(skip, skipped) != skipped) { stopreading(); return false; }
             off -= skipped;
         }
-        
+
         return true;
     }
 
@@ -1228,7 +1228,7 @@ struct utf8stream : stream
             if(bufread >= bufcarry) { if(readbuf(BUFSIZE)) continue; stopreading(); if(!next) return false; break; }
             size_t n = min(len - next, bufcarry - bufread);
             uchar *endline = (uchar *)memchr(&buf[bufread], '\n', n);
-            if(endline) { n = endline+1 - &buf[bufread]; len = next + n; } 
+            if(endline) { n = endline+1 - &buf[bufread]; len = next + n; }
             memcpy(&((uchar *)dst)[next], &buf[bufread], n);
             next += n;
             bufread += n;
@@ -1315,7 +1315,7 @@ char *loadfile(const char *fn, size_t *size, bool utf8)
         if(f->read(buf, 3) != 3) { delete f; delete[] buf; return NULL; }
         if(((uchar *)buf)[0] == 0xEF && ((uchar *)buf)[1] == 0xBB && ((uchar *)buf)[2] == 0xBF) len -= 3;
         else offset += 3;
-    } 
+    }
     size_t rlen = f->read(&buf[offset], len-offset);
     delete f;
     if(rlen != len-offset) { delete[] buf; return NULL; }
@@ -1324,4 +1324,3 @@ char *loadfile(const char *fn, size_t *size, bool utf8)
     if(size!=NULL) *size = len;
     return buf;
 }
-

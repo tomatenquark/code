@@ -26,7 +26,7 @@ void newfont(char *name, char *tex, int *defaultw, int *defaulth)
 void fontoffset(char *c)
 {
     if(!fontdef) return;
-    
+
     fontdef->charoffset = c[0];
 }
 
@@ -34,7 +34,7 @@ void fontscale(int *scale)
 {
     if(!fontdef) return;
 
-    fontdef->scale = *scale > 0 ? *scale : fontdef->defaulth; 
+    fontdef->scale = *scale > 0 ? *scale : fontdef->defaulth;
 }
 
 void fonttex(char *s)
@@ -137,7 +137,7 @@ void gettextres(int &w, int &h)
     }
 }
 
-float text_widthf(const char *str) 
+float text_widthf(const char *str)
 {
     float width, height;
     text_boundsf(str, width, height);
@@ -160,7 +160,7 @@ void tabify(const char *str, int *numtabs)
 }
 
 COMMAND(tabify, "si");
-    
+
 void draw_textf(const char *fstr, int left, int top, ...)
 {
     defvformatstring(str, top, fstr);
@@ -207,10 +207,10 @@ static float draw_char(Texture *&tex, int c, float x, float y, float scale)
 }
 
 //stack[sp] is current color index
-static void text_color(char c, char *stack, int size, int &sp, bvec color, int a) 
+static void text_color(char c, char *stack, int size, int &sp, bvec color, int a)
 {
     if(c=='s') // save color
-    {   
+    {
         c = stack[sp];
         if(sp<size-1) stack[++sp] = c;
     }
@@ -223,7 +223,7 @@ static void text_color(char c, char *stack, int size, int &sp, bvec color, int a
         {
             case '0': color = bvec( 64, 255, 128); break;   // green: player talk
             case '1': color = bvec( 96, 160, 255); break;   // blue: "echo" command
-            case '2': color = bvec(255, 192,  64); break;   // yellow: gameplay messages 
+            case '2': color = bvec(255, 192,  64); break;   // yellow: gameplay messages
             case '3': color = bvec(255,  64,  64); break;   // red: important errors
             case '4': color = bvec(128, 128, 128); break;   // gray
             case '5': color = bvec(192,  64, 192); break;   // magenta
@@ -233,7 +233,7 @@ static void text_color(char c, char *stack, int size, int &sp, bvec color, int a
             // provided color: everything else
         }
         gle::color(color, a);
-    } 
+    }
 }
 
 #define TEXTSKELETON \
@@ -304,7 +304,7 @@ int text_visible(const char *str, float hitx, float hity, int maxwidth)
 }
 
 //inverse of text_visible
-void text_posf(const char *str, int cursor, float &cx, float &cy, int maxwidth) 
+void text_posf(const char *str, int cursor, float &cx, float &cy, int maxwidth)
 {
     #define TEXTINDEX(idx) if(idx == cursor) { cx = x; cy = y; break; }
     #define TEXTWHITE(idx)
@@ -343,11 +343,11 @@ void text_boundsf(const char *str, float &width, float &height, int maxwidth)
     #undef TEXTWORD
 }
 
-void draw_text(const char *str, int left, int top, int r, int g, int b, int a, int cursor, int maxwidth) 
+void draw_text(const char *str, int left, int top, int r, int g, int b, int a, int cursor, int maxwidth)
 {
     #define TEXTINDEX(idx) if(idx == cursor) { cx = x; cy = y; }
     #define TEXTWHITE(idx)
-    #define TEXTLINE(idx) 
+    #define TEXTLINE(idx)
     #define TEXTCOLOR(idx) if(usecolor) text_color(str[idx], colorstack, sizeof(colorstack), colorpos, color, a);
     #define TEXTCHAR(idx) draw_char(tex, c, left+x, top+y, scale); x += cw;
     #define TEXTWORD TEXTWORDSKELETON
@@ -389,4 +389,3 @@ void reloadfonts()
         loopv(f.texs) if(!reloadtexture(*f.texs[i])) fatal("failed to reload font texture");
     );
 }
-

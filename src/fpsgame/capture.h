@@ -717,8 +717,8 @@ ICOMMAND(insidebases, "", (),
     }
     buf.add('\0');
     result(buf.getbuf());
-}); 
-    
+});
+
 #else
     bool notgotbases;
 
@@ -744,7 +744,7 @@ ICOMMAND(insidebases, "", (),
             entity &e = ments[i];
             if(e.type != BASE) continue;
             int ammotype = e.attr1;
-            addbase(ammotype, e.o); 
+            addbase(ammotype, e.o);
         }
         notgotbases = false;
         sendbases();
@@ -1107,5 +1107,3 @@ case N_REPAMMO:
 }
 
 #endif
-
-

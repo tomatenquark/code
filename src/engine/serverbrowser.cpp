@@ -88,7 +88,7 @@ void resolverstop(resolverthread &rt)
     rt.query = NULL;
     rt.starttime = 0;
     SDL_UnlockMutex(resolvermutex);
-} 
+}
 
 void resolverclear()
 {
@@ -129,12 +129,12 @@ bool resolvercheck(const char **name, ENetAddress *address)
     else loopv(resolverthreads)
     {
         resolverthread &rt = resolverthreads[i];
-        if(rt.query && totalmillis - rt.starttime > RESOLVERLIMIT)        
+        if(rt.query && totalmillis - rt.starttime > RESOLVERLIMIT)
         {
             resolverstop(rt);
             *name = rt.query;
             resolved = true;
-        }    
+        }
     }
     SDL_UnlockMutex(resolvermutex);
     return resolved;
@@ -152,10 +152,10 @@ bool resolverwait(const char *name, ENetAddress *address)
     SDL_CondSignal(querycond);
     int starttime = SDL_GetTicks(), timeout = 0;
     bool resolved = false;
-    for(;;) 
+    for(;;)
     {
         SDL_CondWaitTimeout(resultcond, resolvermutex, 250);
-        loopv(resolverresults) if(resolverresults[i].query == name) 
+        loopv(resolverresults) if(resolverresults[i].query == name)
         {
             address->host = resolverresults[i].address.host;
             resolverresults.remove(i);
@@ -163,11 +163,11 @@ bool resolverwait(const char *name, ENetAddress *address)
             break;
         }
         if(resolved) break;
-    
+
         timeout = SDL_GetTicks() - starttime;
         renderprogress(min(float(timeout)/RESOLVERLIMIT, 1.0f), text);
         if(interceptkey(SDLK_ESCAPE)) timeout = RESOLVERLIMIT + 1;
-        if(timeout > RESOLVERLIMIT) break;    
+        if(timeout > RESOLVERLIMIT) break;
     }
     if(!resolved && timeout > RESOLVERLIMIT)
     {
@@ -213,7 +213,7 @@ int connectwithtimeout(ENetSocket sock, const char *hostname, const ENetAddress 
 
     return -1;
 }
- 
+
 struct pingattempts
 {
     enum { MAXATTEMPTS = 2 };
@@ -224,7 +224,7 @@ struct pingattempts
 
     void clearattempts() { memset(attempts, 0, sizeof(attempts)); }
 
-    void setoffset() { offset = 1 + rnd(0xFFFFFF); } 
+    void setoffset() { offset = 1 + rnd(0xFFFFFF); }
 
     int encodeping(int millis)
     {
@@ -261,8 +261,8 @@ enum { UNRESOLVED = 0, RESOLVING, RESOLVED };
 
 struct serverinfo : pingattempts
 {
-    enum 
-    { 
+    enum
+    {
         WAITING = INT_MAX,
 
         MAXPINGS = 3
@@ -416,7 +416,7 @@ template<size_t N> static inline void buildping(ENetBuffer &buf, uchar (&ping)[N
 
 void pingservers()
 {
-    if(pingsock == ENET_SOCKET_NULL) 
+    if(pingsock == ENET_SOCKET_NULL)
     {
         pingsock = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
         if(pingsock == ENET_SOCKET_NULL)
@@ -442,7 +442,7 @@ void pingservers()
         if(si.address.host == ENET_HOST_ANY) continue;
         buildping(buf, ping, si);
         enet_socket_send(pingsock, &si.address, &buf, 1);
-        
+
         si.checkdecay(servpingdecay);
     }
     if(searchlan)
@@ -455,7 +455,7 @@ void pingservers()
     }
     lastinfo = totalmillis;
 }
-  
+
 void checkresolver()
 {
     int resolving = 0;
@@ -481,7 +481,7 @@ void checkresolver()
             serverinfo &si = *servers[i];
             if(name == si.name)
             {
-                si.resolved = RESOLVED; 
+                si.resolved = RESOLVED;
                 si.address.host = addr.host;
                 break;
             }
@@ -499,12 +499,12 @@ void checkpings()
     ENetAddress addr;
     uchar ping[MAXTRANS];
     char text[MAXTRANS];
-    buf.data = ping; 
+    buf.data = ping;
     buf.dataLength = sizeof(ping);
     while(enet_socket_wait(pingsock, &events, 0) >= 0 && events)
     {
         int len = enet_socket_receive(pingsock, &addr, &buf, 1);
-        if(len <= 0) return;  
+        if(len <= 0) return;
         ucharbuf p(ping, len);
         int millis = getint(p);
         serverinfo *si = NULL;
@@ -517,7 +517,7 @@ void checkpings()
         else if(!searchlan || !lanpings.checkattempt(millis, false)) continue;
         else
         {
-            si = newserver(NULL, server::serverport(addr.port), addr.host); 
+            si = newserver(NULL, server::serverport(addr.port), addr.host);
             millis = lanpings.decodeping(millis);
         }
         int rtt = clamp(totalmillis - millis, 0, min(servpingdecay, totalmillis));
@@ -546,7 +546,7 @@ void refreshservers()
 {
     static int lastrefresh = 0;
     if(lastrefresh==totalmillis) return;
-    if(totalmillis - lastrefresh > 1000) 
+    if(totalmillis - lastrefresh > 1000)
     {
         loopv(servers) servers[i]->reset();
         lastreset = totalmillis;
@@ -635,7 +635,7 @@ void retrieveservers(vector<char> &data)
     while(reqlen > 0)
     {
         enet_uint32 events = ENET_SOCKET_WAIT_SEND;
-        if(enet_socket_wait(sock, &events, 250) >= 0 && events) 
+        if(enet_socket_wait(sock, &events, 250) >= 0 && events)
         {
             buf.data = (void *)req;
             buf.dataLength = reqlen;
@@ -739,10 +739,10 @@ void writeservercfg()
     }
     if(kept) f->printf("\n");
     f->printf("// servers connected to are added here automatically\n\n");
-    loopv(servers) 
+    loopv(servers)
     {
         serverinfo *s = servers[i];
-        if(!s->keep) 
+        if(!s->keep)
         {
             if(s->password) f->printf("addserver %s %d %s\n", escapeid(s->name), s->port, escapestring(s->password));
             else f->printf("addserver %s %d\n", escapeid(s->name), s->port);
@@ -750,4 +750,3 @@ void writeservercfg()
     }
     delete f;
 }
-

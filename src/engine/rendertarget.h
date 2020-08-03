@@ -121,7 +121,7 @@ struct rendertarget
             while(!depthfmt && depthfmts[++find]);
             if(!depthfmt) depthfmt = depthfmts[find];
         }
- 
+
         glBindFramebuffer_(GL_FRAMEBUFFER, 0);
 
         texw = w;
@@ -152,8 +152,8 @@ struct rendertarget
     bool checkblurtiles(float x1, float y1, float x2, float y2, float blurmargin = 0)
     {
         float blurerror = 2.0f*float(2*blursize + blurmargin);
-        if(x2+blurerror/vieww < scissorx1 || y2+blurerror/viewh < scissory1 || 
-           x1-blurerror/vieww > scissorx2 || y1-blurerror/viewh > scissory2) 
+        if(x2+blurerror/vieww < scissorx1 || y2+blurerror/viewh < scissory1 ||
+           x1-blurerror/vieww > scissorx2 || y1-blurerror/viewh > scissory2)
             return false;
 
         if(!blurtile) return true;
@@ -247,7 +247,7 @@ struct rendertarget
         }
 
         if(scissor) glDisable(GL_SCISSOR_TEST);
-            
+
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
     }
@@ -259,7 +259,7 @@ struct rendertarget
     virtual bool shouldrender() { return true; }
 
     virtual void doblur(int blursize, float blursigma, int blurysize)
-    { 
+    {
         int sx, sy, sw, sh;
         bool scissoring = rtscissor && scissorblur(sx, sy, sw, sh) && sw > 0 && sh > 0;
         if(!scissoring) { sx = sy = 0; sw = vieww; sh = viewh; }
@@ -268,7 +268,7 @@ struct rendertarget
 
     virtual bool scissorrender(int &x, int &y, int &w, int &h)
     {
-        if(scissorx1 >= scissorx2 || scissory1 >= scissory2) 
+        if(scissorx1 >= scissorx2 || scissory1 >= scissory2)
         {
             if(vieww < texw || viewh < texh)
             {
@@ -323,19 +323,19 @@ struct rendertarget
         vieww = w;
         viewh = h;
         if(w!=texw || h!=texh || (swaptexs() && !rtsharefb ? !blurfb : blurfb)) cleanup();
-        
+
         if(!filter())
         {
             if(blurtex) cleanupblur();
             blursize = blurysize = 0;
         }
-            
+
         if(!rendertex) setup(w, h);
-   
+
         scissorx2 = scissory2 = -1;
         scissorx1 = scissory1 = 1;
         memset(blurtiles, 0, sizeof(blurtiles));
- 
+
         if(!shouldrender()) return;
 
         if(blursize && !blurtex) setupblur();
@@ -451,7 +451,7 @@ struct rendertarget
     {
         if(!rendertex) return;
         int w = min(screenw, screenh)/2, h = (w*screenh)/screenw;
-        hudshader->set(); 
+        hudshader->set();
         gle::colorf(1, 1, 1);
         glBindTexture(GL_TEXTURE_2D, rendertex);
         float tx1 = 0, tx2 = 1, ty1 = 0, ty2 = 1;
@@ -461,4 +461,3 @@ struct rendertarget
         dodebug(w, h);
     }
 };
-

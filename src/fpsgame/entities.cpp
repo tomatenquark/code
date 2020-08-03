@@ -31,7 +31,7 @@ namespace entities
             case BARREL:
             case PLATFORM:
             case ELEVATOR:
-                int yaw = (int(e.attr1)%360 + 360)%360 + 7; 
+                int yaw = (int(e.attr1)%360 + 360)%360 + 7;
                 e.attr1 = yaw - yaw%15;
                 break;
         }
@@ -204,7 +204,7 @@ namespace entities
         if(ents.inrange(tp) && ents[tp]->type == TELEPORT)
         {
             extentity &e = *ents[tp];
-            if(e.attr4 >= 0) 
+            if(e.attr4 >= 0)
             {
                 int snd = S_TELEPORT, flags = 0;
                 if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
@@ -706,4 +706,3 @@ namespace entities
     }
 #endif
 }
-

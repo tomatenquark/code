@@ -538,7 +538,7 @@ int main(int argc, char **argv)
         sw = (f->glyph->advance.x+0x3F)>>6;
     }
 #endif
-    if(sh <= 0) sh = y2 - y1; 
+    if(sh <= 0) sh = y2 - y1;
     if(sw <= 0) sw = sh/3;
     writetexs(argv[2], chars, numchars, numtex, tw, th);
     writecfg(argv[2], chars, numchars, x1, y1, x2, y2, sw, sh, argc, argv);
@@ -553,4 +553,3 @@ int main(int argc, char **argv)
     printf("cube2font: (%d, %d) .. (%d, %d) = (%d, %d) / (%d, %d), %d texs\n", x1, y1, x2, y2, x2 - x1, y2 - y1, w2, h2, numtex);
     return EXIT_SUCCESS;
 }
-

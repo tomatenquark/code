@@ -35,11 +35,11 @@ namespace game
 
     bool monsterhurt;
     vec monsterhurtpos;
-    
+
     struct monster : fpsent
     {
         int monsterstate;                   // one of M_*, M_NONE means human
-    
+
         int mtype, tag;                     // see monstertypes table
         fpsent *enemy;                      // monster wants to kill this entity
         float targetyaw;                    // monster wants to look in this direction
@@ -48,7 +48,7 @@ namespace game
         int anger;                          // how many times already hit by fellow monster
         physent *stacked;
         vec stackpos;
-    
+
         monster(int _type, int _yaw, int _tag, int _state, int _trigger, int _move) :
             monsterstate(_state), tag(_tag),
             stacked(NULL),
@@ -86,13 +86,13 @@ namespace game
             anger = 0;
             copystring(name, t.name);
         }
-       
+
         void normalize_yaw(float angle)
         {
             while(yaw<angle-180.0f) yaw += 360.0f;
             while(yaw>angle+180.0f) yaw -= 360.0f;
         }
- 
+
         // monster AI is sequenced using transitions: they are in a particular state where
         // they execute a particular behaviour until the trigger time is hit, and then they
         // reevaluate their situation based on the current state, the environment etc., and
@@ -122,7 +122,7 @@ namespace game
                 if(targetyaw>yaw) yaw = targetyaw;
             }
             float dist = enemy->o.dist(o);
-            if(monsterstate!=M_SLEEP) pitch = asin((enemy->o.z - o.z) / dist) / RAD; 
+            if(monsterstate!=M_SLEEP) pitch = asin((enemy->o.z - o.z) / dist) / RAD;
 
             if(blocked)                                                              // special case: if we run into scenery
             {
@@ -137,9 +137,9 @@ namespace game
                     transition(M_SEARCH, 1, 100, 1000);
                 }
             }
-            
+
             float enemyyaw = -atan2(enemy->o.x - o.x, enemy->o.y - o.y)/RAD;
-            
+
             switch(monsterstate)
             {
                 case M_PAIN:
@@ -147,10 +147,10 @@ namespace game
                 case M_SEARCH:
                     if(trigger<lastmillis) transition(M_HOME, 1, 100, 200);
                     break;
-                    
+
                 case M_SLEEP:                       // state classic sp monster start in, wait for visual contact
                 {
-                    if(editmode) break;          
+                    if(editmode) break;
                     normalize_yaw(enemyyaw);
                     float angle = (float)fabs(enemyyaw-yaw);
                     if(dist<32                   // the better the angle to the player, the further the monster can see/hear
@@ -169,7 +169,7 @@ namespace game
                     }
                     break;
                 }
-                
+
                 case M_AIMING:                      // this state is the delay between wanting to shoot and actually firing
                     if(trigger<lastmillis)
                     {
@@ -189,7 +189,7 @@ namespace game
                         {
                             transition(M_HOME, 1, 800, 500);
                         }
-                        else 
+                        else
                         {
                             bool melee = false, longrange = false;
                             switch(monstertypes[mtype].gun)
@@ -198,9 +198,9 @@ namespace game
                                 case GUN_FIST: melee = true; break;
                                 case GUN_RIFLE: longrange = true; break;
                             }
-                            // the closer the monster is the more likely he wants to shoot, 
+                            // the closer the monster is the more likely he wants to shoot,
                             if((!melee || dist<20) && !rnd(longrange ? (int)dist/12+1 : min((int)dist/12+1,6)) && enemy->state==CS_ALIVE)      // get ready to fire
-                            { 
+                            {
                                 attacktarget = target;
                                 transition(M_AIMING, 0, monstertypes[mtype].lag, 10);
                             }
@@ -211,7 +211,7 @@ namespace game
                         }
                     }
                     break;
-                    
+
             }
 
             if(move || maymove() || (stacked && (stacked->state!=CS_ALIVE || stackpos != stacked->o)))
@@ -290,9 +290,9 @@ namespace game
     }
 
     vector<monster *> monsters;
-    
+
     int nextmonster, spawnremain, numkilled, monstertotal, mtimestart, remain;
-    
+
     void spawnmonster()     // spawn a random monster according to freq distribution in DMSP
     {
         int n = rnd(TOTMFREQ), type;
@@ -304,7 +304,7 @@ namespace game
     {
         removetrackedparticles();
         removetrackeddynlights();
-        loopv(monsters) delete monsters[i]; 
+        loopv(monsters) delete monsters[i];
         cleardynentcache();
         monsters.shrink(0);
         numkilled = 0;
@@ -324,7 +324,7 @@ namespace game
             {
                 extentity &e = *entities::ents[i];
                 if(e.type!=MONSTER) continue;
-                monster *m = new monster(e.attr2, e.attr1, e.attr3, M_SLEEP, 100, 0);  
+                monster *m = new monster(e.attr2, e.attr1, e.attr3, M_SLEEP, 100, 0);
                 monsters.add(m);
                 m->o = e.o;
                 entinmap(m);
@@ -347,7 +347,7 @@ namespace game
     }
     ICOMMAND(endsp, "", (), endsp(false));
 
-    
+
     void monsterkilled()
     {
         numkilled++;
@@ -364,11 +364,11 @@ namespace game
             nextmonster = lastmillis+1000;
             spawnmonster();
         }
-        
+
         if(killsendsp && monstertotal && !spawnremain && numkilled==monstertotal) endsp(true);
-        
+
         bool monsterwashurt = monsterhurt;
-        
+
         loopv(monsters)
         {
             if(monsters[i]->state==CS_ALIVE) monsters[i]->monsteraction(curtime);
@@ -382,7 +382,7 @@ namespace game
                 }
             }
         }
-        
+
         if(monsterwashurt) monsterhurt = false;
     }
 
@@ -430,4 +430,3 @@ namespace game
         conoutf(CON_GAMEINFO, "\f2TOTAL SCORE (time + time penalties): %d seconds (best so far: %d seconds)", score, bestscore);
     }
 }
-

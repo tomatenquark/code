@@ -64,7 +64,7 @@ namespace mpr
         }
 
         vec center() const { return vec(ent->o.x, ent->o.y, ent->o.z + (ent->aboveeye - ent->eyeheight - zmargin)/2); }
-        
+
         vec contactface(const vec &wn, const vec &wdir) const
         {
             vec n = orient.transform(wn).div(vec(ent->xradius, ent->yradius, (ent->aboveeye + ent->eyeheight + zmargin)/2)),
@@ -572,4 +572,3 @@ namespace mpr
         return false;
     }
 }
-

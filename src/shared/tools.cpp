@@ -4,9 +4,9 @@
 
 ////////////////////////// rnd numbers ////////////////////////////////////////
 
-#define N (624)             
-#define M (397)                
-#define K (0x9908B0DFU)       
+#define N (624)
+#define M (397)
+#define K (0x9908B0DFU)
 
 static uint state[N];
 static int next = N;
@@ -209,4 +209,3 @@ int ipmask::print(char *buf) const
     if(!bits && range%8) buf += sprintf(buf, "/%d", range);
     return int(buf-start);
 }
-

@@ -101,7 +101,7 @@ struct editline
     void del(int start, int count)
     {
         if(!text) return;
-        if(start < 0) { count += start; start = 0; } 
+        if(start < 0) { count += start; start = 0; }
         if(count <= 0 || start >= len) return;
         if(start + count > len) count = len - start - 1;
         memmove(&text[start], &text[start+count], len + 1 - (start + count));
@@ -136,8 +136,8 @@ struct editline
         }
     }
 };
-        
-struct editor 
+
+struct editor
 {
     int mode; //editor mode - 1= keep while focused, 2= keep while used in gui, 3= keep forever (i.e. until mode changes)
     bool active, rendered;
@@ -147,23 +147,23 @@ struct editor
     int cx, cy; // cursor position - ensured to be valid after a region() or currentline()
     int mx, my; // selection mark, mx=-1 if following cursor - avoid direct access, instead use region()
     int maxx, maxy; // maxy=-1 if unlimited lines, 1 if single line editor
-    
+
     int scrolly; // vertical scroll offset
-    
+
     bool linewrap;
     int pixelwidth; // required for up/down/hit/draw/bounds
     int pixelheight; // -1 for variable sized, i.e. from bounds()
-    
+
     vector<editline> lines; // MUST always contain at least one line!
-        
-    editor(const char *name, int mode, const char *initval) : 
+
+    editor(const char *name, int mode, const char *initval) :
         mode(mode), active(true), rendered(false), name(newstring(name)), filename(NULL),
         cx(0), cy(0), mx(-1), maxx(-1), maxy(-1), scrolly(0), linewrap(false), pixelwidth(-1), pixelheight(-1)
     {
         //printf("editor %08x '%s'\n", this, name);
         lines.add().set(initval ? initval : "");
     }
-    
+
     ~editor()
     {
         //printf("~editor %08x '%s'\n", this, name);
@@ -171,7 +171,7 @@ struct editor
         DELETEA(filename);
         clear(NULL);
     }
-        
+
     void clear(const char *init = "")
     {
         cx = cy = 0;
@@ -180,19 +180,19 @@ struct editor
         lines.shrink(0);
         if(init) lines.add().set(init);
     }
-    
+
     void setfile(const char *fname)
     {
-        DELETEA(filename); 
+        DELETEA(filename);
         if(fname) filename = newstring(fname);
     }
-    
+
     void load()
     {
         if(!filename) return;
         clear(NULL);
         stream *file = openutf8file(filename, "r");
-        if(file) 
+        if(file)
         {
             while(lines.add().read(file, maxx) && (maxy < 0 || lines.length() <= maxy));
             lines.pop().clear();
@@ -200,7 +200,7 @@ struct editor
         }
         if(lines.empty()) lines.add().set("");
     }
-    
+
     void save()
     {
         if(!filename) return;
@@ -209,29 +209,29 @@ struct editor
         loopv(lines) file->putline(lines[i].text);
         delete file;
     }
-   
-    void mark(bool enable) 
+
+    void mark(bool enable)
     {
         mx = (enable) ? cx : -1;
         my = cy;
     }
-        
+
     void selectall()
     {
         mx = my = INT_MAX;
         cx = cy = 0;
     }
-    
+
     // constrain results to within buffer - s=start, e=end, return true if a selection range
     // also ensures that cy is always within lines[] and cx is valid
     bool region(int &sx, int &sy, int &ex, int &ey)
     {
-        int n = lines.length(); 
+        int n = lines.length();
         ASSERT(n != 0);
         if(cy < 0) cy = 0; else if(cy >= n) cy = n-1;
         int len = lines[cy].len;
         if(cx < 0) cx = 0; else if(cx > len) cx = len;
-        if(mx >= 0) 
+        if(mx >= 0)
         {
             if(my < 0) my = 0; else if(my >= n) my = n-1;
             len = lines[my].len;
@@ -242,16 +242,16 @@ struct editor
         ex = cx;
         ey = cy;
         if(sy > ey) { swap(sy, ey); swap(sx, ex); }
-        else if(sy==ey && sx > ex) swap(sx, ex);        
+        else if(sy==ey && sx > ex) swap(sx, ex);
         return (sx != ex) || (sy != ey);
     }
-   
+
     bool region() { int sx, sy, ex, ey; return region(sx, sy, ex, ey); }
 
     // also ensures that cy is always within lines[] and cx is valid
     editline &currentline()
     {
-        int n = lines.length(); 
+        int n = lines.length();
         ASSERT(n != 0);
         if(cy < 0) cy = 0; else if(cy >= n) cy = n-1;
         if(cx < 0) cx = 0; else if(cx > lines[cy].len) cx = lines[cy].len;
@@ -329,16 +329,16 @@ struct editor
         for(int i = 0; i < int(count); i++) lines[start+i].clear();
         lines.remove(start, count);
     }
-            
+
     bool del() // removes the current selection (if any)
     {
         int sx, sy, ex, ey;
-        if(!region(sx, sy, ex, ey)) 
-        { 
-            mark(false); 
-            return false; 
+        if(!region(sx, sy, ex, ey))
+        {
+            mark(false);
+            return false;
         }
-        if(sy == ey) 
+        if(sy == ey)
         {
             if(sx == 0 && ex == lines[ey].len) removelines(sy, 1);
             else lines[sy].del(sx, ex - sx);
@@ -361,12 +361,12 @@ struct editor
         }
         return true;
     }
-        
-    void insert(char ch) 
+
+    void insert(char ch)
     {
         del();
         editline &current = currentline();
-        if(ch == '\n') 
+        if(ch == '\n')
         {
             if(maxy == -1 || cy < maxy-1)
             {
@@ -377,7 +377,7 @@ struct editor
             }
             else current.chop(cx);
             cx = 0;
-        } 
+        }
         else
         {
             int len = current.len;
@@ -391,31 +391,31 @@ struct editor
         while(*s) insert(*s++);
     }
 
-    void insertallfrom(editor *b) 
-    {   
+    void insertallfrom(editor *b)
+    {
         if(b==this) return;
 
         del();
-        
-        if(b->lines.length() == 1 || maxy == 1) 
+
+        if(b->lines.length() == 1 || maxy == 1)
         {
             editline &current = currentline();
-            char *str = b->lines[0].text;            
+            char *str = b->lines[0].text;
             int slen = b->lines[0].len;
             if(maxx >= 0 && b->lines[0].len + cx > maxx) slen = maxx-cx;
-            if(slen > 0) 
+            if(slen > 0)
             {
                 int len = current.len;
                 if(maxx >= 0 && slen + cx + len > maxx) len = max(0, maxx-(cx+slen));
-                current.insert(str, cx, slen); 
+                current.insert(str, cx, slen);
                 cx += slen;
             }
-        } 
-        else 
+        }
+        else
         {
-            loopv(b->lines) 
-            {   
-                if(!i) 
+            loopv(b->lines)
+            {
+                if(!i)
                 {
                     lines[cy++].append(b->lines[i].text);
                 }
@@ -431,12 +431,12 @@ struct editor
 
     void key(int code)
     {
-        switch(code) 
+        switch(code)
         {
             case SDLK_UP:
-                if(linewrap) 
+                if(linewrap)
                 {
-                    int x, y; 
+                    int x, y;
                     char *str = currentline().text;
                     text_pos(str, cx+1, x, y, pixelwidth);
                     if(y > 0) { cx = text_visible(str, x, y-FONTH, pixelwidth); break; }
@@ -444,7 +444,7 @@ struct editor
                 cy--;
                 break;
             case SDLK_DOWN:
-                if(linewrap) 
+                if(linewrap)
                 {
                     int x, y, width, height;
                     char *str = currentline().text;
@@ -495,7 +495,7 @@ struct editor
                 if(!del())
                 {
                     editline &current = currentline();
-                    if(cx > 0) current.del(--cx, 1); 
+                    if(cx > 0) current.del(--cx, 1);
                     else if(cy > 0)
                     {   //combine with previous line
                         cx = lines[cy-1].len;
@@ -507,7 +507,7 @@ struct editor
             case SDLK_LSHIFT:
             case SDLK_RSHIFT:
                 break;
-            case SDLK_RETURN:    
+            case SDLK_RETURN:
                 insert('\n');
                 break;
             case SDLK_TAB:
@@ -530,10 +530,10 @@ struct editor
             int width, height;
             text_bounds(lines[i].text, width, height, maxwidth);
             if(h + height > pixelheight) break;
-            
-            if(hity >= h && hity <= h+height) 
+
+            if(hity >= h && hity <= h+height)
             {
-                int x = text_visible(lines[i].text, hitx, hity-h, maxwidth); 
+                int x = text_visible(lines[i].text, hitx, hity-h, maxwidth);
                 if(dragged) { mx = x; my = i; } else { cx = x; cy = i; };
                 break;
             }
@@ -559,13 +559,13 @@ struct editor
     void draw(int x, int y, int color, bool hit)
     {
         int maxwidth = linewrap?pixelwidth:-1;
-        
+
         int sx, sy, ex, ey;
         bool selection = region(sx, sy, ex, ey);
-        
+
         // fix scrolly so that <cx, cy> is always on screen
         if(cy < scrolly) scrolly = cy;
-        else 
+        else
         {
             if(scrolly < 0) scrolly = 0;
             int h = 0;
@@ -577,7 +577,7 @@ struct editor
                 h += height;
             }
         }
-        
+
         if(selection)
         {
             // convert from cursor coords into pixel coords
@@ -589,15 +589,15 @@ struct editor
             for(int i = scrolly; i < maxy; i++)
             {
                 int width, height;
-                text_bounds(lines[i].text, width, height, maxwidth);                
+                text_bounds(lines[i].text, width, height, maxwidth);
                 if(h + height > pixelheight) { maxy = i; break; }
                 if(i == sy) psy += h;
                 if(i == ey) { pey += h; break; }
                 h += height;
             }
             maxy--;
-            
-            if(ey >= scrolly && sy <= maxy) 
+
+            if(ey >= scrolly && sy <= maxy)
             {
                 // crop top/bottom within window
                 if(sy < scrolly) { sy = scrolly; psy = 0; psx = 0; }
@@ -607,19 +607,19 @@ struct editor
                 gle::colorub(0xA0, 0x80, 0x80);
                 gle::defvertex(2);
                 gle::begin(GL_QUADS);
-                if(psy == pey) 
+                if(psy == pey)
                 {
                     gle::attribf(x+psx, y+psy);
                     gle::attribf(x+pex, y+psy);
                     gle::attribf(x+pex, y+pey+FONTH);
                     gle::attribf(x+psx, y+pey+FONTH);
-                } 
-                else 
+                }
+                else
                 {   gle::attribf(x+psx,        y+psy);
                     gle::attribf(x+psx,        y+psy+FONTH);
                     gle::attribf(x+pixelwidth, y+psy+FONTH);
                     gle::attribf(x+pixelwidth, y+psy);
-                    if(pey-psy > FONTH) 
+                    if(pey-psy > FONTH)
                     {
                         gle::attribf(x,            y+psy+FONTH);
                         gle::attribf(x+pixelwidth, y+psy+FONTH);
@@ -635,17 +635,17 @@ struct editor
                 hudshader->set();
             }
         }
-    
+
         int h = 0;
         for(int i = scrolly; i < lines.length(); i++)
         {
             int width, height;
             text_bounds(lines[i].text, width, height, maxwidth);
             if(h + height > pixelheight) break;
-            
+
             draw_text(lines[i].text, x, y+h, color>>16, (color>>8)&0xFF, color&0xFF, 0xFF, hit&&(cy==i)?cx:-1, maxwidth);
             if(linewrap && height > FONTH) // line wrap indicator
-            {   
+            {
                 hudnotextureshader->set();
                 gle::colorub(0x80, 0xA0, 0x80);
                 gle::defvertex(2);
@@ -667,23 +667,23 @@ static vector <editor*> editors;
 
 static editor *currentfocus() { return editors.length() ? editors.last() : NULL; }
 
-static void readyeditors() 
+static void readyeditors()
 {
     loopv(editors) editors[i]->active = (editors[i]->mode==EDITORFOREVER);
 }
 
-static void flusheditors() 
+static void flusheditors()
 {
-    loopvrev(editors) if(!editors[i]->active) 
+    loopvrev(editors) if(!editors[i]->active)
     {
         editor *e = editors.remove(i);
         DELETEP(e);
     }
 }
 
-static editor *useeditor(const char *name, int mode, bool focus, const char *initval = NULL) 
+static editor *useeditor(const char *name, int mode, bool focus, const char *initval = NULL)
 {
-    loopv(editors) if(strcmp(editors[i]->name, name) == 0) 
+    loopv(editors) if(strcmp(editors[i]->name, name) == 0)
     {
         editor *e = editors[i];
         if(focus) { editors.add(e); editors.remove(i); } // re-position as last
@@ -691,7 +691,7 @@ static editor *useeditor(const char *name, int mode, bool focus, const char *ini
         return e;
     }
     editor *e = new editor(name, mode, initval);
-    if(focus) editors.add(e); else editors.insert(0, e); 
+    if(focus) editors.add(e); else editors.insert(0, e);
     return e;
 }
 
@@ -705,7 +705,7 @@ static editor *useeditor(const char *name, int mode, bool focus, const char *ini
 ICOMMAND(textlist, "", (), // @DEBUG return list of all the editors
     vector<char> s;
     loopv(editors)
-    {   
+    {
         if(i > 0) s.put(", ", 2);
         s.put(editors[i]->name, strlen(editors[i]->name));
     }
@@ -728,9 +728,9 @@ TEXTCOMMAND(textmode, "i", (int *m), // (1= keep while focused, 2= keep while us
     else intret(top->mode);
 );
 TEXTCOMMAND(textsave, "s", (char *file),  // saves the topmost (filename is optional)
-    if(*file) top->setfile(path(file, true)); 
+    if(*file) top->setfile(path(file, true));
     top->save();
-);  
+);
 TEXTCOMMAND(textload, "s", (char *file), // loads into the topmost editor, returns filename if no args
     if(*file)
     {
@@ -749,7 +749,7 @@ TEXTCOMMAND(textinit, "sss", (char *name, char *file, char *initval), // loads i
         e->load();
     }
 });
- 
+
 #define PASTEBUFFER "#pastebuffer"
 
 TEXTCOMMAND(textcopy, "", (), editor *b = useeditor(PASTEBUFFER, EDITORFOREVER, false); top->copyselectionto(b););
@@ -767,4 +767,3 @@ TEXTCOMMAND(textexec, "i", (int *selected), // execute script commands from the 
     execute(script);
     delete[] script;
 );
-

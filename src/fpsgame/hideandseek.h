@@ -15,7 +15,7 @@ struct hideandseekclientmode : clientmode
 #ifndef SERVMODE
 
 #define ishider(ci) (strcmp(ci->team, TEAM_HIDE) == 0 && ci->state != CS_SPECTATOR ? true : false)
-    
+
     void drawblip(fpsent *d, float x, float y, float s, const vec &pos, float size_factor) {
         float scale = calcradarscale();
         vec dir = d->o;
@@ -92,17 +92,17 @@ struct hideandseekclientmode : clientmode
         lastupdatecheck = totalmillis;
         initplayers();
     }
-    
+
     void sethider(clientinfo *ci) {
         copystring(ci->team, TEAM_HIDE, MAXTEAMLEN+1);
         sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
     }
-    
+
     void setseeker(clientinfo *ci) {
         copystring(ci->team, TEAM_SEEK, MAXTEAMLEN+1);
         sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, ci->team, 1);
     }
-    
+
     vector<clientinfo*> getactiveclients() {
         vector<clientinfo*> activeclients;
         loopv(clients) if(clients[i]->state.state != CS_SPECTATOR) activeclients.add(clients[i]);
@@ -135,14 +135,14 @@ struct hideandseekclientmode : clientmode
             sendf(-1, 1, "riisi", N_SETTEAM, clients[i]->clientnum, clients[i]->team, 1);
         }
     }
-    
+
     int getnumseekers() {
         int numseekers = 0;
         vector<clientinfo*> activeclients = getactiveclients();
         loopv(activeclients) if (isseeker(activeclients[i])) numseekers++;
         return numseekers;
     }
-    
+
     int getnumhiders() {
         int numhiders = 0;
         vector<clientinfo*> activeclients = getactiveclients();

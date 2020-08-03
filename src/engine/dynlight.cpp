@@ -166,7 +166,7 @@ void dynlightreaching(const vec &target, vec &color, vec &dir, bool hud)
         if(x+y>0)
         {
             dir.mul(x);
-            dyndir.mul(y); 
+            dyndir.mul(y);
             dir.add(dyndir).div(x+y);
             if(dir.iszero()) dir = vec(0, 0, 1);
             else dir.normalize();
@@ -224,4 +224,3 @@ int setdynlights(vtxarray *va)
 
     return index;
 }
-

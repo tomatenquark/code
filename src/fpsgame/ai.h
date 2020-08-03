@@ -313,5 +313,3 @@ namespace ai
 
     extern void render();
 }
-
-

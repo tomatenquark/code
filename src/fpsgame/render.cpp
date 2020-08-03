@@ -4,7 +4,7 @@ struct spawninfo { const extentity *e; float weight; };
 extern float gatherspawninfos(dynent *d, int tag, vector<spawninfo> &spawninfos);
 
 namespace game
-{      
+{
     vector<fpsent *> bestplayers;
     vector<const char *> bestteams;
 
@@ -27,7 +27,7 @@ namespace game
         r->attackchan = r->idlechan = -1;
         if(d==player1) r->playermodel = playermodel;
         ragdolls.add(r);
-        d->ragdoll = NULL;   
+        d->ragdoll = NULL;
     }
 
     void clearragdolls()
@@ -81,7 +81,7 @@ namespace game
     {
         if(player1->clientnum < 0) player1->playermodel = playermodel;
         if(player1->ragdoll) cleanragdoll(player1);
-        loopv(ragdolls) 
+        loopv(ragdolls)
         {
             fpsent *d = ragdolls[i];
             if(!d->ragdoll) continue;
@@ -123,7 +123,7 @@ namespace game
             for(int j = 0; j < int(3); j++) if(mdl->armour[j]) preloadmodel(mdl->armour[j]);
         }
     }
-    
+
     VAR(testquad, 0, 0, 1);
     VAR(testarmour, 0, 0, 1);
     VAR(testteam, 0, 0, 3);
@@ -181,7 +181,7 @@ namespace game
         }
         renderclient(d, mdlname, a[0].tag ? a : NULL, hold, attack, delay, lastaction, intermission && d->state!=CS_DEAD ? 0 : d->lastpain, fade, ragdoll && mdl.ragdoll);
 #if 0
-        if(d->state!=CS_DEAD && d->quadmillis) 
+        if(d->state!=CS_DEAD && d->quadmillis)
         {
             entitylight light;
             rendermodel(&light, "quadrings", ANIM_MAPMODEL|ANIM_LOOP, vec(d->o).sub(vec(0, 0, d->eyeheight/2)), 360*lastmillis/1000.0f, 0, MDL_DYNSHADOW | MDL_CULL_VFC | MDL_CULL_DIST);
@@ -336,10 +336,10 @@ namespace game
             int team = 0;
             if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
             float fade = 1.0f;
-            if(ragdollmillis && ragdollfade) 
+            if(ragdollmillis && ragdollfade)
                 fade -= clamp(float(lastmillis - (d->lastupdate + max(ragdollmillis - ragdollfade, 0)))/min(ragdollmillis, ragdollfade), 0.0f, 1.0f);
             renderplayer(d, getplayermodelinfo(d), team, fade, mainpass);
-        } 
+        }
         if(isthirdperson() && !followingplayer() && (player1->state!=CS_DEAD || hidedead != 1)) renderplayer(player1, getplayermodelinfo(player1), teamskins || m_teammode ? 1 : 0, 1, mainpass);
         rendermonsters();
         rendermovables();
@@ -444,8 +444,8 @@ namespace game
     void drawhudgun()
     {
         fpsent *d = hudplayer();
-        if(d->state==CS_SPECTATOR || d->state==CS_EDITING || !hudgun || editmode) 
-        { 
+        if(d->state==CS_SPECTATOR || d->state==CS_EDITING || !hudgun || editmode)
+        {
             d->muzzle = player1->muzzle = vec(-1, -1, -1);
             return;
         }
@@ -557,4 +557,3 @@ namespace game
     }
 
 }
-

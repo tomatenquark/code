@@ -112,7 +112,7 @@ struct obj : vertloader<obj>
                         for(;;)
                         {
                             while(isspace(*c)) c++;
-                            if(!*c) break; 
+                            if(!*c) break;
                             ivec vkey(-1, -1, -1);
                             for(int i = 0; i < int(3); i++)
                             {
@@ -188,4 +188,3 @@ struct obj : vertloader<obj>
 };
 
 vertcommands<obj> objcommands;
-

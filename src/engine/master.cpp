@@ -258,7 +258,7 @@ void gengbanlist()
     loopv(gbans)
     {
         ipmask &b = gbans[i];
-        l->buf.put(cmd, cmdlen + b.print(&cmd[cmdlen])); 
+        l->buf.put(cmd, cmdlen + b.print(&cmd[cmdlen]));
         l->buf.add('\n');
     }
     if(gbanlists.length() && gbanlists.last()->equals(*l))
@@ -277,7 +277,7 @@ void gengbanlist()
     loopv(clients)
     {
         client &c = *clients[i];
-        if(c.servport >= 0 && !c.message) 
+        if(c.servport >= 0 && !c.message)
         {
             c.message = l;
             c.message->refs++;
@@ -628,9 +628,9 @@ void checkclients()
                 {
                     if(c.output.length()) c.output.setsize(0);
                     else
-                    { 
+                    {
                         c.message->purge();
-                        c.message = NULL; 
+                        c.message = NULL;
                     }
                     c.outputpos = 0;
                     if(!c.message && c.output.empty() && c.shouldpurge)
@@ -715,4 +715,3 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-

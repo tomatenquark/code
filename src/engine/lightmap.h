@@ -28,15 +28,15 @@ struct PackNode
     bool insert(ushort &tx, ushort &ty, ushort tw, ushort th);
 };
 
-enum 
-{ 
-    LM_DIFFUSE = 0, 
-    LM_BUMPMAP0, 
-    LM_BUMPMAP1, 
+enum
+{
+    LM_DIFFUSE = 0,
+    LM_BUMPMAP0,
+    LM_BUMPMAP1,
     LM_TYPE = 0x0F,
 
-    LM_ALPHA = 1<<4,  
-    LM_FLAGS = 0xF0 
+    LM_ALPHA = 1<<4,
+    LM_FLAGS = 0xF0
 };
 
 struct LightMap
@@ -44,7 +44,7 @@ struct LightMap
     int type, bpp, tex, offsetx, offsety;
     PackNode packroot;
     uint lightmaps, lumels;
-    int unlitx, unlity; 
+    int unlitx, unlity;
     uchar *data;
 
     LightMap()
@@ -106,7 +106,7 @@ struct lerpvert
     bool operator==(const lerpvert &l) const { return tc == l.tc;; }
     bool operator!=(const lerpvert &l) const { return tc != l.tc; }
 };
-    
+
 struct lerpbounds
 {
     const lerpvert *min;
@@ -143,4 +143,3 @@ extern volatile bool check_calclight_progress;
 extern void check_calclight_canceled();
 
 extern int lightmapping;
-

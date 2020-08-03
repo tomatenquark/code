@@ -77,8 +77,8 @@ struct vec
     };
 
     vec() {}
-    explicit vec(int a) : x(a), y(a), z(a) {} 
-    explicit vec(float a) : x(a), y(a), z(a) {} 
+    explicit vec(int a) : x(a), y(a), z(a) {}
+    explicit vec(float a) : x(a), y(a), z(a) {}
     vec(float a, float b, float c) : x(a), y(b), z(c) {}
     explicit vec(int v[3]) : x(v[0]), y(v[1]), z(v[2]) {}
     explicit vec(const float *v) : x(v[0]), y(v[1]), z(v[2]) {}
@@ -90,7 +90,7 @@ struct vec
 
     float &operator[](int i)       { return v[i]; }
     float  operator[](int i) const { return v[i]; }
-    
+
     vec &set(int i, float f) { v[i] = f; return *this; }
 
     bool operator==(const vec &o) const { return x == o.x && y == o.y && z == o.z; }
@@ -289,10 +289,10 @@ struct vec4
         w += (b.w-w)*t;
         return *this;
     }
-    vec4 &lerp(const vec4 &a, const vec4 &b, float t) 
-    { 
-        x = a.x+(b.x-a.x)*t; 
-        y = a.y+(b.y-a.y)*t; 
+    vec4 &lerp(const vec4 &a, const vec4 &b, float t)
+    {
+        x = a.x+(b.x-a.x)*t;
+        y = a.y+(b.y-a.y)*t;
         z = a.z+(b.z-a.z)*t;
         w = a.w+(b.w-a.w)*t;
         return *this;
@@ -356,7 +356,7 @@ struct quat : vec4
     explicit quat(const matrix4 &m) { convertmatrix(m); }
 
     void restorew() { w = 1.0f-x*x-y*y-z*z; w = w<0 ? 0 : -sqrtf(w); }
-    
+
     quat &add(const vec4 &o) { vec4::add(o); return *this; }
     quat &sub(const vec4 &o) { vec4::sub(o); return *this; }
     quat &mul(float k) { vec4::mul(k); return *this; }
@@ -379,7 +379,7 @@ struct quat : vec4
         if(rr>0)
         {
             angle = 2*acosf(w);
-            axis = vec(x, y, z).mul(1/rr); 
+            axis = vec(x, y, z).mul(1/rr);
         }
         else { angle = 0; axis = vec(0, 0, 1); }
     }
@@ -438,7 +438,7 @@ struct dualquat
     quat real, dual;
 
     dualquat() {}
-    dualquat(const quat &q, const vec &p) 
+    dualquat(const quat &q, const vec &p)
         : real(q),
           dual(0.5f*( p.x*q.w + p.y*q.z - p.z*q.y),
                0.5f*(-p.x*q.z + p.y*q.w + p.z*q.x),
@@ -474,14 +474,14 @@ struct dualquat
         dual.sub(quat(real).mul(2*real.dot(dual)));
         return *this;
     }
-    
+
     void mul(const dualquat &p, const dualquat &o)
     {
         real.mul(p.real, o.real);
         dual.mul(p.real, o.dual).add(quat().mul(p.dual, o.real));
-    }       
-    void mul(const dualquat &o) { mul(dualquat(*this), o); }    
-  
+    }
+    void mul(const dualquat &o) { mul(dualquat(*this), o); }
+
     void mulorient(const quat &q)
     {
         real.mul(q, quat(real));
@@ -1017,7 +1017,7 @@ struct plane : vec
     bool operator!=(const plane &p) const { return x!=p.x || y!=p.y || z!=p.z || offset!=p.offset; }
 
     plane() {}
-    plane(const vec &c, float off) : vec(c), offset(off) {} 
+    plane(const vec &c, float off) : vec(c), offset(off) {}
     plane(const vec4 &p) : vec(p), offset(p.w) {}
     plane(int d, float off)
     {
@@ -1056,7 +1056,7 @@ struct plane : vec
     {
         offset += 2*rz*z;
         z = -z;
-        return *this; 
+        return *this;
     }
 
     plane &invert()
@@ -1082,7 +1082,7 @@ struct plane : vec
     {
         float mag = magnitude();
         div(mag);
-        offset /= mag; 
+        offset /= mag;
         return *this;
     }
 
@@ -1193,12 +1193,12 @@ inline vec::vec(const ivec &v) : x(v.x), y(v.y), z(v.z) {}
 static inline bool htcmp(const ivec &x, const ivec &y)
 {
     return x == y;
-}  
+}
 
 static inline uint hthash(const ivec &k)
 {
     return k.x^k.y^k.z;
-}  
+}
 
 struct ivec2
 {
@@ -1825,4 +1825,3 @@ static inline float cos360(int angle) { return sincos360[angle].x; }
 static inline float sin360(int angle) { return sincos360[angle].y; }
 static inline float tan360(int angle) { const vec2 &sc = sincos360[angle]; return sc.y/sc.x; }
 static inline float cotan360(int angle) { const vec2 &sc = sincos360[angle]; return sc.x/sc.y; }
-
