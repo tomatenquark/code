@@ -44,3 +44,9 @@ build/
 
 # Ban OSX files
 .DS_Store
+
+# Resource files
+cmake/vcpp/cube2.ico
+cmake/xcode/Resources/help/sauer16.png
+cmake/xcode/Resources/help/sauer32.png
+
