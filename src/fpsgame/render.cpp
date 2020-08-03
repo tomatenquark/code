@@ -231,10 +231,10 @@ namespace game
     {
         vec p = d->abovehead();
         int icons = 0;
+        const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
         if(statusicons)
         {
             if(d->quadmillis) icons++;
-            const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
             if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
             if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems) icons++;
         }
