@@ -283,7 +283,7 @@ namespace game
             offset += size;
             particle_meter(vec(p).madd(camup, offset), fill, PART_METER, 1, color, 0, size);
         }
-        int color = d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : 0x40FF80);
+        int color = d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : (d->health<=100 ? 0x40FF80 : 0x40C0FF));
         float size = scale*sqrtf(max(d->health, d->maxhealth)/100.0f);
         float fill = float(d->health)/d->maxhealth;
         offset += size;
