@@ -573,13 +573,14 @@ void gl_checkextensions()
     if(glversion >= 300 || hasext("GL_EXT_gpu_shader4"))
     {
         // on DX10 or above class cards (i.e. GF8 or RadeonHD) enable expensive features
-        extern int grass, glare, maxdynlights, depthfxsize, blurdepthfx;
+        extern int grass, glare, maxdynlights, depthfxsize, blurdepthfx, texcompress;
         grass = 1;
         waterfallrefract = 1;
         glare = 1;
         maxdynlights = MAXDYNLIGHTS;
         depthfxsize = 10;
         blurdepthfx = 0;
+        texcompress = max(texcompress, 1024 + 1);
     }
 }
 
