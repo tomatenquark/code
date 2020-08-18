@@ -1044,7 +1044,7 @@ namespace server
         for(int i = 0; i < int(sizeof(team)/sizeof(team[0])); i++)
         {
             addteaminfo(teamnames[i]);
-            loopvj(team[i])
+            if(!persistteams) loopvj(team[i])
             {
                 clientinfo *ci = team[i][j];
                 if(!strcmp(ci->team, teamnames[i])) continue;
@@ -2075,7 +2075,7 @@ namespace server
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
         clearteaminfo();
-        if(m_teammode && !persistteams) autoteam();
+        if(m_teammode) autoteam();
 
         if(m_capture) smode = &capturemode;
         else if(m_ctf) smode = &ctfmode;
