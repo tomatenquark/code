@@ -2099,10 +2099,10 @@ namespace server
         {
             if(clients.length()) setupdemoplayback();
         }
-        else if(demonextmatch)
+        else
         {
+            if(demonextmatch) setupdemorecord();
             demonextmatch = autorecorddemo!=0;
-            setupdemorecord();
         }
 
         if(smode) smode->setup();
