@@ -434,14 +434,17 @@ namespace game
     {
         d->state = CS_DEAD;
         d->lastpain = lastmillis;
-        if(!restore) gibeffect(max(-d->health, 0), d->vel, d);
+        if(!restore)
+        {
+            gibeffect(max(-d->health, 0), d->vel, d);
+            d->deaths++;
+        }
         if(d==player1)
         {
             if(deathscore) showscores(true);
             disablezoom();
             if(!restore) for(int i = 0; i < int(NUMGUNS); i++) savedammo[i] = player1->ammo[i];
             d->attacking = false;
-            if(!restore) d->deaths++;
             //d->pitch = 0;
             d->roll = 0;
             playsound(S_DIE1+rnd(2));
@@ -462,8 +465,8 @@ namespace game
         if(d->state==CS_EDITING)
         {
             d->editstate = CS_DEAD;
-            if(d==player1) d->deaths++;
-            else d->resetinterp();
+            d->deaths++;
+            if(d!=player1) d->resetinterp();
             return;
         }
         else if((d->state!=CS_ALIVE && d->state != CS_LAGGED && d->state != CS_SPAWNING) || intermission) return;
