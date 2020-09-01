@@ -184,7 +184,7 @@ void restorevfcP()
 
 void visiblecubes(bool cull)
 {
-    memset(vasort, 0, sizeof(vasort));
+    memclear(vasort);
 
     if(cull)
     {
@@ -194,10 +194,10 @@ void visiblecubes(bool cull)
     }
     else
     {
-        memset(vfcP, 0, sizeof(vfcP));
+        memclear(vfcP);
         vfcDfog = 1000000;
-        memset(vfcDnear, 0, sizeof(vfcDnear));
-        memset(vfcDfar, 0, sizeof(vfcDfar));
+        memclear(vfcDnear);
+        memclear(vfcDfar);
         visibleva = NULL;
         loopv(valist)
         {
