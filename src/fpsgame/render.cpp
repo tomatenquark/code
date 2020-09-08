@@ -265,7 +265,7 @@ namespace game
         }
     }
 
-    VARP(statusbars, 0, 0, 2);
+    VARP(statusbars, 0, 1, 2);
     FVARP(statusbarscale, 0, 1, 2);
 
     float renderstatusbars(fpsent *d, int team)
