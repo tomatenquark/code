@@ -468,12 +468,12 @@ struct gui : g3d_gui
             {
                 hit = ishit(FONTH, ysize, x, y);
                 px = x + (FONTH-w)/2;
-                py = y + (ysize-FONTH) - ((ysize-FONTH)*(val-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at bottom
+                py = y + (ysize-FONTH) - ((ysize-FONTH)*(clamp(val, vmin, vmax)-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at bottom
             }
             else
             {
                 hit = ishit(xsize, FONTH, x, y);
-                px = x + FONTH/2 - w/2 + ((xsize-w)*(val-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at left
+                px = x + FONTH/2 - w/2 + ((xsize-w)*(clamp(val, vmin, vmax)-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at left
                 py = y;
             }
 
