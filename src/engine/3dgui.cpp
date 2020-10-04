@@ -463,17 +463,17 @@ struct gui : g3d_gui
             int w = text_width(label);
 
             bool hit;
-            int px, py;
+            int px, py, offset = vmin < vmax ? clamp(val, vmin, vmax) : clamp(val, vmax, vmin);
             if(ishorizontal())
             {
                 hit = ishit(FONTH, ysize, x, y);
                 px = x + (FONTH-w)/2;
-                py = y + (ysize-FONTH) - ((ysize-FONTH)*(clamp(val, vmin, vmax)-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at bottom
+                py = y + (ysize-FONTH) - ((ysize-FONTH)*(offset-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at bottom
             }
             else
             {
                 hit = ishit(xsize, FONTH, x, y);
-                px = x + FONTH/2 - w/2 + ((xsize-w)*(clamp(val, vmin, vmax)-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at left
+                px = x + FONTH/2 - w/2 + ((xsize-w)*(offset-vmin))/((vmax==vmin) ? 1 : (vmax-vmin)); //vmin at left
                 py = y;
             }
 
