@@ -921,6 +921,8 @@ void attachent()
 
 COMMAND(attachent, "");
 
+VARP(entcamdir, 0, 1, 1);
+
 static int keepents = 0;
 
 extentity *newentity(bool local, const vec &o, int type, int v1, int v2, int v3, int v4, int v5, int &idx)
@@ -946,16 +948,16 @@ extentity *newentity(bool local, const vec &o, int type, int v1, int v2, int v3,
     e.light.dir = vec(0, 0, 1);
     if(local)
     {
-        switch(type)
+        if(entcamdir) switch(type)
         {
-                case ET_MAPMODEL:
-                case ET_PLAYERSTART:
-                    e.attr5 = e.attr4;
-                    e.attr4 = e.attr3;
-                    e.attr3 = e.attr2;
-                    e.attr2 = e.attr1;
-                    e.attr1 = (int)camera1->yaw;
-                    break;
+            case ET_MAPMODEL:
+            case ET_PLAYERSTART:
+                e.attr5 = e.attr4;
+                e.attr4 = e.attr3;
+                e.attr3 = e.attr2;
+                e.attr2 = e.attr1;
+                e.attr1 = (int)camera1->yaw;
+                break;
         }
         entities::fixentity(e);
     }
