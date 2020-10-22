@@ -214,7 +214,7 @@ static inline float parsefloat(const char *s)
 }
 
 static inline void intformat(char *buf, int v, int len = 20) { nformatstring(buf, len, "%d", v); }
-static inline void floatformat(char *buf, float v, int len = 20) { nformatstring(buf, len, v==int(v) ? "%.1f" : "%.7g", v); }
+static inline void floatformat(char *buf, float v, int len = 20) { nformatstring(buf, len, v==int(v) ? "%.1f" : "%.6g", v); }
 
 static inline const char *getstr(const identval &v, int type)
 {
