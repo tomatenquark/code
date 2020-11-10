@@ -119,11 +119,12 @@ jobs:
           mkdir build64
           cd build64
           cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
-          make
+          make tomatenquark tomaten_server tomaten_master
       - name: Archive Ubuntu binaries
         run: |
           cp ./build64/tomatenquark bin_unix/linux_64_client
           cp ./build64/tomaten_server bin_unix/linux_64_server
+          cp ./build64/tomaten_master bin_unix/linux_64_master
           zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
       - uses: actions/upload-artifact@v1
         with: 
