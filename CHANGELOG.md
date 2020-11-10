@@ -1044,7 +1044,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleaned up octaedit
 - hacked a fix for a culling error in touchingfaces
 
-[Unreleased]: https://github.com/tomatenquark/code/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/tomatenquark/code/compare/v0.2.2...HEAD
+[0.2.1]: https://github.com/tomatenquark/code/compare/v0.2.1...0.2.2
 [0.2.1]: https://github.com/tomatenquark/code/compare/v0.2.0...0.2.1
 [0.2.0]: https://github.com/tomatenquark/code/compare/v0.1.12...0.2.0
 [0.1.12]: https://github.com/tomatenquark/code/compare/v0.1.11...0.1.12
