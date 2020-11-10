@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2020-10-11
+- Create parity with SVN 6225
+- Provide `tomaten_server` and `tomaten_master` binaries so they can be downloaded directly
+
 ## [0.2.1] - 2020-02-08
 ### Fixes
 - Fixed issues with the workshop that could potentially crash the client
