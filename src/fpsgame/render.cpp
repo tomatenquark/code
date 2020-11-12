@@ -324,7 +324,7 @@ namespace game
             }
 
             copystring(d->info, colorname(d));
-            if(d->state!=CS_DEAD)
+            if(d->state!=CS_ALIVE && d->state!=CS_LAGGED)
             {
                 float offset = renderstatusbars(d, team);
                 renderstatusicons(d, team, offset);
