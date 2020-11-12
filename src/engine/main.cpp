@@ -340,9 +340,7 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
 
     clientkeepalive();      // make sure our connection doesn't time out while loading maps etc.
 
-    #ifdef __APPLE__
     SDL_PumpEvents(); // keep the event queue awake to avoid 'beachball' cursor
-    #endif
 
     extern int mesa_swap_bug, curvsync;
     bool forcebackground = progressbackground || (mesa_swap_bug && (curvsync || totalmillis==1));
