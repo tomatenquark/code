@@ -232,7 +232,7 @@ namespace game
         vec p = d->abovehead().madd(camup, yoffset);
         int icons = 0;
         const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
-        if(statusicons)
+        if(statusicons && (d->state==CS_ALIVE || d->state==CS_LAGGED))
         {
             if(d->quadmillis) icons++;
             if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
@@ -270,7 +270,7 @@ namespace game
 
     float renderstatusbars(fpsent *d, int team)
     {
-        if(!statusbars || m_insta || (player1->state==CS_SPECTATOR ? statusbars <= 1 : team != 1)) return 0;
+        if(!statusbars || m_insta || (player1->state==CS_SPECTATOR ? statusbars <= 1 : team != 1) || (d->state!=CS_ALIVE && d->state!=CS_LAGGED)) return 0;
         vec p = d->abovehead().msub(camdir, 50/80.0f).msub(camup, 2.0f);
         float offset = 0;
         float scale = statusbarscale;
@@ -324,7 +324,7 @@ namespace game
             }
 
             copystring(d->info, colorname(d));
-            if(d->state!=CS_ALIVE && d->state!=CS_LAGGED)
+            if(d->state!=CS_DEAD)
             {
                 float offset = renderstatusbars(d, team);
                 renderstatusicons(d, team, offset);
