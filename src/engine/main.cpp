@@ -864,8 +864,8 @@ void checkinput()
     {
         if(events.length()) event = events.remove(0);
 
-        if(focused && event.type!=SDL_WINDOWEVENT) { inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
-        
+        if(focused && event.type!=SDL_WINDOWEVENT) { if(grabinput != (focused>0)) inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
+
         switch(event.type)
         {
             case SDL_QUIT:
@@ -966,7 +966,7 @@ void checkinput()
                 break;
         }
     }
-    if(focused) { inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
+    if(focused) { if(grabinput != (focused>0)) inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
     if(mousemoved) resetmousemotion();
 }
 
