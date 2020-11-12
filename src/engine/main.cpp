@@ -460,7 +460,7 @@ VARNP(relativemouse, userelativemouse, 0, 1, 1);
 
 bool shouldgrab = false, grabinput = false, minimized = false, canrelativemouse = true, relativemouse = false;
 
-void inputgrab(bool on)
+void inputgrab(bool on, bool delay = false)
 {
     if(on)
     {
@@ -490,7 +490,7 @@ void inputgrab(bool on)
             relativemouse = false;
         }
     }
-    shouldgrab = false;
+    shouldgrab = delay;
 }
 
 bool initwindowpos = false;
@@ -859,10 +859,13 @@ void checkinput()
     SDL_Event event;
     //int lasttype = 0, lastbut = 0;
     bool mousemoved = false;
+    int focused = 0;
     while(events.length() || pollevent(event))
     {
         if(events.length()) event = events.remove(0);
 
+        if(focused && event.type!=SDL_WINDOWEVENT) { inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
+        
         switch(event.type)
         {
             case SDL_QUIT:
@@ -895,12 +898,14 @@ void checkinput()
                         shouldgrab = true;
                         break;
                     case SDL_WINDOWEVENT_ENTER:
-                        inputgrab(grabinput = true);
+                        shouldgrab = false;
+                        focused = 1;
                         break;
 
                     case SDL_WINDOWEVENT_LEAVE:
                     case SDL_WINDOWEVENT_FOCUS_LOST:
-                        inputgrab(grabinput = false);
+                        shouldgrab = false;
+                        focused = -1;
                         break;
 
                     case SDL_WINDOWEVENT_MINIMIZED:
@@ -961,6 +966,7 @@ void checkinput()
                 break;
         }
     }
+    if(focused) { inputgrab(grabinput = focused>0, shouldgrab); focused = 0; }
     if(mousemoved) resetmousemotion();
 }
 
