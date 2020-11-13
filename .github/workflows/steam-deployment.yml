@@ -12,8 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: tomatenquark/skds
+          repository: tomatenquark/sdks
           path: sdks
+          ref: main
       - uses: actions/checkout@v2
         with:
           lfs: true
