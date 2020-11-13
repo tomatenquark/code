@@ -508,6 +508,7 @@ namespace game
 
     void timeupdate(int secs)
     {
+        server::timeupdate(secs);
         if(secs > 0)
         {
             maplimit = lastmillis + secs*1000;

@@ -606,7 +606,7 @@ namespace server
 
     bool demonextmatch = false;
     stream *demotmp = NULL, *demorecord = NULL, *demoplayback = NULL;
-    int nextplayback = 0, demomillis = 0;
+    int nextplayback = 0;
 
 #ifndef STANDALONE
     void setdemotime(const char *time)
@@ -1288,7 +1288,6 @@ namespace server
 
         sendservmsgf("playing demo \"%s\"", file);
 
-        demomillis = 0;
         sendf(-1, 1, "ri3", N_DEMOPLAYBACK, 1, -1);
 
         if(demoplayback->read(&nextplayback, sizeof(nextplayback))!=sizeof(nextplayback))
@@ -1302,8 +1301,7 @@ namespace server
     void readdemo()
     {
         if(!demoplayback) return;
-        demomillis += curtime;
-        while(demomillis>=nextplayback)
+        while(gamemillis>=nextplayback)
         {
             int chan, len;
             if(demoplayback->read(&chan, sizeof(chan))!=sizeof(chan) ||
@@ -1333,6 +1331,48 @@ namespace server
             lilswap(&nextplayback, 1);
         }
     }
+
+    void timeupdate(int secs)
+    {
+        if(!demoplayback) return;
+        if(secs <= 0) interm = -1;
+        else gamelimit = max(gamelimit, nextplayback + secs*1000);
+    }
+
+    void seekdemo(char *t)
+    {
+        if(!demoplayback) return;
+        bool rev = *t == '-';
+        if(rev) t++;
+        int mins = strtoul(t, &t, 10), secs = 0, millis = 0;
+        if(*t == ':') secs = strtoul(t+1, &t, 10);
+        else { secs = mins; mins = 0; }
+        if(*t == '.') millis = strtoul(t+1, &t, 10);
+        int offset = max(millis + (mins*60 + secs)*1000, 0), prevmillis = gamemillis;
+        if(rev) while(gamelimit - offset > gamemillis)
+        {
+            gamemillis = gamelimit - offset;
+            readdemo();
+        }
+        else if(offset > gamemillis)
+        {
+            gamemillis = offset;
+            readdemo();
+        }
+        if(gamemillis > prevmillis && !interm) sendf(-1, 1, "ri2", N_TIMEUP, max((gamelimit - gamemillis)/1000, 1));
+    }
+
+    ICOMMAND(seekdemo, "sN$", (char *t, int *numargs, ident *id),
+    {
+        if(*numargs > 0) seekdemo(t);
+        else
+        {
+            int secs = gamemillis/1000;
+            defformatstring(str, "%d:%02d.%03d", secs/60, secs%60, gamemillis%1000);
+            if(*numargs < 0) result(str);
+            else printsvar(id, str);
+        }
+    });
 
     void stopdemo()
     {
