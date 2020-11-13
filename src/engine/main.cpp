@@ -887,7 +887,7 @@ static void resetmousemotion()
 
 static void checkmousemotion(int &dx, int &dy)
 {
-    while(pumpevents(event))
+    while(pumpevents(events))
     {
         SDL_Event &event = events.removing();
         if(event.type != SDL_MOUSEMOTION) return;
