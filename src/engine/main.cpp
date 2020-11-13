@@ -815,7 +815,7 @@ template <int SIZE> static inline bool pumpevents(queue<SDL_Event, SIZE> &events
         databuf<SDL_Event> buf = events.reserve(events.capacity());
         int n = SDL_PeepEvents(buf.getbuf(), buf.remaining(), SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
         if(n <= 0) return false;
-        loopi(n) if(filterevent(buf.buf[i])) buf.put(buf.buf[i]);
+        for(int i = 0; i < n; i++) if(filterevent(buf.buf[i])) buf.put(buf.buf[i]);
         events.addbuf(buf);
     }
     return true;
