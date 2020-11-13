@@ -634,7 +634,6 @@ namespace server
             return;
         }
         int diffmillis = timeleft-millis;
-        demomillis += diffmillis;
         lastmillis += diffmillis;
     }
     COMMAND(setdemotime, "s");
