@@ -1,0 +1,170 @@
+name: Steam deployment for Tomatenquark
+on: [push]
+
+env:
+  GITCOMMITID: 7027d93e776daf0107de86af64dfcbccab782140
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    env:
+      vcpkgResponseFile: '${{ github.workspace }}/cmake/triplets/osx'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: tomatenquark/sdks
+          path: sdks
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+      - name: Unpack SDK
+        run: |
+          cd sdks
+          unzip steamworks_sdk_150.zip
+      - name: Build for OSX
+        run: |
+          mkdir build
+          cd build
+          STEAM_DIR=sdks/sdk cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G Xcode
+          xcodebuild clean -configuration Release -arch x86_64 build
+          xattr -cr Release/tomatenquark.app
+          cp ../sdks/sdk/redistributable_bin/osx/libsteam_api.dylib build/Release/tomatenquark.app/Contents/Frameworks
+      - name: Archive OSX App
+        run: zip -r tomatenquark_macos.zip .
+        working-directory: build/Release
+      - uses: actions/upload-artifact@v1
+        with: 
+          name: tomatenquark_macos
+          path: ./build/Release/tomatenquark_macos.zip
+  build-windows:
+    runs-on: windows-latest
+    env:
+      vcpkgResponseFile32: '${{ github.workspace }}/cmake/triplets/windows32'
+      vcpkgResponseFile64: '${{ github.workspace }}/cmake/triplets/windows64'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Restore from cache and run vcpkg 32 bit
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile32 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+          cleanAfterBuild: false
+      - name: Restore from cache and run vcpkg 64
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
+          cleanAfterBuild: false
+      - name: Setup MSBuild
+        uses: warrenbuckley/Setup-MSBuild@v1
+      - name: Build for Windows 32
+        run: |
+          mkdir build32
+          cd build32
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -A Win32
+          msbuild /property:Platform=Win32 /t:tomatenquark /p:Configuration=Release tomatenquark.sln
+      - name: Build for Windows 64
+        run: |
+          mkdir build64
+          cd build64
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -A x64
+          msbuild /property:Platform=x64 /t:tomatenquark /p:Configuration=Release tomatenquark.sln
+      - name: Copy DLL files
+        run: |
+          cp build32/Release/* bin
+          cp build64/Release/* bin64
+          dir vcpkg
+          dir vcpkg\packages
+          copy vcpkg\packages\libogg_x86-windows\bin\*.dll bin
+          copy vcpkg\packages\libvorbis_x86-windows\bin\*.dll bin
+          copy vcpkg\packages\libogg_x64-windows\bin\*.dll bin64
+          copy vcpkg\packages\libvorbis_x64-windows\bin\*.dll bin64
+      - name: Archive Windows binaries
+        run: Compress-Archive -Path .\bin, .\bin64, .\tomatenquark.bat, .\server.bat, .\server-init.cfg -DestinationPath tomatenquark_windows.zip
+      - uses: actions/upload-artifact@v1
+        with: 
+          name: tomatenquark_windows
+          path: ./tomatenquark_windows.zip
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    env:
+      vcpkgResponseFile64: '${{ github.workspace }}/cmake/triplets/linux64'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: lukka/get-cmake@latest
+      - name: Install Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libasound2-dev libvorbis-dev
+      - name: Restore from cache and run vcpkg
+        uses: lukka/run-vcpkg@v3
+        with:
+          vcpkgArguments: '@${{ env.vcpkgResponseFile64 }}'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: ${{ env.GITCOMMITID }}
+          appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile64) }}
+      - name: Build for Ubuntu
+        run: |
+          mkdir build64
+          cd build64
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+          make tomatenquark tomaten_server tomaten_master
+      - name: Archive Ubuntu binaries
+        run: |
+          cp ./build64/tomatenquark bin_unix/linux_64_client
+          cp ./build64/tomaten_server bin_unix/linux_64_server
+          cp ./build64/tomaten_master bin_unix/linux_64_master
+          zip -r tomatenquark_ubuntu.zip ./tomatenquark_unix ./bin_unix ./server-init.cfg
+      - uses: actions/upload-artifact@v1
+        with: 
+          name: tomatenquark_ubuntu
+          path: ./tomatenquark_ubuntu.zip
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-macos, build-windows, build-ubuntu]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: tomatenquark/essential
+      - uses: actions/download-artifact@v1
+        with:
+          name: tomatenquark_macos
+      - uses: actions/download-artifact@v1
+        with:
+          name: tomatenquark_windows
+      - uses: actions/download-artifact@v1
+        with:
+          name: tomatenquark_ubuntu
+      - name: Add release assets to OSX archive
+        run: |
+          mkdir -p tomatenquark.app/Contents/gamedata
+          cp -r ../data ../packages tomatenquark.app/Contents/gamedata
+          zip -ur tomatenquark_macos.zip ./tomatenquark.app
+        working-directory: ./tomatenquark_macos
+      - name: Add release assets to Windows archive
+        run: |
+          cp -r ../data ../packages .
+          zip -ur tomatenquark_windows.zip ./packages ./data
+        working-directory: ./tomatenquark_windows
+      - name: Add release assets to Ubuntu archive
+        run: |
+          cp -r ../data ../packages .
+          zip -ur tomatenquark_ubuntu.zip ./packages ./data
+        working-directory: ./tomatenquark_ubuntu
