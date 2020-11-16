@@ -2170,6 +2170,8 @@ namespace server
         votecount(char *s, int n) : map(s), mode(n), count(0) {}
     };
 
+    vector<votecount> voteslist;
+
     void checkvotes(bool force = false)
     {
         vector<votecount> votes;
@@ -2190,6 +2192,7 @@ namespace server
             if(!vc) vc = &votes.add(votecount(oi->mapvote, oi->modevote));
             vc->count++;
         }
+        voteslist = votes;
         votecount *best = NULL;
         loopv(votes) if(!best || votes[i].count > best->count || (votes[i].count == best->count && rnd(2))) best = &votes[i];
         if(force || (best && best->count > maxvotes/2))
@@ -2204,6 +2207,28 @@ namespace server
             else rotatemap(true);
         }
     }
+
+    ICOMMAND(listvotes, "", (),
+    {
+        vector<char> buf;
+        string vote;
+        string voter;
+        checkvotes();
+        loopv(voteslist)
+        {
+            formatstring(vote)("[%s %d %d [", voteslist[i].map, voteslist[i].mode, voteslist[i].count);
+            buf.put(vote, strlen(vote));
+            loopvj(clients)
+            {
+                clientinfo *oi = clients[j];
+                formatstring(voter)("%d ", oi->clientnum);
+                if(!strcmp(oi->mapvote, voteslist[i].map) && oi->modevote==voteslist[i].mode) buf.put(voter, strlen(voter));
+            }
+            buf.put("]]", 2);
+        }
+        buf.add('\0');
+        result(buf.getbuf());
+    });
 
     void forcemap(const char *map, int mode)
     {
