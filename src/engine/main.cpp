@@ -513,6 +513,7 @@ void inputgrab(bool on, bool delay = false)
                 XGrabPointer(info.info.x11.display, info.info.x11.window, True, mask, GrabModeAsync, GrabModeAsync, info.info.x11.window, None, CurrentTime);
             }
             else XUngrabPointer(info.info.x11.display, CurrentTime);
+            XSync(info.info.x11.display, False);
         }
     }
 #endif
