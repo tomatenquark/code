@@ -43,8 +43,8 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: ${{ env.GITCOMMITID }}
           appendedCacheKey: ${{ hashFiles(env.vcpkgResponseFile) }}
-      - name: Setup MSBuild
-        uses: warrenbuckley/Setup-MSBuild@v1
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
       - name: Build for Windows
         run: |
           mkdir build
