@@ -15,7 +15,7 @@ jobs:
           lfs: true
       - uses: lukka/get-cmake@latest
       - name: Restore from cache and run vcpkg
-        uses: lukka/run-vcpkg@v3
+        uses: lukka/run-vcpkg@v5
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
@@ -37,7 +37,7 @@ jobs:
           lfs: true
       - uses: lukka/get-cmake@latest
       - name: Restore from cache and run vcpkg
-        uses: lukka/run-vcpkg@v3
+        uses: lukka/run-vcpkg@v5
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
@@ -65,7 +65,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libasound2-dev libvorbis-dev
       - name: Restore from cache and run vcpkg
-        uses: lukka/run-vcpkg@v3
+        uses: lukka/run-vcpkg@v5
         with:
           vcpkgArguments: '@${{ env.vcpkgResponseFile }}'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
