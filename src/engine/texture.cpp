@@ -1406,7 +1406,8 @@ static bool texturedata(ImageData &d, const char *tname, Slot::Tex *tex = NULL, 
         file++;
     }
 
-    bool raw = !usedds || !compress, dds = false;
+    int flen = strlen(file);
+    bool raw = !usedds || !compress, dds = false, guess = false;
     for(const char *pcmds = cmds; pcmds;)
     {
         #define PARSETEXCOMMANDS(cmds) \
@@ -1424,13 +1425,16 @@ static bool texturedata(ImageData &d, const char *tname, Slot::Tex *tex = NULL, 
             }
         PARSETEXCOMMANDS(pcmds);
         if(matchstring(cmd, len, "dds")) dds = true;
-        else if(matchstring(cmd, len, "thumbnail")) raw = true;
+        else if(matchstring(cmd, len, "thumbnail"))
+        {
+            raw = true;
+            guess = flen >= 4 && !strchr(file+flen-4, '.');
+        }
         else if(matchstring(cmd, len, "stub")) return canloadsurface(file);
     }
 
     if(msg) renderprogress(loadprogress, file);
 
-    int flen = strlen(file);
     if(flen >= 4 && (!strcasecmp(file + flen - 4, ".dds") || (dds && !raw)))
     {
         string dfile;
@@ -1446,7 +1450,20 @@ static bool texturedata(ImageData &d, const char *tname, Slot::Tex *tex = NULL, 
 
     if(!d.data)
     {
-        SDL_Surface *s = loadsurface(file);
+        SDL_Surface *s = NULL;
+        if(guess)
+        {
+            static const char *exts[] = {".jpg", ".png"};
+            string ext;
+            for(int i = 0; i < sizeof(exts)/sizeof(exts[0]); i++)
+            {
+                copystring(ext, file);
+                concatstring(ext, exts[i]);
+                s = loadsurface(ext);
+                if(s) break;
+            }
+        }
+        else s = loadsurface(file);
         if(!s) { if(msg) conoutf(CON_ERROR, "could not load texture %s", file); return false; }
         int bpp = s->format->BitsPerPixel;
         if(bpp%8 || !texformat(bpp/8)) { SDL_FreeSurface(s); conoutf(CON_ERROR, "texture must be 8, 16, 24, or 32 bpp: %s", file); return false; }
