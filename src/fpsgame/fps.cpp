@@ -944,9 +944,11 @@ namespace game
     }
 
     VARP(healthcolors, 0, 1, 1);
+    VARP(hidehudicons, 0, 0, 1);
 
     void drawhudicons(fpsent *d)
     {
+        if(hidehudicons) return;
         pushhudmatrix();
         hudmatrix.scale(2, 2, 1);
         flushhudmatrix();
