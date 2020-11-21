@@ -874,13 +874,15 @@ void loadvslots(stream *f, int numvslots)
     delete[] prev;
 }
 
+VARP(allowsavebasemap, 0, 0, 1);
+
 bool save_world(const char *mname, bool nolms)
 {
     if(!*mname) mname = game::getclientmap();
     setmapfilenames(mname);
     if(savebak) backup(ogzname, bakname);
     stream *f = opengzfile(ogzname, "wb");
-    if(!f) { conoutf(CON_WARN, "could not write map to %s", ogzname); return false; }
+    if(!f || (!allowsavebasemap && strstr(id->getstr(), mname))) { conoutf(CON_WARN, "could not write map to %s", ogzname); return false; }
 
     int numvslots = vslots.length();
     if(!nolms && !multiplayer(false))
