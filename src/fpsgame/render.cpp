@@ -317,7 +317,7 @@ namespace game
             vec dir = vec(d->o).sub(camera1->o);
             float dist = dir.magnitude();
             dir.div(dist);
-            if(raycube(camera1->o, dir, dist, 0) < dist)
+            if(d->state!=CS_EDITING && raycube(camera1->o, dir, dist, 0) < dist)
             {
                 d->info[0] = '\0';
                 continue;
