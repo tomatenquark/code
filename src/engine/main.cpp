@@ -463,7 +463,7 @@ VARNP(relativemouse, userelativemouse, 0, 1, 1);
 bool shouldgrab = false, grabinput = false, minimized = false, canrelativemouse = true, relativemouse = false;
 
 #ifdef SDL_VIDEO_DRIVER_X11
-VAR(sdl_xgrab_bug, 0, 1, 1);
+VAR(sdl_xgrab_bug, 0, 0, 1);
 #endif
 
 void inputgrab(bool on, bool delay = false)
@@ -1231,6 +1231,14 @@ int main(int argc, char **argv)
         logoutf("init: sdl");
 
         if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO|SDL_INIT_AUDIO)<0) fatal("Unable to initialize SDL: %s", SDL_GetError());
+        +
+#ifdef SDL_VIDEO_DRIVER_X11
+        SDL_version version;
+        SDL_GetVersion(&version);
+        if (SDL_VERSIONNUM(version.major, version.minor, version.patch) < SDL_VERSIONNUM(2, 0, 13))
+            sdl_xgrab_bug = 1;
+#endif
+     }
     }
 
     logoutf("init: net");
