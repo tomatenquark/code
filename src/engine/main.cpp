@@ -788,11 +788,6 @@ COMMAND(resetgl, "");
 
 static queue<SDL_Event, 32> events;
 
-static inline void pushevent(const SDL_Event &e)
-{
-    events.add(e);
-}
-
 static inline bool filterevent(const SDL_Event &event)
 {
     switch(event.type)
