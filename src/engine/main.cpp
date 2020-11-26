@@ -473,7 +473,9 @@ VAR(sdl_xgrab_bug, 0, 0, 1);
 
 void inputgrab(bool on, bool delay = false)
 {
+#ifdef SDL_VIDEO_DRIVER_X11
     bool wasrelativemouse = relativemouse;
+#endif
     if(on)
     {
         SDL_ShowCursor(SDL_FALSE);
