@@ -162,6 +162,7 @@ extern bool validateblock(const char *s);
 extern void explodelist(const char *s, vector<char *> &elems, int limit = -1);
 extern char *indexlist(const char *s, int pos);
 extern int listlen(const char *s);
+extern int listincludes(const char* list, const char* needle, int needlelen);
 extern void printvar(ident *id);
 extern void printvar(ident *id, int i);
 extern void printfvar(ident *id, float f);

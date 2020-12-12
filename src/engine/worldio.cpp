@@ -883,7 +883,7 @@ bool save_world(const char *mname, bool nolms)
     if(savebak) backup(ogzname, bakname);
     stream *f = opengzfile(ogzname, "wb");
     ident *id = readident("allmaps");
-    if(!f || (!allowsavebasemap && strstr(id->getstr(), mname))) { conoutf(CON_WARN, "could not write map to %s", ogzname); return false; }
+    if (!f || (!allowsavebasemap && listincludes(id->getstr(), mname, strlen(mname)) != -1)) { conoutf(CON_WARN, "could not write map to %s", ogzname); return false; }
 
     int numvslots = vslots.length();
     if(!nolms && !multiplayer(false))
