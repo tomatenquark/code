@@ -162,7 +162,7 @@ extern bool validateblock(const char *s);
 extern void explodelist(const char *s, vector<char *> &elems, int limit = -1);
 extern char *indexlist(const char *s, int pos);
 extern int listlen(const char *s);
-extern int listincludes(const char* list, const char* needle, int needlelen);
+extern int listincludes(const char *list, const char *needle, int needlelen);
 extern void printvar(ident *id);
 extern void printvar(ident *id, int i);
 extern void printfvar(ident *id, float f);
@@ -227,7 +227,7 @@ static inline bool insideworld(const ivec &o)
 }
 
 // world
-extern char* mapid;
+extern char *mapid;
 extern bool emptymap(int factor, bool force, const char *mname = "", bool usecfg = true);
 extern bool enlargemap(bool force);
 extern int findentity(int type, int index = 0, int attr1 = -1, int attr2 = -1);
