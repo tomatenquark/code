@@ -184,6 +184,7 @@ namespace server
         int frags, flags, deaths, teamkills, shotdamage, damage;
         int timeplayed;
         float effectiveness;
+        int racetime, racelaps, racecheckpoint, racerank, racestate;
 
         void save(gamestate &gs)
         {
@@ -195,6 +196,11 @@ namespace server
             damage = gs.damage;
             timeplayed = gs.timeplayed;
             effectiveness = gs.effectiveness;
+            racetime = gs.racetime;
+            racelaps = gs.racelaps;
+            racecheckpoint = gs.racecheckpoint;
+            racerank = gs.racerank;
+            racestate = gs.racestate;
         }
 
         void restore(gamestate &gs)
@@ -903,11 +909,13 @@ namespace server
     #include "ctf.h"
     #include "collect.h"
     #include "hideandseek.h"
+    #include "race.h"
 
     captureservmode capturemode;
     ctfservmode ctfmode;
     collectservmode collectmode;
     hideandseekservmode hideandseekmode;
+    raceservmode racemode;
     servmode *smode = NULL;
 
     bool canspawnitem(int type) { return !m_noitems && (type>=I_SHELLS && type<=I_QUAD && (!m_noammo || type<I_SHELLS || type>I_CARTRIDGES)); }
@@ -1391,12 +1399,12 @@ namespace server
         if(!gamepaused) return;
         int admins = 0;
         loopv(clients) if(clients[i]->privilege >= (restrictpausegame ? PRIV_ADMIN : PRIV_MASTER) || clients[i]->local) admins++;
-        if(!admins) pausegame(false);
+        if(!admins) server::pausegame(false);
     }
 
     void forcepaused(bool paused)
     {
-        pausegame(paused);
+        server::pausegame(paused);
     }
 
     bool ispaused() { return gamepaused; }
@@ -2119,6 +2127,7 @@ namespace server
         else if(m_ctf) smode = &ctfmode;
         else if(m_collect) smode = &collectmode;
         else if(m_hideandseek) smode = &hideandseekmode;
+        else if(m_race) smode = &racemode;
         else smode = NULL;
 
         if(m_timed && smapname[0]) sendf(-1, 1, "ri2", N_TIMEUP, gamemillis < gamelimit && !interm ? max((gamelimit - gamemillis)/1000, 1) : 0);

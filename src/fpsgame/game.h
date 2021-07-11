@@ -46,6 +46,9 @@ enum                            // static entity types
     PLATFORM,                   // attr1 = angle, attr2 = idx, attr3 = tag, attr4 = speed
     ELEVATOR,                   // attr1 = angle, attr2 = idx, attr3 = tag, attr4 = speed
     FLAG,                       // attr1 = angle, attr2 = team
+    RACE_START,
+    RACE_FINISH,
+    RACE_CHECKPOINT,            // attr1 = angle, attr2 = checkpoint no
     MAXENTTYPES
 };
 
@@ -91,7 +94,8 @@ enum
     M_SLOWMO     = 1<<18,
     M_COLLECT    = 1<<19,
     M_HALFTIME   = 1<<20,
-    M_HIDEANDSEEK= 1<<21
+    M_HIDEANDSEEK= 1<<21,
+    M_RACE       = 1<<22,
 };
 
 static struct gamemodeinfo
@@ -127,7 +131,8 @@ static struct gamemodeinfo
     { "collect", M_COLLECT | M_TEAM, "Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. Collect items for ammo." },
     { "insta collect", M_NOITEMS | M_INSTA | M_COLLECT | M_TEAM, "Instagib Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with full rifle ammo and die instantly from one shot. There are no items." },
     { "effic collect", M_NOITEMS | M_EFFICIENCY | M_COLLECT | M_TEAM, "Efficiency Skull Collector: Frag \fs\f3the enemy team\fr to drop \fs\f3skulls\fr. Collect them and bring them to \fs\f3the enemy base\fr to score points for \fs\f1your team\fr or steal back \fs\f1your skulls\fr. You spawn with all weapons and armour. There are no items." },
-    { "hideandseek", M_HALFTIME | M_HIDEANDSEEK | M_TEAM , "Hide and Seek: \fs\f2Hiders\fr need to hide from \fs\f1seekers\fr. \fs\f2Hiders\fr can not kill \fs\f1seekers\fr." }
+    { "hideandseek", M_HALFTIME | M_HIDEANDSEEK | M_TEAM , "Hide and Seek: \fs\f2Hiders\fr need to hide from \fs\f1seekers\fr. \fs\f2Hiders\fr can not kill \fs\f1seekers\fr." },
+    { "race", M_RACE, "Race: Be the first who completes 3 laps. Kill people to repulse them." }
 };
 
 #define STARTGAMEMODE (-3)
@@ -153,6 +158,7 @@ static struct gamemodeinfo
 #define m_hold         (m_checkall(gamemode, M_CTF | M_HOLD))
 #define m_collect      (m_check(gamemode, M_COLLECT))
 #define m_hideandseek  (m_check(gamemode, M_HIDEANDSEEK))
+#define m_race         (m_check(gamemode, M_RACE))
 #define m_teammode     (m_check(gamemode, M_TEAM))
 #define m_halftime     (m_check(gamemode, M_HALFTIME))
 #define isteam(a,b)    (m_teammode && strcmp(a, b)==0)
@@ -247,6 +253,7 @@ enum
     N_MAPCRC, N_CHECKMAPS,
     N_SWITCHNAME, N_SWITCHMODEL, N_SWITCHTEAM,
     N_INITTOKENS, N_TAKETOKEN, N_EXPIRETOKENS, N_DROPTOKENS, N_DEPOSITTOKENS, N_STEALTOKENS,
+    N_RACESTART, N_RACEFINISH, N_RACECHECKPOINT, N_RACELAP, N_RACEINFO,
     N_SERVCMD,
     N_DEMOPACKET,
     NUMMSG
@@ -278,6 +285,7 @@ static const int msgsizes[] =               // size inclusive message token, 0 f
     N_MAPCRC, 0, N_CHECKMAPS, 1,
     N_SWITCHNAME, 0, N_SWITCHMODEL, 2, N_SWITCHTEAM, 0,
     N_INITTOKENS, 0, N_TAKETOKEN, 2, N_EXPIRETOKENS, 0, N_DROPTOKENS, 0, N_DEPOSITTOKENS, 2, N_STEALTOKENS, 0,
+    N_RACESTART, 0, N_RACEFINISH, 0, N_RACECHECKPOINT, 2, N_RACELAP, 2, N_RACEINFO, 7,
     N_SERVCMD, 0,
     N_DEMOPACKET, 0,
     -1
@@ -287,7 +295,7 @@ static const int msgsizes[] =               // size inclusive message token, 0 f
 #define SAUERBRATEN_SERVER_PORT 28785
 #define SAUERBRATEN_SERVINFO_PORT 28786
 #define SAUERBRATEN_MASTER_PORT 28787
-#define PROTOCOL_VERSION 262            // bump when protocol changes
+#define PROTOCOL_VERSION 263            // bump when protocol changes
 #define DEMO_VERSION 1                  // bump when demo format changes
 #define DEMO_MAGIC "SAUERBRATEN_DEMO"
 
@@ -379,6 +387,7 @@ struct fpsstate
     int gunselect, gunwait;
     int ammo[NUMGUNS];
     int aitype, skill;
+    int racetime, racelaps, racecheckpoint, racerank, racestate;
 
     fpsstate() : maxhealth(100), aitype(AI_NONE), skill(0) {}
 
@@ -553,7 +562,7 @@ struct fpsent : dynent, fpsstate
     bool attacking;
     int attacksound, attackchan, idlesound, idlechan;
     int lasttaunt;
-    int lastpickup, lastpickupmillis, lastbase, lastrepammo, flagpickup, tokens;
+    int lastpickup, lastpickupindex, lastpickupmillis, lastbase, lastrepammo, flagpickup, tokens;
     vec lastcollect;
     int frags, flags, deaths, totaldamage, totalshots;
     editinfo *edit;

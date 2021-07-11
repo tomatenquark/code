@@ -110,18 +110,21 @@ namespace game
     #include "ctf.h"
     #include "collect.h"
     #include "hideandseek.h"
+    #include "race.h"
 
     clientmode *cmode = NULL;
     captureclientmode capturemode;
     ctfclientmode ctfmode;
     collectclientmode collectmode;
     hideandseekclientmode hideandseekmode;
+    raceclientmode racemode;
 
     void setclientmode()
     {
         if(m_capture) cmode = &capturemode;
         else if(m_ctf) cmode = &ctfmode;
         else if(m_collect) cmode = &collectmode;
+        else if(m_race) cmode = &racemode;
         else if(m_hideandseek) cmode = &hideandseekmode;
         else cmode = NULL;
     }
